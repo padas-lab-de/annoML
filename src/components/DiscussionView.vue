@@ -23,7 +23,7 @@
 
 import Question from '@/components/discussion/Question.vue';
 import QuestionEditor from '@/components/discussion/QuestionEditor.vue';
-import APIService from '@/services/APIService';
+import APIService from '@/service/APIService';
 
 export default {
   name: 'DiscussionView',

@@ -1,11 +1,20 @@
 <template>
-  <div class="visualization-view" ref="vis" v-if="visualization">
-    <h1>{{ visualization.title }} by {{ visualization.author.username }}</h1>
+  <div class="visualization-view mt-3" ref="vis" v-if="visualization" >
+    <h1>{{ visualization.title }}</h1>
     <vega-annotation-options
       :tools="tools"
       :current-tool="currentTool"
       @tool="setTool"
     />
+      <b-alert :show="visualizationFailed"  variant="danger">
+          Loading visualization failed!
+      </b-alert>
+      <b-alert :show="resourceFailed" variant="warning">
+          Visualization cannot been loaded!
+      </b-alert>
+      <b-alert :show="modifiedWarning" dismissible variant="info">
+          Visualization was modified by resource owner!
+      </b-alert>
     <div id="visualization-container">
       <vega-chart
         v-if="chart"
@@ -15,16 +24,21 @@
         :tools="tools"
         @click="createAnnotation"
       />
+      <b-spinner v-else class=" text-center"
+                 style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
     </div>
+      <span v-if="$store.getters.debug"
+            style="color: lightgray">Hash: {{visualization.hash}}</span>
   </div>
-</template>
+</template>  <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
 <script>
 /* eslint-disable vue/require-default-prop,no-console,no-param-reassign,no-return-assign */
 
 import d3annotation from 'd3-svg-annotation';
+import JSum from 'jsum';
 import VegaAnnotationOptions from '@/components/visualization/VegaAnnotationToolbar.vue';
 import VegaChart from '@/components/visualization/VegaChart.vue';
-import APIService from '@/services/APIService';
+import APIService from '@/service/APIService';
 
 export default {
   name: 'VisualizationView',
@@ -33,13 +47,13 @@ export default {
     VegaChart,
   },
   props: {
-    visId: Number,
+    visualizationId: Number,
   },
   data() {
     return {
       scaleFactor: 1,
-      visualization: null,
       discussion: null,
+      visualization: null,
       chart: null,
       questions: null,
       annotation: null,
@@ -61,6 +75,9 @@ export default {
           tempPoint: null,
         },
       },
+      visualizationFailed: false,
+      resourceFailed: false,
+      modifiedWarning: false,
     };
   },
   mounted() {
@@ -93,14 +110,42 @@ export default {
           .currentRectangleAnnotations.concat(currentRectangleAnnotations);
       },
     );
-    APIService.getVisualization(this.visId).then((data) => {
-      console.log(data);
+    APIService.getVisualization(this.visualizationId).then((data) => {
       this.visualization = data;
-      this.chart = data.schema.spec;
+      if (this.visualization.schema) {
+        this.chart = this.visualization.schema;
+      } else if (this.visualization.source) {
+        APIService.getExternalVisualization(data.source).then((visualization) => {
+          this.chart = visualization.schema;
+        }).catch((error) => {
+          console.log(error);
+          this.resourceFailed = true;
+        });
+      }
+    }).catch((error) => {
+      console.log(error);
+      this.visualizationFailed = false;
     });
   },
-  watch: {},
+  watch: {
+    chart() {
+      if (this.chart) {
+        if (this.visualization.hash) {
+          const hash = JSum.digest(this.chart, 'SHA256', 'hex');
+          if (hash !== this.visualization.hash) {
+            this.modifiedWarning = true;
+          }
+        } else {
+          this.visualization.hash = JSum.digest(this.chart, 'SHA256', 'hex');
+          this.modifiedWarning = true;
+        }
+      }
+    },
+  },
   methods: {
+    /**
+     * Annotation creation
+     */
     createAnnotation(item) {
       if (this.$store.getters.visualizationSelectable) {
         if (this.currentTool === this.tools.pointAnnotation) {
@@ -169,6 +214,9 @@ export default {
     setTool(newTool) {
       this.currentTool = newTool;
     },
+    /**
+     * Visualization Management
+     */
   },
 };
 </script>

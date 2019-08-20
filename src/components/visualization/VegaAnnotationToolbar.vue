@@ -1,22 +1,48 @@
 <template>
   <div>
-    <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
-      <b-button-group class="annotation-tools">
-        <b-button @click="selectNoTool" :disabled="currentTool === tools.noTool"
-          ><i class="fa fa-hand-stop-o"
+    <b-button-toolbar class="mb-2">
+      <b-button-group class="annotation-tools" >
+        <b-button @click="selectNoTool"
+                  :disabled="!$store.getters.visualizationSelectable"
+                  :pressed="currentTool === tools.noTool"
+
+        ><i class="fa fa-hand-stop-o"
         /></b-button>
         <b-button
           @click="selectPointAnnotation"
-          :disabled="currentTool === tools.pointAnnotation"
+          :disabled="!$store.getters.visualizationSelectable"
+          :pressed="currentTool === tools.pointAnnotation"
           ><i class="fa fa-dot-circle-o" /> Point</b-button
         >
         <b-button
           @click="selectRectangleAnnotation"
-          :disabled="currentTool === tools.rectangleAnnotation"
-          ><i class="fa fa-object-ungroup" /> Rectangle</b-button
+          :disabled="!$store.getters.visualizationSelectable"
+          :pressed="currentTool === tools.rectangleAnnotation"
+        ><i class="fa fa-object-ungroup" /> Rectangle</b-button
         >
       </b-button-group>
-
+      <b-dropdown right class="mx-1 " text="Annotations">
+        <b-dropdown-item
+                :active="$store.getters.visualizationFit"
+                @click="$store.commit('toggleVisualizationFit')"
+        >Point Annotations</b-dropdown-item
+        >
+        <b-dropdown-item
+                :active="$store.getters.visualizationFit"
+                @click="$store.commit('toggleVisualizationFit')"
+        >Free Point Annotations</b-dropdown-item
+        >
+        <b-dropdown-item
+                :active="$store.getters.visualizationFit"
+                @click="$store.commit('toggleVisualizationFit')"
+        >Rectangle Annotations</b-dropdown-item
+        >
+        <b-dropdown-item
+                :active="$store.getters.visualizationFit"
+                @click="$store.commit('toggleVisualizationFit')"
+        >Free Rectangle Annotations</b-dropdown-item
+        >
+      </b-dropdown>
       <b-dropdown right class="mx-1 " text="Options">
         <b-dropdown-item
           :active="$store.getters.visualizationFit"
@@ -26,14 +52,8 @@
         <b-dropdown-divider />
         <b-dropdown-item @click="downloadSVG">Download SVG </b-dropdown-item>
       </b-dropdown>
+
     </b-button-toolbar>
-    <div
-      class="float-right status-tile selectable"
-      v-if="$store.getters.visualizationSelectable"
-    >
-      Selectable
-    </div>
-    <div class="float-right status-tile" v-else>Selectable</div>
   </div>
 </template>
 

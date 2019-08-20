@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import APIService from '@/services/APIService';
+import APIService from '@/service/APIService';
 import VegaChart from '@/components/visualization/VegaChart.vue';
 
 export default {

@@ -1,13 +1,16 @@
 <template>
   <div>
     <b-card class="mb-2 ml-4">
+      <Highlight edit=true starred=false></Highlight>
       <span
         v-if="$store.getters.debug"
         class="float-right"
         style="color: lightgray"
       >
-        {{ comment.author.username }} #{{ comment.id }}</span
+        {{ comment.author.username }} #{{ comment.id }}
+</span
       >
+
       <annotation-select
         class="annotation-select"
         v-if="
@@ -23,6 +26,7 @@
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
+      <vote></vote>
       <b-button @click="editComment" class="float-right" variant="light"
         >Edit</b-button
       >
@@ -52,10 +56,14 @@ import {
   Underline,
 } from 'tiptap-extensions';
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
+import Vote from '@/components/discussion/vote/Vote.vue';
+import Highlight from '@/components/discussion/vote/Highlight.vue';
 
 export default {
   name: 'Comment',
   components: {
+    Vote,
+    Highlight,
     EditorContent,
     AnnotationSelect,
   },

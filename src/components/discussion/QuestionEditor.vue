@@ -112,14 +112,16 @@
       </div>
       <editor-content class="editor__content" id="editor" :editor="editor" />
     </div>
-    <div slot="footer">
+    <div>
+
       <b-button v-if="question.id" @click="updateQuestion" variant="success"
         >Save
       </b-button>
+
       <b-button v-else @click="submitQuestion" variant="success"
         >Submit</b-button
       >
-      <b-button @click="deleteQuestion" variant="danger">Delete </b-button>
+      <b-button class="ml-1" @click="deleteQuestion" variant="danger">Delete </b-button>
     </div>
     <answer
       v-for="answer in question.answers"

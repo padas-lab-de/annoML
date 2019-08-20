@@ -3,6 +3,7 @@
     <b-card class="question mb-2 mt-4">
       <h2 class="question-title">
         {{ question.title }}
+        <Highlight class="pull-right" edit="true" starred="false"></Highlight>
         <span
           v-if="$store.getters.debug"
           class="float-right"
@@ -26,7 +27,7 @@
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
-      <div slot="footer">
+      <div>
         <b-button
           v-if="!$store.getters.currentEdit"
           @click="answerPost"
@@ -34,6 +35,7 @@
         >
           Answer
         </b-button>
+        <vote></vote>
         <b-button @click="editQuestion" class="float-right" variant="light"
           >Edit</b-button
         >
@@ -84,11 +86,16 @@ import {
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
 import Answer from '@/components/discussion/Answer.vue';
 import AnswerEditor from '@/components/discussion/AnswerEditor.vue';
-import APIService from '@/services/APIService';
+import APIService from '@/service/APIService';
+import Vote from '@/components/discussion/vote/Vote.vue';
+import Highlight from '@/components/discussion/vote/Highlight.vue';
+
 
 export default {
   name: 'Question',
   components: {
+    Highlight,
+    Vote,
     EditorContent,
     AnnotationSelect,
     AnswerEditor,

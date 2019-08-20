@@ -5,7 +5,7 @@
         <b-col cols="12" md="6">
           <visualization-view
             v-if="discussion"
-            :vis-id="discussion.visualization.id"
+            :visualization-id="discussion.visualization.id"
           />
         </b-col>
         <b-col cols="12" md="6">
@@ -20,7 +20,7 @@
 /* eslint-disable no-console */
 
 import VisualizationView from '@/components/VisualizationView.vue';
-import APIService from '@/services/APIService';
+import APIService from '@/service/APIService';
 import DiscussionView from '@/components/DiscussionView.vue';
 
 export default {
@@ -32,11 +32,12 @@ export default {
   data() {
     return {
       discussion: null,
-      discussionId: 5,
+      discussionId: 7,
     };
   },
   mounted() {
     APIService.getDiscussion(this.discussionId).then((data) => {
+      console.log(data);
       this.discussion = data;
     });
   },

@@ -2,9 +2,11 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:9999';
+const USER_API_URL = 'http//:localhost:8080/api';
+
 
 const instance = axios.create({
-  baseURL: 'http://localhost:9999',
+  baseURL: API_URL,
   headers: {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
@@ -12,15 +14,16 @@ const instance = axios.create({
   },
 });
 
-const padreStaging = axios.create({
-  baseURL: 'http://localhost:9090/api',
-  crossDomain: true,
+const userProvider = axios.create({
+  baseURL: USER_API_URL,
   headers: {
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
   },
 });
+
+
 export default {
   addQuestion(discussionId, question) {
     const url = `/discussions/${discussionId}/question`;
@@ -67,15 +70,24 @@ export default {
   },
 
   getDiscussion(disId) {
-    const url = `${API_URL}/discussions/${disId}`;
-    return axios.get(url).then(response => response.data);
+    const url = `/discussions/${disId}`;
+    return instance.get(url).then(response => response.data);
   },
 
   /**
-   * Data from Padre staging
+   * User data from external provider
    */
-  getDatasetVisualizations(datasetId) {
-    const url = `/datasets/${datasetId}/visualizations`;
-    return padreStaging.get(url).then(response => response.data);
+  getUser(userId) {
+    const url = `/users/${userId}`;
+    return userProvider.get(url).then(response => response.data);
   },
+
+  /**
+   * Data from external resource server
+   */
+  getExternalVisualization(url) {
+    return axios.get(url).then(response => response.data);
+  },
+
+
 };

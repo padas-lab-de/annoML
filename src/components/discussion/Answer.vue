@@ -1,14 +1,15 @@
 <template>
   <div>
     <b-card class="mb-2 ml-2">
-      <span
+        <Highlight edit="true" starred="false"></Highlight>
+        <span
         v-if="$store.getters.debug"
         class="float-right"
         style="color: lightgray"
       >
         {{ answer.author.username }} #{{ answer.id }}</span
       >
-      <annotation-select
+        <annotation-select
         class="annotation-select"
         v-if="
           answer.pointAnnotations.length > 0 ||
@@ -30,6 +31,7 @@
       >
         Comment
       </b-button>
+        <vote></vote>
       <b-button @click="editAnswer" class="float-right" variant="light"
         >Edit</b-button
       >
@@ -80,11 +82,16 @@ import {
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
 import Comment from '@/components/discussion/Comment.vue';
 import CommentEditor from '@/components/discussion/CommentEditor.vue';
-import APIService from '@/services/APIService';
+import APIService from '@/service/APIService';
+import Vote from '@/components/discussion/vote/Vote.vue';
+import Highlight from '@/components/discussion/vote/Highlight.vue';
+
 
 export default {
   name: 'Answer',
   components: {
+    Vote,
+    Highlight,
     CommentEditor,
     Comment,
     EditorContent,

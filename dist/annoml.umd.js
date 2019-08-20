@@ -4,14 +4,17 @@
  * Released under the undefined License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.Annoml = factory());
-}(this, function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@/store/module')) :
+  typeof define === 'function' && define.amd ? define(['@/store/module'], factory) :
+  (global = global || self, global.Annoml = factory(global.module));
+}(this, function (module) { 'use strict';
 
+  module = module && module.hasOwnProperty('default') ? module['default'] : module;
+
+  /* eslint-disable no-console */
   var version = '1.0.0'; // const install = (Vue) => {
 
-  var install = function install() {
+  var install = function install(store, options) {
     /*
      * NOTE:
      *   if you need to extend Vue contstructor, you can extend it in here.
@@ -21,6 +24,16 @@
      * NOTE:
      *  somthing implementation here ...
      */
+    if (!options || !store) {
+      throw new Error('Please initialise plugin with the required options and a Vuex store.');
+    }
+
+    if (options.debug) {
+      console.log('DEBUG MODE');
+    } // register annoML module to provided Vuex storage
+
+
+    store.registerModule('annoml', module);
   };
 
   var plugin = {

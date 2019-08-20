@@ -7,4 +7,4 @@ Features include:
 - Feature2
 - ...
 
-[Get started](./started/) or play with the [demo](https://github.com//annoml/tree/dev/demo) (see [`README.md`](https://github.com//annoml/) to run them).
+[Get started](./started/) or play with the [demo](https://github.com//annoml/tree/dev/demo) (see [`README.md`](https://github.com/thomborg/annoml/) to run them).
