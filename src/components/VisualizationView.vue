@@ -1,36 +1,49 @@
 <template>
-  <div class="visualization-view mt-3" ref="vis" v-if="visualization" >
-    <h1>{{ visualization.title }}</h1>
-    <vega-annotation-options
-      :tools="tools"
-      :current-tool="currentTool"
-      @tool="setTool"
-    />
-      <b-alert :show="visualizationFailed"  variant="danger">
-          Loading visualization failed!
+  <div class="visualization-view mt-3" ref="vis">
+    <div class="visualization" v-if="visualization">
+      <h1>{{ visualization.title }}</h1>
+      <vega-annotation-options
+        :tools="tools"
+        :current-tool="currentTool"
+        @tool="setTool"
+      />
+      <b-alert :show="visualizationFailed" variant="danger">
+        Loading visualization failed!
       </b-alert>
       <b-alert :show="resourceFailed" variant="warning">
-          Visualization cannot been loaded!
+        Visualization cannot been loaded!
       </b-alert>
       <b-alert :show="modifiedWarning" dismissible variant="info">
-          Visualization was modified by resource owner!
+        Visualization was modified by resource owner!
       </b-alert>
-    <div id="visualization-container">
-      <vega-chart
-        v-if="chart"
-        :chart="chart"
-        :annotations="vegaAnnotations"
-        :temp-annotations="tempAnnotations"
-        :tools="tools"
-        @click="createAnnotation"
-      />
-      <b-spinner v-else class=" text-center"
-                 style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
+      <div id="visualization-container">
+        <vega-chart
+          v-if="chart"
+          :visualiazion-id="visualization.id"
+          :chart="chart"
+          :annotations="vegaAnnotations"
+          :temp-annotations="tempAnnotations"
+          :tools="tools"
+          @click="createAnnotation"
+        />
+        <b-spinner
+          v-else
+          class=" text-center"
+          style="width: 3rem; height: 3rem;"
+          label="Large Spinner"
+        ></b-spinner>
+      </div>
+      <span v-if="$store.getters.debug" style="color: lightgray"
+        >Hash: {{ visualization.hash }}</span
+      >
     </div>
-      <span v-if="$store.getters.debug"
-            style="color: lightgray">Hash: {{visualization.hash}}</span>
+    <b-spinner
+      v-else
+      style="width: 3rem; height: 3rem;"
+      label="Large Spinner"
+    ></b-spinner>
   </div>
-</template>  <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
+</template>
 <script>
 /* eslint-disable vue/require-default-prop,no-console,no-param-reassign,no-return-assign */
 
@@ -68,9 +81,20 @@ export default {
           type: d3annotation.annotationBadge,
         },
         pointAnnotation: {
+          name: 'POINT',
+          type: d3annotation.annotationCalloutCircle,
+        },
+        freePointAnnotation: {
+          name: 'FREEPOINT',
           type: d3annotation.annotationCalloutCircle,
         },
         rectangleAnnotation: {
+          name: 'RECTANGLE',
+          type: d3annotation.annotationCalloutRect,
+          tempPoint: null,
+        },
+        freeRectangleAnnotation: {
+          name: 'FREERECTANGEL',
           type: d3annotation.annotationCalloutRect,
           tempPoint: null,
         },
@@ -98,9 +122,8 @@ export default {
     this.$store.watch(
       (state, getters) => getters.currentPointAnnotations,
       (currentPointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$store.getters.pointAnnotations.concat(
-          currentPointAnnotations,
-        );
+        this.vegaAnnotations.pointAnnotations = this.$store.getters
+          .pointAnnotations.concat(currentPointAnnotations);
       },
     );
     this.$store.watch(
@@ -110,22 +133,26 @@ export default {
           .currentRectangleAnnotations.concat(currentRectangleAnnotations);
       },
     );
-    APIService.getVisualization(this.visualizationId).then((data) => {
-      this.visualization = data;
-      if (this.visualization.schema) {
-        this.chart = this.visualization.schema;
-      } else if (this.visualization.source) {
-        APIService.getExternalVisualization(data.source).then((visualization) => {
-          this.chart = visualization.schema;
-        }).catch((error) => {
-          console.log(error);
-          this.resourceFailed = true;
-        });
-      }
-    }).catch((error) => {
-      console.log(error);
-      this.visualizationFailed = false;
-    });
+    APIService.getVisualization(this.visualizationId)
+      .then((data) => {
+        this.visualization = data;
+        if (this.visualization.schema) {
+          this.chart = this.visualization.schema;
+        } else if (this.visualization.source) {
+          APIService.getExternalVisualization(data.source)
+            .then((visualization) => {
+              this.chart = visualization.schema;
+            })
+            .catch((error) => {
+              console.log(error);
+              this.resourceFailed = true;
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.visualizationFailed = false;
+      });
   },
   watch: {
     chart() {
@@ -177,7 +204,7 @@ export default {
     addPointAnnotation(item) {
       this.$store.commit('disableSelectable');
       const annotation = {};
-      annotation.annotationType = 'POINT';
+      annotation.annotationType = this.tools.pointAnnotation.name;
       annotation.id = Date.now();
       annotation.note = {
         title: 'Circle Annotation',
@@ -193,7 +220,7 @@ export default {
     addRectangleAnnotation(item) {
       const startPoint = this.tools.rectangleAnnotation.tempPoint;
       const annotation = {};
-      annotation.annotationType = 'RECTANGLE';
+      annotation.annotationType = this.tools.rectangleAnnotation.name;
       annotation.id = Date.now();
       annotation.note = {
         title: 'Rect Annotation',

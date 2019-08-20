@@ -1,12 +1,12 @@
 <template>
     <div class="vote pull-right btn">
             <span @click="voteUp()" >
-                <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                <font-awesome-icon icon="chevron-up"></font-awesome-icon>
             </span>
             <span >{{ voteCounter() }}</span>
             <span @click="voteDown()" >
-            <i class="fa fa-chevron-down" aria-hidden="true">
-            </i>
+            <font-awesome-icon icon="chevron-down">
+            </font-awesome-icon>
             </span>
     </div>
 </template>

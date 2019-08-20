@@ -32,79 +32,80 @@
       <div class="editor-toolbar">
         <b-button-toolbar>
           <editor-menu-bar
-            class="menubar"
-            :editor="editor"
-            v-slot="{ commands, isActive }"
+                  class="menubar"
+                  :editor="editor"
+                  v-slot="{ commands, isActive }"
           >
             <b-button-group size="sm">
               <b-button
-                class="menubar__b-button"
-                :class="{ active: isActive.bold() }"
-                @click="commands.bold"
+                      class="menubar__b-button"
+                      :class="{ active: isActive.bold() }"
+                      @click="commands.bold"
               >
-                <i class="fa fa-bold"
-              /></b-button>
+                <font-awesome-icon icon="bold"
+                /></b-button>
 
               <b-button
-                class="menubar__b-button"
-                :class="{ active: isActive.italic() }"
-                @click="commands.italic"
+                      class="menubar__b-button"
+                      :class="{ active: isActive.italic() }"
+                      @click="commands.italic"
               >
-                <i class="fa fa-italic"
-              /></b-button>
+                <font-awesome-icon icon="italic"
+                /></b-button>
 
               <b-button
-                class="menubar__b-button"
-                :class="{ active: isActive.strike() }"
-                @click="commands.strike"
+                      class="menubar__b-button"
+                      :class="{ active: isActive.strike() }"
+                      @click="commands.strike"
               >
-                <i class="fa fa-strikethrough"
-              /></b-button>
+                <font-awesome-icon icon="strikethrough"
+                /></b-button>
 
               <b-button
-                class="menubar__b-button"
-                :class="{ active: isActive.underline() }"
-                @click="commands.underline"
+                      class="menubar__b-button"
+                      :class="{ active: isActive.underline() }"
+                      @click="commands.underline"
               >
-                <i class="fa fa-underline"
-              /></b-button>
+                <font-awesome-icon icon="underline"
+                /></b-button>
+
               <b-button
-                class="menubar__button"
-                :class="{ active: isActive.bullet_list() }"
-                @click="commands.bullet_list"
+                      class="menubar__button"
+                      :class="{ active: isActive.bullet_list() }"
+                      @click="commands.bullet_list"
               >
-                <i class="fa fa-list-ul" />
+                <font-awesome-icon icon="list-ul" />
               </b-button>
 
               <b-button
-                class="menubar__button"
-                :class="{ active: isActive.ordered_list() }"
-                @click="commands.ordered_list"
+                      class="menubar__button"
+                      :class="{ active: isActive.ordered_list() }"
+                      @click="commands.ordered_list"
               >
-                <i class="fa fa-list-ol" />
+                <font-awesome-icon icon="list-ol" />
               </b-button>
 
               <b-button
-                class="menubar__button"
-                :class="{ active: isActive.blockquote() }"
-                @click="commands.blockquote"
+                      class="menubar__button"
+                      :class="{ active: isActive.blockquote() }"
+                      @click="commands.blockquote"
               >
-                <i class="fa fa-quote-left" />
+                <font-awesome-icon icon="quote-left" />
               </b-button>
 
               <b-button
-                class="menubar__button"
-                :class="{ active: isActive.code_block() }"
-                @click="commands.code_block"
+                      class="menubar__button"
+                      :class="{ active: isActive.code_block() }"
+                      @click="commands.code_block"
               >
-                <i class="fa fa-code" />
+                <font-awesome-icon icon="code" />
               </b-button>
               <b-button class="menubar__button" @click="commands.undo">
-                <i class="fa fa-undo" />
+                <font-awesome-icon icon="undo" />
               </b-button>
 
               <b-button class="menubar__button" @click="commands.redo">
-                <i class="fa fa-undo icon-flipped" />
+                <font-awesome-icon icon="undo" flip="horizontal"/>
               </b-button>
             </b-button-group>
           </editor-menu-bar>

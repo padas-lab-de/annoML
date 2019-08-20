@@ -1,8 +1,16 @@
 <template>
-    <div class="highlight" @click="toggleHighlight">
-        <i v-if="starred" class="fa fa-star " aria-hidden="true" style="color: #ffbe3c;"></i>
-        <i v-else class="fa fa-star-o light" aria-hidden="true"></i>
-    </div>
+  <div class="highlight" @click="toggleHighlight">
+    <font-awesome-icon
+      v-if="starred"
+      icon="star"
+      :style="{ color: '#ffbe3c' }"
+    ></font-awesome-icon>
+    <font-awesome-icon
+      v-else
+      icon="star"
+      :style="{ color: 'lightgray' }"
+    ></font-awesome-icon>
+  </div>
 </template>
 
 <script>
@@ -31,14 +39,13 @@ export default {
 </script>
 
 <style scoped>
-    .highlight {
-        height: 40px;
-        width: 40px;
-        color: gray;
-    }
-    .highlight:hover {
-        color: #ffbe3c;
-        transform: scale(1.2);
-    }
-
+.highlight {
+  height: 40px;
+  width: 40px;
+  color: gray;
+}
+.highlight:hover {
+  color: #ffbe3c;
+  transform: scale(1.2);
+}
 </style>

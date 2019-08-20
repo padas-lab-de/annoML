@@ -14,15 +14,65 @@
               borderColor: annotation.color
             }"
           >
-            <i
-              v-if="annotation.annotationType === 'POINT'"
-              class="fa fa-dot-circle-o"
-            />
-            <i
+            <font-awesome-layers v-if="annotation.annotationType === 'POINT'">
+              <font-awesome-icon icon="bullseye" />
+              <font-awesome-icon
+                icon="circle"
+                transform="shrink-6 down-6 right-6"
+                :style="{ color: 'gray' }"
+              />
+              <font-awesome-icon
+                icon="database"
+                transform="shrink-5 down-6 right-6"
+              />
+            </font-awesome-layers>
+
+            <font-awesome-layers
+              v-else-if="annotation.annotationType === 'FREEPOINT'"
+            >
+              <font-awesome-icon icon="bullseye" />
+              <font-awesome-icon
+                icon="circle"
+                transform="shrink-9 down-7 right-7"
+                :style="{ color: 'black' }"
+              />
+              <font-awesome-icon
+                icon="hand-pointer"
+                transform="shrink-4 down-5 right-6"
+              />
+            </font-awesome-layers>
+
+            <font-awesome-layers
               v-else-if="annotation.annotationType === 'RECTANGLE'"
-              class="fa fa-object-group"
-            /> </span
-        ></b-input-group-prepend>
+            >
+              <font-awesome-icon icon="vector-square" />
+              <font-awesome-icon
+                icon="circle"
+                transform="shrink-6 down-6 right-6"
+                :style="{ color: 'gray' }"
+              />
+              <font-awesome-icon
+                icon="database"
+                transform="shrink-5 down-6 right-6"
+              />
+            </font-awesome-layers>
+
+            <font-awesome-layers
+              v-else-if="annotation.annotationType === 'FREERECTANGEL'"
+            >
+              <font-awesome-icon icon="vector-square" />
+              <font-awesome-icon
+                icon="circle"
+                transform="shrink-9 down-6 right-7"
+                :style="{ color: 'black' }"
+              />
+              <font-awesome-icon
+                icon="hand-pointer"
+                transform="shrink-4 down-4 right-6"
+              />
+            </font-awesome-layers>
+          </span>
+        </b-input-group-prepend>
 
         <b-form-input
           :readonly="!edit"
@@ -32,17 +82,16 @@
         />
         <b-input-group-append
           v-if="edit"
-          :style="{ borderColor: annotation.color }"
+          :style="{ borderColor: annotation.color, width: '40px', }"
         >
           <b-button
             :style="{
               backgroundColor: annotation.color,
-              borderColor: annotation.color
+              borderColor: annotation.color,
             }"
             variant="outline-secondary"
             @click="deleteAnnotation"
-          >
-            <i style="{color: white}" class="fa fa-times" />
+          ><font-awesome-icon icon="times" style="{color: white}" />
           </b-button>
         </b-input-group-append>
       </b-input-group>

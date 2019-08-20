@@ -1,10 +1,10 @@
 <!--suppress ALL -->
 <template>
-  <div ref="chart" id="vis" />
+  <div ref="chart" />
 </template>
 
 <script>
-/* eslint-disable no-console */
+/* eslint-disable no-console  */
 
 import VegaEmbed from 'vega-embed';
 import * as d3 from 'd3';
@@ -14,6 +14,12 @@ import lodash from 'lodash';
 export default {
   name: 'VegaChart',
   props: {
+    visualiazionId: {
+      type: Number,
+      default() {
+        return 0;
+      },
+    },
     chart: {
       type: Object,
       default() {
@@ -94,19 +100,19 @@ export default {
   mounted() {
     this.$store.watch(
       (state, getters) => getters.showPointAnnotations,
-      () => this.updateChart(),
+      () => this.drawAnnotations(),
     );
     this.$store.watch(
       (state, getters) => getters.showFreePointAnnotations,
-      () => this.updateChart(),
+      () => this.drawAnnotations(),
     );
     this.$store.watch(
       (state, getters) => getters.showRectangleAnnotations,
-      () => this.updateChart(),
+      () => this.drawAnnotations(),
     );
     this.$store.watch(
       (state, getters) => getters.showFreeRectangleAnnotations,
-      () => this.updateChart(),
+      () => this.drawAnnotations(),
     );
     this.$store.watch(
       (state, getters) => getters.visualizationFit,
@@ -138,7 +144,7 @@ export default {
       this.chart.width = size.width - 90; // Bootstrap sizing issue
       this.chart.height = size.height;
       const self = this;
-      VegaEmbed('#vis', this.chart, this.options).then((result) => {
+      VegaEmbed(this.$refs.chart, this.chart, this.options).then((result) => {
         self.view = result.view;
         this.drawAnnotations();
         const containerEl = document.getElementById('visualization-container');
@@ -191,7 +197,7 @@ export default {
      * Annotations
      */
     drawAnnotations() {
-      const svg = d3.select('svg');
+      const svg = d3.select(this.$refs.chart.getElementsByTagName('svg')[0]);
       // CLEAR OLD ANNOTATIONS
       this.removeAnnotations();
 
@@ -214,8 +220,7 @@ export default {
         // POINT ANNOTATIONS
         if (
           this.annotations.pointAnnotations.length > 0
-          && this.$store.getters.showPointAnnotations
-        ) {
+          && this.$store.getters.showPointAnnotations) {
           this.svgAnnotations.pointAnnotations = this.makeAnnotations(
             this.annotations.pointAnnotations,
             d3annotation.annotationCalloutCircle,
@@ -228,8 +233,7 @@ export default {
         // RECTANGLE ANNOTATIONS
         if (
           this.annotations.rectangleAnnotations.length > 0
-          && this.$store.getters.showFreeRectangleAnnotations
-        ) {
+          && this.$store.getters.showRectangleAnnotations) {
           this.svgAnnotations.rectangleAnnotations = this.makeAnnotations(
             this.annotations.rectangleAnnotations,
             d3annotation.annotationCalloutRect,
@@ -241,7 +245,7 @@ export default {
         }
       }
 
-      /* HOTFIX for missing check for item.mark.marktype in vega event-extend.js */
+      /* FIX for missing check for item.mark.marktype in vega event-extend.js */
       d3.selectAll('.annotations').each((items) => {
         items.annotations.forEach((i) => {
           const item = i;

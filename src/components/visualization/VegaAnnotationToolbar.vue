@@ -6,7 +6,8 @@
           @click="selectNoTool"
           :disabled="!$store.getters.visualizationSelectable"
           :pressed="currentTool === tools.noTool"
-          ><font-awesome-icon icon="hand-stop" /></b-button>
+          ><font-awesome-icon icon="hand-paper"
+        /></b-button>
         <b-button
           @click="selectPointAnnotation"
           :disabled="
@@ -17,37 +18,36 @@
           ><font-awesome-layers class="mr-1">
             <font-awesome-icon icon="bullseye" />
             <font-awesome-icon
-                    icon="circle"
-                    transform="shrink-6 down-6 right-6"
-                    :style="{ color: 'gray' }"
+              icon="circle"
+              transform="shrink-6 down-6 right-6"
+              :style="{ color: 'gray' }"
             />
             <font-awesome-icon
-                    icon="database"
-                    transform="shrink-5 down-6 right-6"
+              icon="database"
+              transform="shrink-5 down-6 right-6"
             />
-        </font-awesome-layers>
+          </font-awesome-layers>
           Point</b-button
         >
         <b-button
-          @click="selectRectangleAnnotation"
+          @click="selectFreePointAnnotation"
           :disabled="
             !$store.getters.visualizationSelectable ||
-              !$store.getters.showRectangleAnnotations
+              !$store.getters.showFreePointAnnotations
           "
-          :pressed="currentTool === tools.rectangleAnnotation"
+          :pressed="currentTool === tools.freePointAnnotation"
           ><font-awesome-layers class="mr-1">
             <font-awesome-icon icon="bullseye" />
             <font-awesome-icon
-                    icon="circle"
-                    transform="shrink-9 down-7 right-7"
-                    :style="{ color: 'black' }"
+              icon="circle"
+              transform="shrink-9 down-7 right-7"
+              :style="{ color: 'black' }"
             />
             <font-awesome-icon
-                    icon="hand-pointer"
-                    transform="shrink-4 down-5 right-6"
-
+              icon="hand-pointer"
+              transform="shrink-4 down-5 right-6"
             />
-        </font-awesome-layers>
+          </font-awesome-layers>
           Free Point</b-button
         >
         <b-button
@@ -58,11 +58,11 @@
           "
           :pressed="currentTool === tools.rectangleAnnotation"
           ><font-awesome-layers class="mr-1">
-            <font-awesome-icon icon="vector-square"/>
+            <font-awesome-icon icon="vector-square" />
             <font-awesome-icon
-                    icon="circle"
-                    transform="shrink-6 down-6 right-6"
-                    :style="{ color: 'gray' }"
+              icon="circle"
+              transform="shrink-6 down-6 right-6"
+              :style="{ color: 'gray' }"
             />
             <font-awesome-icon
               icon="database"
@@ -71,64 +71,95 @@
           </font-awesome-layers>
           Rectangle</b-button
         >
-          <b-button
-                  @click="selectRectangleAnnotation"
-                  :disabled="
+        <b-button
+          @click="selectFreeRectangleAnnotation"
+          :disabled="
             !$store.getters.visualizationSelectable ||
-              !$store.getters.showRectangleAnnotations
+              !$store.getters.showFreeRectangleAnnotations
           "
-                  :pressed="currentTool === tools.rectangleAnnotation"
+          :pressed="currentTool === tools.freeRectangleAnnotation"
           ><font-awesome-layers class="mr-1">
-              <font-awesome-icon icon="vector-square"/>
-              <font-awesome-icon
-                      icon="circle"
-                      transform="shrink-9 down-6 right-7"
-                      :style="{ color: 'black' }"
-              />
-              <font-awesome-icon
-                      icon="hand-pointer"
-                      transform="shrink-4 down-4 right-6"
-
-              />
+            <font-awesome-icon icon="vector-square" />
+            <font-awesome-icon
+              icon="circle"
+              transform="shrink-9 down-6 right-7"
+              :style="{ color: 'black' }"
+            />
+            <font-awesome-icon
+              icon="hand-pointer"
+              transform="shrink-4 down-4 right-6"
+            />
           </font-awesome-layers>
-              Free Rectangle</b-button
-          >
+          Free Rectangle</b-button
+        >
       </b-button-group>
       <b-dropdown right class="mx-1 " text="Annotations">
         <b-dropdown-item
           :active="$store.getters.showPointAnnotations"
           @click="$store.commit('toggleShowPointAnnotations')"
-          ><i
-            class="fa fa-check"
-            v-if="$store.getters.showPointAnnotations"
-          ></i>
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="bullseye" />
+            <font-awesome-icon
+              icon="circle"
+              transform="shrink-6 down-6 right-6"
+              :style="{ color: 'gray' }"
+            />
+            <font-awesome-icon
+              icon="database"
+              transform="shrink-5 down-6 right-6"
+            />
+          </font-awesome-layers>
           Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
           :active="$store.getters.showFreePointAnnotations"
           @click="$store.commit('toggleShowFreePointAnnotations')"
-          ><i
-            class="fa fa-check"
-            v-if="$store.getters.showFreePointAnnotations"
-          ></i>
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="bullseye" />
+            <font-awesome-icon
+              icon="circle"
+              transform="shrink-9 down-7 right-7"
+              :style="{ color: 'black' }"
+            />
+            <font-awesome-icon
+              icon="hand-pointer"
+              transform="shrink-4 down-5 right-6"
+            />
+          </font-awesome-layers>
           Free Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
           :active="$store.getters.showRectangleAnnotations"
           @click="$store.commit('toggleShowRectangleAnnotations')"
-          ><i
-            class="fa fa-check"
-            v-if="$store.getters.showRectangleAnnotations"
-          ></i>
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="vector-square" />
+            <font-awesome-icon
+              icon="circle"
+              transform="shrink-6 down-6 right-6"
+              :style="{ color: 'gray' }"
+            />
+            <font-awesome-icon
+              icon="database"
+              transform="shrink-5 down-6 right-6"
+            />
+          </font-awesome-layers>
           Rectangle Annotations</b-dropdown-item
         >
         <b-dropdown-item
           :active="$store.getters.showFreeRectangleAnnotations"
           @click="$store.commit('toggleShowFreeRectangleAnnotations')"
-          ><i
-            class="fa fa-check"
-            v-if="$store.getters.showFreeRectangleAnnotations"
-          ></i>
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="vector-square" />
+            <font-awesome-icon
+              icon="circle"
+              transform="shrink-9 down-6 right-7"
+              :style="{ color: 'black' }"
+            />
+            <font-awesome-icon
+              icon="hand-pointer"
+              transform="shrink-4 down-4 right-6"
+            />
+          </font-awesome-layers>
           Free Rectangle Annotations</b-dropdown-item
         >
       </b-dropdown>
@@ -136,10 +167,13 @@
         <b-dropdown-item
           :active="$store.getters.visualizationFit"
           @click="$store.commit('toggleVisualizationFit')"
-          >Fit Chat</b-dropdown-item
+          ><font-awesome-icon icon="expand-arrows-alt" /> Fit
+          Chat</b-dropdown-item
         >
         <b-dropdown-divider />
-        <b-dropdown-item @click="downloadSVG">Download SVG </b-dropdown-item>
+        <b-dropdown-item @click="downloadSVG"
+          ><font-awesome-icon icon="download" /> Download SVG
+        </b-dropdown-item>
       </b-dropdown>
     </b-button-toolbar>
   </div>
@@ -169,8 +203,14 @@ export default {
     selectPointAnnotation() {
       this.setTool(this.tools.pointAnnotation);
     },
+    selectFreePointAnnotation() {
+      this.setTool(this.tools.freePointAnnotation);
+    },
     selectRectangleAnnotation() {
       this.setTool(this.tools.rectangleAnnotation);
+    },
+    selectFreeRectangleAnnotation() {
+      this.setTool(this.tools.freeRectangleAnnotation);
     },
     setTool(tool) {
       this.$emit('tool', tool);
