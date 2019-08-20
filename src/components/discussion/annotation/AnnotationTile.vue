@@ -20,7 +20,7 @@
             />
             <i
               v-else-if="annotation.annotationType === 'RECTANGLE'"
-              class="fa fa-object-ungroup"
+              class="fa fa-object-group"
             /> </span
         ></b-input-group-prepend>
 

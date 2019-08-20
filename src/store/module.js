@@ -1,9 +1,12 @@
-
 export default {
   state: {
     debugging: true,
     visualization: {
       id: 5,
+      showPointAnnotations: true,
+      showFreePointAnnotations: true,
+      showRectangleAnnotations: true,
+      showFreeRectangleAnnotations: true,
       selectable: true,
       fitChart: true,
     },
@@ -41,6 +44,10 @@ export default {
   getters: {
     getUsername: state => state.username,
     debug: state => state.debugging,
+    showPointAnnotations: state => state.visualization.showPointAnnotations,
+    showFreePointAnnotations: state => state.visualization.showFreePointAnnotations,
+    showRectangleAnnotations: state => state.visualization.showRectangleAnnotations,
+    showFreeRectangleAnnotations: state => state.visualization.showFreeRectangleAnnotations,
     visualizationSelectable: state => state.visualization.selectable,
     visualizationFit: state => state.visualization.fitChart,
     selectedAnnotation: state => state.annotation.selectedAnnotation,
@@ -57,6 +64,22 @@ export default {
     currentRectangleAnnotations: state => state.annotation.currentRectangleAnnotations,
   },
   mutations: {
+    toggleShowPointAnnotations(state) {
+      state.visualization.showPointAnnotations = !state.visualization
+        .showPointAnnotations;
+    },
+    toggleShowFreePointAnnotations(state) {
+      state.visualization.showFreePointAnnotations = !state.visualization
+        .showFreeRectangleAnnotations;
+    },
+    toggleShowRectangleAnnotations(state) {
+      state.visualization.showRectangleAnnotations = !state.visualization
+        .showRectangleAnnotations;
+    },
+    toggleShowFreeRectangleAnnotations(state) {
+      state.visualization.showFreeRectangleAnnotations = !state.visualization
+        .showFreeRectangleAnnotations;
+    },
     toggleVisualizationFit(state) {
       state.visualization.fitChart = !state.visualization.fitChart;
     },

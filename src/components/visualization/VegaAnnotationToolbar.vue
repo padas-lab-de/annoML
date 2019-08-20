@@ -1,46 +1,135 @@
 <template>
   <div>
     <b-button-toolbar class="mb-2">
-      <b-button-group class="annotation-tools" >
-        <b-button @click="selectNoTool"
-                  :disabled="!$store.getters.visualizationSelectable"
-                  :pressed="currentTool === tools.noTool"
-
-        ><i class="fa fa-hand-stop-o"
-        /></b-button>
+      <b-button-group class="annotation-tools">
+        <b-button
+          @click="selectNoTool"
+          :disabled="!$store.getters.visualizationSelectable"
+          :pressed="currentTool === tools.noTool"
+          ><font-awesome-icon icon="hand-stop" /></b-button>
         <b-button
           @click="selectPointAnnotation"
-          :disabled="!$store.getters.visualizationSelectable"
+          :disabled="
+            !$store.getters.visualizationSelectable ||
+              !$store.getters.showPointAnnotations
+          "
           :pressed="currentTool === tools.pointAnnotation"
-          ><i class="fa fa-dot-circle-o" /> Point</b-button
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="bullseye" />
+            <font-awesome-icon
+                    icon="circle"
+                    transform="shrink-6 down-6 right-6"
+                    :style="{ color: 'gray' }"
+            />
+            <font-awesome-icon
+                    icon="database"
+                    transform="shrink-5 down-6 right-6"
+            />
+        </font-awesome-layers>
+          Point</b-button
         >
         <b-button
           @click="selectRectangleAnnotation"
-          :disabled="!$store.getters.visualizationSelectable"
+          :disabled="
+            !$store.getters.visualizationSelectable ||
+              !$store.getters.showRectangleAnnotations
+          "
           :pressed="currentTool === tools.rectangleAnnotation"
-        ><i class="fa fa-object-ungroup" /> Rectangle</b-button
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="bullseye" />
+            <font-awesome-icon
+                    icon="circle"
+                    transform="shrink-9 down-7 right-7"
+                    :style="{ color: 'black' }"
+            />
+            <font-awesome-icon
+                    icon="hand-pointer"
+                    transform="shrink-4 down-5 right-6"
+
+            />
+        </font-awesome-layers>
+          Free Point</b-button
         >
+        <b-button
+          @click="selectRectangleAnnotation"
+          :disabled="
+            !$store.getters.visualizationSelectable ||
+              !$store.getters.showRectangleAnnotations
+          "
+          :pressed="currentTool === tools.rectangleAnnotation"
+          ><font-awesome-layers class="mr-1">
+            <font-awesome-icon icon="vector-square"/>
+            <font-awesome-icon
+                    icon="circle"
+                    transform="shrink-6 down-6 right-6"
+                    :style="{ color: 'gray' }"
+            />
+            <font-awesome-icon
+              icon="database"
+              transform="shrink-5 down-6 right-6"
+            />
+          </font-awesome-layers>
+          Rectangle</b-button
+        >
+          <b-button
+                  @click="selectRectangleAnnotation"
+                  :disabled="
+            !$store.getters.visualizationSelectable ||
+              !$store.getters.showRectangleAnnotations
+          "
+                  :pressed="currentTool === tools.rectangleAnnotation"
+          ><font-awesome-layers class="mr-1">
+              <font-awesome-icon icon="vector-square"/>
+              <font-awesome-icon
+                      icon="circle"
+                      transform="shrink-9 down-6 right-7"
+                      :style="{ color: 'black' }"
+              />
+              <font-awesome-icon
+                      icon="hand-pointer"
+                      transform="shrink-4 down-4 right-6"
+
+              />
+          </font-awesome-layers>
+              Free Rectangle</b-button
+          >
       </b-button-group>
       <b-dropdown right class="mx-1 " text="Annotations">
         <b-dropdown-item
-                :active="$store.getters.visualizationFit"
-                @click="$store.commit('toggleVisualizationFit')"
-        >Point Annotations</b-dropdown-item
+          :active="$store.getters.showPointAnnotations"
+          @click="$store.commit('toggleShowPointAnnotations')"
+          ><i
+            class="fa fa-check"
+            v-if="$store.getters.showPointAnnotations"
+          ></i>
+          Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
-                :active="$store.getters.visualizationFit"
-                @click="$store.commit('toggleVisualizationFit')"
-        >Free Point Annotations</b-dropdown-item
+          :active="$store.getters.showFreePointAnnotations"
+          @click="$store.commit('toggleShowFreePointAnnotations')"
+          ><i
+            class="fa fa-check"
+            v-if="$store.getters.showFreePointAnnotations"
+          ></i>
+          Free Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
-                :active="$store.getters.visualizationFit"
-                @click="$store.commit('toggleVisualizationFit')"
-        >Rectangle Annotations</b-dropdown-item
+          :active="$store.getters.showRectangleAnnotations"
+          @click="$store.commit('toggleShowRectangleAnnotations')"
+          ><i
+            class="fa fa-check"
+            v-if="$store.getters.showRectangleAnnotations"
+          ></i>
+          Rectangle Annotations</b-dropdown-item
         >
         <b-dropdown-item
-                :active="$store.getters.visualizationFit"
-                @click="$store.commit('toggleVisualizationFit')"
-        >Free Rectangle Annotations</b-dropdown-item
+          :active="$store.getters.showFreeRectangleAnnotations"
+          @click="$store.commit('toggleShowFreeRectangleAnnotations')"
+          ><i
+            class="fa fa-check"
+            v-if="$store.getters.showFreeRectangleAnnotations"
+          ></i>
+          Free Rectangle Annotations</b-dropdown-item
         >
       </b-dropdown>
       <b-dropdown right class="mx-1 " text="Options">
@@ -52,7 +141,6 @@
         <b-dropdown-divider />
         <b-dropdown-item @click="downloadSVG">Download SVG </b-dropdown-item>
       </b-dropdown>
-
     </b-button-toolbar>
   </div>
 </template>

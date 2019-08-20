@@ -93,6 +93,22 @@ export default {
   },
   mounted() {
     this.$store.watch(
+      (state, getters) => getters.showPointAnnotations,
+      () => this.updateChart(),
+    );
+    this.$store.watch(
+      (state, getters) => getters.showFreePointAnnotations,
+      () => this.updateChart(),
+    );
+    this.$store.watch(
+      (state, getters) => getters.showRectangleAnnotations,
+      () => this.updateChart(),
+    );
+    this.$store.watch(
+      (state, getters) => getters.showFreeRectangleAnnotations,
+      () => this.updateChart(),
+    );
+    this.$store.watch(
       (state, getters) => getters.visualizationFit,
       (fit) => {
         if (fit) {
@@ -196,7 +212,10 @@ export default {
         || this.tempAnnotations.length <= 0
       ) {
         // POINT ANNOTATIONS
-        if (this.annotations.pointAnnotations.length > 0) {
+        if (
+          this.annotations.pointAnnotations.length > 0
+          && this.$store.getters.showPointAnnotations
+        ) {
           this.svgAnnotations.pointAnnotations = this.makeAnnotations(
             this.annotations.pointAnnotations,
             d3annotation.annotationCalloutCircle,
@@ -207,7 +226,10 @@ export default {
             .call(this.svgAnnotations.pointAnnotations);
         }
         // RECTANGLE ANNOTATIONS
-        if (this.annotations.rectangleAnnotations.length > 0) {
+        if (
+          this.annotations.rectangleAnnotations.length > 0
+          && this.$store.getters.showFreeRectangleAnnotations
+        ) {
           this.svgAnnotations.rectangleAnnotations = this.makeAnnotations(
             this.annotations.rectangleAnnotations,
             d3annotation.annotationCalloutRect,

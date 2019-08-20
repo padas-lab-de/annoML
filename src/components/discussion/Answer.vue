@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-card class="mb-2 ml-2">
-        <Highlight edit="true" starred="false"></Highlight>
+      <Highlight class="pull-right" edit="true" starred="false"></Highlight>
         <span
         v-if="$store.getters.debug"
         class="float-right"

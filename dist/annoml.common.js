@@ -10,9 +10,9 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var module$1 = _interopDefault(require('@/store/module'));
 
 /* eslint-disable no-console */
-var version = '1.0.0'; // const install = (Vue) => {
+var version = '1.0.0';
 
-var install = function install(store, options) {
+var install = function install(Vue, store, options) {
   /*
    * NOTE:
    *   if you need to extend Vue contstructor, you can extend it in here.
@@ -31,16 +31,21 @@ var install = function install(store, options) {
   } // register annoML module to provided Vuex storage
 
 
-  store.registerModule('annoml', module$1);
+  if (options.moduleName) {
+    store.registerModule(options.moduleName, module$1);
+  } else {
+    store.registerModule('annoml', module$1);
+  }
 };
 
 var plugin = {
   install: install,
   version: version
 };
-
-if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(plugin);
-}
+/* Only for automatic plugin install
+* if (typeof window !== 'undefined' && window.Vue) {
+*  window.Vue.use(plugin);
+* }
+*/
 
 module.exports = plugin;

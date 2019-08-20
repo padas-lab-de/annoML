@@ -31,7 +31,10 @@ When used with a module system, you must explicitly install the `annoml` via `Vu
 import Vue from 'vue'
 import annoml from 'annoml'
 
-Vue.use(annoml)
+Vue.use(annoml, store, {
+  debug: true, // default false
+  moduleName: 'annoML', // optional module name inside the Vuex store
+})
 ```
 
 You don't need to do this when using global script tags.

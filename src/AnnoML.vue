@@ -46,10 +46,6 @@ export default {
 
 
   <style lang="scss">
-                      /* Import Font Awesome Icons Set */
-  $fa-font-path: '~font-awesome/fonts';
-  /* eslint-disable-next-line */
-  @import '~font-awesome/scss/font-awesome.scss';
   /* Bootstrap */
   @import '../node_modules/bootstrap/scss/bootstrap';
   @import '../node_modules/bootstrap-vue/src/index.scss';
