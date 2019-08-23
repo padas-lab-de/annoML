@@ -84,8 +84,6 @@ export default {
       this.$startDiscussion(
         visualizationId,
         visualizationUrl,
-        this.$store.getters.getUserId,
-
       ).then((discussion) => {
         this.$router.push({
           name: 'AnnoML',

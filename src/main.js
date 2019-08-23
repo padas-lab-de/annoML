@@ -12,7 +12,7 @@ Vue.use(annoML, {
   moduleName: 'ANNOML',
   annomlBaseURL: 'http://localhost:9999',
   store: {
-    userId: store.getters.getUserId,
+    username: store.getters.getUsername,
     accessToken: store.getters.getToken,
   },
   authenticationProvider: {

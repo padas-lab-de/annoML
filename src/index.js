@@ -22,8 +22,10 @@ const install = (Vue, config) => {
     );
   }
 
+  // Exports plugin settings and store to components
   Vue.prototype.$annomlsettings = config;
   Vue.prototype.$annomlstore = store;
+
 
   const serviceApi = axios.create({
     baseURL: config.annomlBaseURL,
@@ -31,6 +33,8 @@ const install = (Vue, config) => {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      Authorization: `Bearer ${config.store.accessToken}`,
+
     },
   });
 
@@ -48,10 +52,10 @@ const install = (Vue, config) => {
   Vue.prototype.$startDiscussion = (
     visualizationId,
     visualizationUrl,
-    userId,
+    username,
     token,
   ) => APIService(serviceApi)
-    .createDiscussion(visualizationId, visualizationUrl, userId, token)
+    .createDiscussion(visualizationId, visualizationUrl, username, token)
     .then((result) => {
       console.log(result);
       return result.data.id;

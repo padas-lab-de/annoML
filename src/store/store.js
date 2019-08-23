@@ -8,9 +8,8 @@ const store = new Vuex.Store({
     auth: {
       profile: {
         username: 'annoml',
-        uid: '1',
       },
-      token: 'TOKEN',
+      token: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0aG9tYm9yZyIsImV4cCI6MTU2NjU4MDU2MSwiaWF0IjoxNTY2NTc4NzYxfQ.YigKi4Ugtp27tUu8n9NZC-gtLpSPI0QNFGYLQbto4mwATgnvk1k1VIMDb08I52MhUiUgXGHzg6h4arEC6gLU5w',
       isAuthenticated: true,
     },
   },

@@ -66,8 +66,8 @@ const service = instance => ({
       .then(response => response.data);
   },
 
-  createDiscussion: (visualizationId, visualizationUrl, authorId, token) => {
-    const url = `/discussions/create?token=${token}`;
+  createDiscussion: (visualizationId, visualizationUrl, authorId) => {
+    const url = '/discussions/create';
     const body = {
       visualizationId,
       visualizationUrl,
