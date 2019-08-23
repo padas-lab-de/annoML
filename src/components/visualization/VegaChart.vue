@@ -17,7 +17,7 @@ export default {
     visualiazionId: {
       type: Number,
       default() {
-        return 0;
+        return null;
       },
     },
     chart: {
@@ -98,23 +98,23 @@ export default {
     },
   },
   mounted() {
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.showPointAnnotations,
       () => this.drawAnnotations(),
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.showFreePointAnnotations,
       () => this.drawAnnotations(),
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.showRectangleAnnotations,
       () => this.drawAnnotations(),
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.showFreeRectangleAnnotations,
       () => this.drawAnnotations(),
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.visualizationFit,
       (fit) => {
         if (fit) {
@@ -220,7 +220,7 @@ export default {
         // POINT ANNOTATIONS
         if (
           this.annotations.pointAnnotations.length > 0
-          && this.$store.getters.showPointAnnotations) {
+          && this.$annoml.store.getters.showPointAnnotations) {
           this.svgAnnotations.pointAnnotations = this.makeAnnotations(
             this.annotations.pointAnnotations,
             d3annotation.annotationCalloutCircle,
@@ -233,7 +233,7 @@ export default {
         // RECTANGLE ANNOTATIONS
         if (
           this.annotations.rectangleAnnotations.length > 0
-          && this.$store.getters.showRectangleAnnotations) {
+          && this.$annoml.store.getters.showRectangleAnnotations) {
           this.svgAnnotations.rectangleAnnotations = this.makeAnnotations(
             this.annotations.rectangleAnnotations,
             d3annotation.annotationCalloutRect,
@@ -321,7 +321,7 @@ export default {
 
       let scaleFactor = 1;
 
-      if (this.$store.getters.visualizationFit) {
+      if (this.$annoml.store.getters.visualizationFit) {
         let scaleFactorWidth = 1;
         if (containerWidth > 0) {
           scaleFactorWidth = containerWidth / width;
@@ -358,12 +358,12 @@ export default {
         newSize.width.valueOf() !== this.chart.width.valueOf()
         || newSize.height.valueOf() !== this.chart.height.valueOf()
       ) {
-        if (this.size.widthOffset && this.$store.visualizationFit) {
+        if (this.size.widthOffset && this.$annoml.store.visualizationFit) {
           this.chart.width = newSize.width - this.size.widthOffset;
         } else {
           this.chart.width = newSize.width;
         }
-        if (this.size.heightOffset && this.$store.visualizationFit) {
+        if (this.size.heightOffset && this.$annoml.store.visualizationFit) {
           this.chart.height = newSize.height - this.size.heightOffset;
         } else {
           this.chart.height = newSize.height;

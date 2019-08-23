@@ -91,7 +91,7 @@ export default {
     if (this.annotationColor) {
       this.color = this.annotationColor;
     } else {
-      this.color = this.$store.getters.getFreeColor;
+      this.color = this.$annoml.store.getters.getFreeColor;
     }
   },
   watch: {

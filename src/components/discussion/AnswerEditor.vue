@@ -285,7 +285,7 @@ export default {
       }
     },
     addNewAnnotation() {
-      this.$store.commit('enableSelectable');
+      this.$annoml.store.commit('enableSelectable');
     },
     clearAnnotation() {
       this.pointAnnotations.forEach((a) => {

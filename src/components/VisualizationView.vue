@@ -1,7 +1,6 @@
 <template>
-  <div class="visualization-view mt-3" ref="vis">
-    <div class="visualization" v-if="visualization">
-      <h1>{{ visualization.title }}</h1>
+  <div class="visualization-view mt-3" ref="vis" v-if="visualization">
+    <div class="visualization">
       <vega-annotation-options
         :tools="tools"
         :current-tool="currentTool"
@@ -16,32 +15,20 @@
       <b-alert :show="modifiedWarning" dismissible variant="info">
         Visualization was modified by resource owner!
       </b-alert>
-      <div id="visualization-container">
+      <div id="visualization-container" v-if="chart">
         <vega-chart
-          v-if="chart"
           :visualiazion-id="visualization.id"
           :chart="chart"
           :annotations="vegaAnnotations"
           :temp-annotations="tempAnnotations"
           :tools="tools"
           @click="createAnnotation"
-        />
-        <b-spinner
-          v-else
-          class=" text-center"
-          style="width: 3rem; height: 3rem;"
-          label="Large Spinner"
-        ></b-spinner>
+        /><span v-if="$store.getters.debug" style="color: lightgray">
+          Hash: {{ visualization.hash }}</span>
       </div>
-      <span v-if="$store.getters.debug" style="color: lightgray"
-        >Hash: {{ visualization.hash }}</span
-      >
+      <loading v-else :message="'Loading Visualization'"></loading>
     </div>
-    <b-spinner
-      v-else
-      style="width: 3rem; height: 3rem;"
-      label="Large Spinner"
-    ></b-spinner>
+    <p v-if="visualization.description">{{visualization.description}}</p>
   </div>
 </template>
 <script>
@@ -52,15 +39,22 @@ import JSum from 'jsum';
 import VegaAnnotationOptions from '@/components/visualization/VegaAnnotationToolbar.vue';
 import VegaChart from '@/components/visualization/VegaChart.vue';
 import APIService from '@/service/APIService';
+import Loading from '@/components/discussion/util/Loading.vue';
 
 export default {
   name: 'VisualizationView',
   components: {
+    Loading,
     VegaAnnotationOptions,
     VegaChart,
   },
   props: {
-    visualizationId: Number,
+    visualizationId: {
+      type: Number,
+      default() {
+        return null;
+      },
+    },
   },
   data() {
     return {
@@ -105,43 +99,48 @@ export default {
     };
   },
   mounted() {
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.pointAnnotations,
       (pointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$store.getters
-          .currentPointAnnotations.concat(pointAnnotations);
+        this.vegaAnnotations.pointAnnotations = this.$annoml.store
+          .getters.currentPointAnnotations.concat(pointAnnotations);
       },
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.rectangleAnnotations,
       (rectangleAnnotation) => {
-        this.vegaAnnotations.rectangleAnnotations = this.$store.getters
+        this.vegaAnnotations.rectangleAnnotations = this.$annoml.store.getters
           .currentRectangleAnnotations.concat(rectangleAnnotation);
       },
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.currentPointAnnotations,
       (currentPointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$store.getters
-          .pointAnnotations.concat(currentPointAnnotations);
+        this.vegaAnnotations.pointAnnotations = this.$annoml
+          .store.getters.pointAnnotations.concat(currentPointAnnotations);
       },
     );
-    this.$store.watch(
+    this.$annoml.store.watch(
       (state, getters) => getters.currentRectangleAnnotations,
       (currentRectangleAnnotations) => {
-        this.vegaAnnotations.rectangleAnnotations = this.$store.getters
+        this.vegaAnnotations.rectangleAnnotations = this.$annoml.store.getters
           .currentRectangleAnnotations.concat(currentRectangleAnnotations);
       },
     );
-    APIService.getVisualization(this.visualizationId)
+    APIService(this.$serviceApi)
+      .getVisualization(this.visualizationId)
       .then((data) => {
         this.visualization = data;
         if (this.visualization.schema) {
           this.chart = this.visualization.schema;
-        } else if (this.visualization.source) {
-          APIService.getExternalVisualization(data.source)
+        } else if (this.visualization.visualizationUrl) {
+          console.log(this.visualization.visualizationUrl);
+          APIService(this.$serviceApi)
+            .getExternalVisualization(this.visualization.visualizationUrl,
+              'f71e164e-34df-4631-b5ea-1eee122164c4')
             .then((visualization) => {
-              this.chart = visualization.schema;
+              this.visualization = visualization;
+              this.chart = JSON.parse(visualization.schema);
             })
             .catch((error) => {
               console.log(error);
@@ -164,7 +163,7 @@ export default {
           }
         } else {
           this.visualization.hash = JSum.digest(this.chart, 'SHA256', 'hex');
-          this.modifiedWarning = true;
+          this.modifiedWarning = false;
         }
       }
     },
@@ -174,7 +173,7 @@ export default {
      * Annotation creation
      */
     createAnnotation(item) {
-      if (this.$store.getters.visualizationSelectable) {
+      if (this.$annoml.store.getters.visualizationSelectable) {
         if (this.currentTool === this.tools.pointAnnotation) {
           this.addPointAnnotation(item);
         } else if (this.currentTool === this.tools.rectangleAnnotation) {
@@ -202,7 +201,7 @@ export default {
       this.tempAnnotations.push(annotation);
     },
     addPointAnnotation(item) {
-      this.$store.commit('disableSelectable');
+      this.$annoml.store.commit('disableSelectable');
       const annotation = {};
       annotation.annotationType = this.tools.pointAnnotation.name;
       annotation.id = Date.now();
@@ -210,12 +209,12 @@ export default {
         title: 'Circle Annotation',
       };
       annotation.data = item.datum;
-      if (this.$store.getters.hasCurrentPost) {
-        annotation.color = this.$store.getters.getCurrentPost.color;
+      if (this.$annoml.store.getters.hasCurrentPost) {
+        annotation.color = this.$annoml.store.getters.getCurrentPost.color;
       } else {
         annotation.color = 'grey';
       }
-      this.$store.commit('addCurrentPointAnnotation', annotation);
+      this.$annoml.store.commit('addCurrentPointAnnotation', annotation);
     },
     addRectangleAnnotation(item) {
       const startPoint = this.tools.rectangleAnnotation.tempPoint;
@@ -230,12 +229,12 @@ export default {
         width: item.x - startPoint.x,
         height: item.y - startPoint.y,
       };
-      if (this.$store.getters.hasCurrentPost) {
-        annotation.color = this.$store.getters.getCurrentPost.color;
+      if (this.$annoml.store.getters.hasCurrentPost) {
+        annotation.color = this.$annoml.store.getters.getCurrentPost.color;
       } else {
         annotation.color = 'grey';
       }
-      this.$store.commit('addCurrentRectangleAnnotation', annotation);
+      this.$annoml.store.commit('addCurrentRectangleAnnotation', annotation);
       this.clearTempPoints();
     },
     setTool(newTool) {

@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/vue-fontawesome';
 import plugin from './index';
 
+
 library.add(fas);
 
 

@@ -1,6 +1,8 @@
 export default {
   state: {
-    debugging: true,
+    settings: {
+      debug: true,
+    },
     visualization: {
       id: 5,
       showPointAnnotations: true,
@@ -42,8 +44,8 @@ export default {
     },
   },
   getters: {
-    getUsername: state => state.username,
-    debug: state => state.debugging,
+    debug: state => state.settings.debug,
+    getSettings: state => state.settings,
     showPointAnnotations: state => state.visualization.showPointAnnotations,
     showFreePointAnnotations: state => state.visualization.showFreePointAnnotations,
     showRectangleAnnotations: state => state.visualization.showRectangleAnnotations,
@@ -64,6 +66,9 @@ export default {
     currentRectangleAnnotations: state => state.annotation.currentRectangleAnnotations,
   },
   mutations: {
+    importSettings(state, settings) {
+      state.settings = settings;
+    },
     toggleShowPointAnnotations(state) {
       state.visualization.showPointAnnotations = !state.visualization
         .showPointAnnotations;

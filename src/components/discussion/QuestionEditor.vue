@@ -128,6 +128,7 @@
       v-for="answer in question.answers"
       :key="answer.id"
       :post="answer"
+      :favorite="answers.id === question.favorite"
     />
   </b-card>
 </template>
@@ -276,7 +277,7 @@ export default {
      * Annotation Handling
      */
     addNewAnnotation() {
-      this.$store.commit('enableSelectable');
+      this.$annoml.store.commit('enableSelectable');
     },
     selectAnnotation(annotation) {
       if (annotation.color === 'gray') {
@@ -334,7 +335,7 @@ export default {
     },
     updateAnnotationColor(value) {
       if (this.question.color) {
-        this.$store.commit('removeUsedColor', value);
+        this.$annoml.store.commit('removeUsedColor', value);
         this.question.color = value;
       } else {
         this.question.color = value;
