@@ -32,29 +32,6 @@ export default {
     DiscussionView,
     VisualizationView,
   },
-  props: {
-    username: {
-      type: String,
-      required: true,
-      default() {
-        return null;
-      },
-    },
-    userId: {
-      type: String,
-      required: true,
-      default() {
-        return null;
-      },
-    },
-    token: {
-      type: String,
-      required: true,
-      default() {
-        return null;
-      },
-    },
-  },
   data() {
     return {
       discussion: null,
@@ -64,21 +41,17 @@ export default {
     };
   },
   mounted() {
-    if (this.username !== null && this.userId !== null && this.token !== null) {
-      APIService(this.$serviceApi)
-        .getDiscussion(this.$route.params.id)
-        .then((result) => {
-          console.log(result);
-          this.discussion = result;
-          this.visualization = result.visualization;
-        })
-        .catch((message) => {
-          this.warning = message;
-          console.log(message);
-        });
-    } else {
-      this.warning = 'Missing properties for creating Discussion';
-    }
+    APIService(this.$serviceApi)
+      .getDiscussion(this.$route.params.id)
+      .then((result) => {
+        console.log(result);
+        this.discussion = result;
+        this.visualization = result.visualization;
+      })
+      .catch((message) => {
+        this.warning = message;
+        console.log(message);
+      });
   },
 };
 </script>

@@ -5,14 +5,14 @@
         <swatches
           v-if="edit"
           v-model="color"
-          :colors="$store.getters.getColors"
+          :colors="$annomlstore.getters.getColors"
           :show-fallback="
-            $store.getters.getUsedColors.length >
-              $store.getters.getColors.length
+            $annomlstore.getters.getUsedColors.length >
+              $annomlstore.getters.getColors.length
           "
           row-length="5"
           :exceptions="
-            $store.getters.getUsedColors.filter(c => c !== annotationColor)
+            $annomlstore.getters.getUsedColors.filter(c => c !== annotationColor)
           "
           shapes="circles"
           exception-mode="hidden"
@@ -91,7 +91,7 @@ export default {
     if (this.annotationColor) {
       this.color = this.annotationColor;
     } else {
-      this.color = this.$annoml.store.getters.getFreeColor;
+      this.color = this.$annomlstore.getters.getFreeColor;
     }
   },
   watch: {

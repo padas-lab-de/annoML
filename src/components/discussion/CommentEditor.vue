@@ -4,7 +4,7 @@
       <annotation-select
         class="annotation-select"
         v-if="
-          $store.getters.visualizationSelectable ||
+          $annomlstore.getters.visualizationSelectable ||
             pointAnnotations.length > 0 ||
             rectangleAnnotations.length > 0
         "
@@ -18,7 +18,7 @@
         @update-color="updateAnnotationColor"
       />
       <b-button
-        :disabled="$store.getters.visualizationSelectable"
+        :disabled="$annomlstore.getters.visualizationSelectable"
         class="float-right"
         size="sm"
         @click="addNewAnnotation"
@@ -278,7 +278,7 @@ export default {
       }
     },
     addNewAnnotation() {
-      this.$annoml.store.commit('enableSelectable');
+      this.$annomlstore.commit('enableSelectable');
     },
     clearAnnotation() {
       this.pointAnnotations.forEach((a) => {

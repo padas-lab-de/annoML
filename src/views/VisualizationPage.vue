@@ -84,16 +84,13 @@ export default {
       this.$startDiscussion(
         visualizationId,
         visualizationUrl,
-        this.$annoml.store.getters.getUserId,
-        this.$annoml.store.getters.getToken,
+        this.$store.getters.getUserId,
+
       ).then((discussion) => {
         this.$router.push({
           name: 'AnnoML',
           params: {
             id: discussion,
-            username: this.$annoml.store.getters.getUsername,
-            userId: this.$annoml.store.getters.getUserId,
-            token: this.$annoml.store.getters.getToken,
           },
         });
       });

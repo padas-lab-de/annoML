@@ -4,15 +4,15 @@
       <b-button-group class="annotation-tools">
         <b-button
           @click="selectNoTool"
-          :disabled="!$store.getters.visualizationSelectable"
+          :disabled="!$annomlstore.getters.visualizationSelectable"
           :pressed="currentTool === tools.noTool"
           ><font-awesome-icon icon="hand-paper"
         /></b-button>
         <b-button
           @click="selectPointAnnotation"
           :disabled="
-            !$store.getters.visualizationSelectable ||
-              !$store.getters.showPointAnnotations
+            !$annomlstore.getters.visualizationSelectable ||
+              !$annomlstore.getters.showPointAnnotations
           "
           :pressed="currentTool === tools.pointAnnotation"
           ><font-awesome-layers class="mr-1">
@@ -32,8 +32,8 @@
         <b-button
           @click="selectFreePointAnnotation"
           :disabled="
-            !$store.getters.visualizationSelectable ||
-              !$store.getters.showFreePointAnnotations
+            !$annomlstore.getters.visualizationSelectable ||
+              !$annomlstore.getters.showFreePointAnnotations
           "
           :pressed="currentTool === tools.freePointAnnotation"
           ><font-awesome-layers class="mr-1">
@@ -53,8 +53,8 @@
         <b-button
           @click="selectRectangleAnnotation"
           :disabled="
-            !$store.getters.visualizationSelectable ||
-              !$store.getters.showRectangleAnnotations
+            !$annomlstore.getters.visualizationSelectable ||
+              !$annomlstore.getters.showRectangleAnnotations
           "
           :pressed="currentTool === tools.rectangleAnnotation"
           ><font-awesome-layers class="mr-1">
@@ -74,8 +74,8 @@
         <b-button
           @click="selectFreeRectangleAnnotation"
           :disabled="
-            !$store.getters.visualizationSelectable ||
-              !$store.getters.showFreeRectangleAnnotations
+            !$annomlstore.getters.visualizationSelectable ||
+              !$annomlstore.getters.showFreeRectangleAnnotations
           "
           :pressed="currentTool === tools.freeRectangleAnnotation"
           ><font-awesome-layers class="mr-1">
@@ -95,8 +95,8 @@
       </b-button-group>
       <b-dropdown right class="mx-1 " text="Annotations">
         <b-dropdown-item
-          :active="$store.getters.showPointAnnotations"
-          @click="$store.commit('toggleShowPointAnnotations')"
+          :active="$annomlstore.getters.showPointAnnotations"
+          @click="$annomlstore.commit('toggleShowPointAnnotations')"
           ><font-awesome-layers class="mr-1">
             <font-awesome-icon icon="bullseye" />
             <font-awesome-icon
@@ -112,8 +112,8 @@
           Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
-          :active="$store.getters.showFreePointAnnotations"
-          @click="$store.commit('toggleShowFreePointAnnotations')"
+          :active="$annomlstore.getters.showFreePointAnnotations"
+          @click="$annomlstore.commit('toggleShowFreePointAnnotations')"
           ><font-awesome-layers class="mr-1">
             <font-awesome-icon icon="bullseye" />
             <font-awesome-icon
@@ -129,8 +129,8 @@
           Free Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
-          :active="$store.getters.showRectangleAnnotations"
-          @click="$store.commit('toggleShowRectangleAnnotations')"
+          :active="$annomlstore.getters.showRectangleAnnotations"
+          @click="$annomlstore.commit('toggleShowRectangleAnnotations')"
           ><font-awesome-layers class="mr-1">
             <font-awesome-icon icon="vector-square" />
             <font-awesome-icon
@@ -146,8 +146,8 @@
           Rectangle Annotations</b-dropdown-item
         >
         <b-dropdown-item
-          :active="$store.getters.showFreeRectangleAnnotations"
-          @click="$store.commit('toggleShowFreeRectangleAnnotations')"
+          :active="$annomlstore.getters.showFreeRectangleAnnotations"
+          @click="$annomlstore.commit('toggleShowFreeRectangleAnnotations')"
           ><font-awesome-layers class="mr-1">
             <font-awesome-icon icon="vector-square" />
             <font-awesome-icon
@@ -165,8 +165,8 @@
       </b-dropdown>
       <b-dropdown right class="mx-1 " text="Options">
         <b-dropdown-item
-          :active="$store.getters.visualizationFit"
-          @click="$store.commit('toggleVisualizationFit')"
+          :active="$annomlstore.getters.visualizationFit"
+          @click="$annomlstore.commit('toggleVisualizationFit')"
           ><font-awesome-icon icon="expand-arrows-alt" /> Fit
           Chat</b-dropdown-item
         >

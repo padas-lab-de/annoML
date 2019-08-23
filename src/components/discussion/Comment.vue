@@ -2,7 +2,7 @@
   <div>
     <b-card class="mb-2 ml-4">
       <span
-        v-if="$store.getters.debug"
+        v-if="$annomlstore.getters.debug"
         class="float-right"
         style="color: lightgray"
       >

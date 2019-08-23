@@ -21,7 +21,7 @@
       @update-color="updateAnnotationColor"
     />
     <b-button
-      :disabled="$store.getters.visualizationSelectable"
+      :disabled="$annomlstore.getters.visualizationSelectable"
       class="float-right"
       size="sm"
       @click="addNewAnnotation"
@@ -277,7 +277,7 @@ export default {
      * Annotation Handling
      */
     addNewAnnotation() {
-      this.$annoml.store.commit('enableSelectable');
+      this.$annomlstore.commit('enableSelectable');
     },
     selectAnnotation(annotation) {
       if (annotation.color === 'gray') {
@@ -335,7 +335,7 @@ export default {
     },
     updateAnnotationColor(value) {
       if (this.question.color) {
-        this.$annoml.store.commit('removeUsedColor', value);
+        this.$annomlstore.commit('removeUsedColor', value);
         this.question.color = value;
       } else {
         this.question.color = value;

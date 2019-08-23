@@ -46,8 +46,8 @@ export default {
   methods: {
     requestUsername(userId) {
       APIService(this.$authApi).getUser(
-        this.$annoml
-          .store.getters.getSettings.authenticationProvider.endpoints.userInfoById, userId,
+        this.$annomlstore.getters
+          .getSettings.authenticationProvider.endpoints.userInfoById, userId,
       ).then((data) => {
         console.log(data);
       });

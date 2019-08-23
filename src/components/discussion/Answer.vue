@@ -3,7 +3,7 @@
     <b-card class="mb-2 ml-2">
       <Highlight class="pull-right" :edit=true :starred=favorite></Highlight>
         <span
-        v-if="$store.getters.debug"
+        v-if="$annomlstore.getters.debug"
         class="float-right"
         style="color: lightgray"
       >
@@ -25,7 +25,7 @@
         <editor-content class="editor__content" :editor="editor" />
       </div>
       <b-button
-        v-if="!$store.getters.currentEdit"
+        v-if="!$annomlstore.getters.currentEdit"
         @click="answerPost"
         variant="primary"
       >
@@ -38,7 +38,7 @@
     </b-card>
     <comment
       v-for="comment in comments.filter(
-        c => c !== $store.getters.getCurrentPost
+        c => c !== $annomlstore.getters.getCurrentPost
       )"
       :key="comment.id"
       :comment="comment"
@@ -46,9 +46,9 @@
     />
     <comment-editor
       v-if="currentEdit"
-      :comment="$store.getters.getCurrentPost"
-      :point-annotations="$store.getters.currentPointAnnotations"
-      :rectangle-annotations="$store.getters.currentRectangleAnnotations"
+      :comment="$annomlstore.getters.getCurrentPost"
+      :point-annotations="$annomlstore.getters.currentPointAnnotations"
+      :rectangle-annotations="$annomlstore.getters.currentRectangleAnnotations"
       @select-annotation="selectAnnotation"
       @delete-annotation="deleteAnnotation"
       @save-comment="saveComment"
@@ -142,13 +142,13 @@ export default {
     this.comments = this.answer.comments;
     this.comments.forEach((comment) => {
       if (comment.color) {
-        this.$annoml.store.commit('addUsedColor', comment.color);
+        this.$annomlstore.commit('addUsedColor', comment.color);
       }
       if (comment.pointAnnotations.length > 0) {
-        this.$annoml.store.commit('addPointAnnotations', comment.pointAnnotations);
+        this.$annomlstore.commit('addPointAnnotations', comment.pointAnnotations);
       }
       if (comment.rectangleAnnotations.length > 0) {
-        this.$annoml.store.commit(
+        this.$annomlstore.commit(
           'addRectangleAnnotations',
           comment.rectangleAnnotations,
         );
@@ -223,17 +223,17 @@ export default {
         comments: [],
       };
       this.currentEdit = comment;
-      this.$annoml.store.commit('disableSelectable');
-      this.$annoml.store.commit('setCurrentPost', comment);
+      this.$annomlstore.commit('disableSelectable');
+      this.$annomlstore.commit('setCurrentPost', comment);
     },
     saveComment(comment) {
       this.currentEdit = null;
-      this.$annoml.store.commit('removeCurrentPost');
-      this.$annoml.store.commit('enableSelectable');
-      this.$annoml.store.commit('mergeCurrentAnnotations');
-      this.$annoml.store.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$annomlstore.commit('mergeCurrentAnnotations');
+      this.$annomlstore.commit('clearCurrentAnnotations');
       if (comment.color) {
-        this.$annoml.store.commit('addUsedColor', comment.color);
+        this.$annomlstore.commit('addUsedColor', comment.color);
       }
       this.comments.push(comment);
       APIService(this.$serviceApi).addComment(this.answer.id, comment).then((response) => {
@@ -244,36 +244,36 @@ export default {
           response,
         );
         if (response.pointAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removePointAnnotations',
             comment.pointAnnotations,
           );
-          this.$annoml.store.commit('addPointAnnotations', response.pointAnnotations);
+          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
         }
         if (response.rectangleAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removeRectangleAnnotations',
             comment.rectangleAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'addRectangleAnnotations',
             response.rectangleAnnotations,
           );
         }
         if (response.color && response.color !== comment.color) {
-          this.$annoml.store.commit('addUsedColor', comment.color);
+          this.$annomlstore.commit('addUsedColor', comment.color);
         }
         this.$forceUpdate(); // todo check if necessary
       });
     },
     updateComment(comment) {
       this.currentEdit = null;
-      this.$annoml.store.commit('removeCurrentPost');
-      this.$annoml.store.commit('enableSelectable');
-      this.$annoml.store.commit('mergeCurrentAnnotations');
-      this.$annoml.store.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$annomlstore.commit('mergeCurrentAnnotations');
+      this.$annomlstore.commit('clearCurrentAnnotations');
       if (comment.color) {
-        this.$annoml.store.commit('addUsedColor', comment.color);
+        this.$annomlstore.commit('addUsedColor', comment.color);
       }
       APIService(this.$serviceApi).updateComment(comment).then((response) => {
         this.$set(
@@ -282,34 +282,34 @@ export default {
           response,
         );
         if (response.pointAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removePointAnnotations',
             comment.pointAnnotations,
           );
-          this.$annoml.store.commit('addPointAnnotations', response.pointAnnotations);
+          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
         }
         if (response.rectangleAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removeRectangleAnnotations',
             comment.rectangleAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'addRectangleAnnotations',
             response.rectangleAnnotations,
           );
         }
         if (response.color && response.color !== comment.color) {
-          this.$annoml.store.commit('addUsedColor', comment.color);
+          this.$annomlstore.commit('addUsedColor', comment.color);
         }
       });
     },
     deleteComment(comment) {
       this.currentEdit = null;
-      this.$annoml.store.commit('removeCurrentPost');
-      this.$annoml.store.commit('enableSelectable');
-      this.$annoml.store.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$annomlstore.commit('clearCurrentAnnotations');
       if (comment.color) {
-        this.$annoml.store.commit('removeUsedColor', comment.color);
+        this.$annomlstore.commit('removeUsedColor', comment.color);
       }
       this.comments = this.comments.filter(a => a.id !== comment.id);
       APIService(this.$serviceApi).deleteComment(comment).then((response) => {
@@ -317,25 +317,25 @@ export default {
       });
     },
     editComment(comment) {
-      if (!this.$annoml.store.getters.hasCurrentPost) {
+      if (!this.$annomlstore.getters.hasCurrentPost) {
         this.currentEdit = comment;
-        this.$annoml.store.commit('setCurrentPost', comment);
+        this.$annomlstore.commit('setCurrentPost', comment);
         if (comment.pointAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removePointAnnotations',
             comment.pointAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'setCurrentPointAnnotations',
             comment.pointAnnotations,
           );
         }
         if (comment.rectangleAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removeRectangleAnnotations',
             comment.rectangleAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'setCurrentRectangleAnnotations',
             comment.rectangleAnnotations,
           );

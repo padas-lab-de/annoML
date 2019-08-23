@@ -1,7 +1,6 @@
 /* eslint-disable no-console,no-param-reassign */
 import axios from 'axios';
-import Vuex from 'vuex';
-import module from '@/store/module';
+import store from '@/store/plugin';
 import APIService from '@/service/APIService';
 
 const version = '__VERSION__';
@@ -16,19 +15,15 @@ const install = (Vue, config) => {
    *  somthing implementation here ...
    */
 
-  const store = new Vuex.Store();
 
-
-  if (!config || !store) {
+  if (!config) {
     throw new Error(
-      'Please initialise plugin with the required config and vuex store.',
+      'Please initialise plugin with the required configs.',
     );
   }
 
-
-  Vue.prototype.$annoml = new Vue({
-    store,
-  });
+  Vue.prototype.$annomlsettings = config;
+  Vue.prototype.$annomlstore = store;
 
   const serviceApi = axios.create({
     baseURL: config.annomlBaseURL,
@@ -64,13 +59,15 @@ const install = (Vue, config) => {
     .catch((message) => {
       console.log(message);
     });
-
+  /*
   // register annoML module to provided Vuex storage
   if (config.moduleName) {
     store.registerModule(config.moduleName, module);
   } else {
     store.registerModule('annoml', module);
   }
+
+  */
   store.commit('importSettings', config);
 
   if (config.debug) {

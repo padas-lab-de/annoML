@@ -4,7 +4,7 @@
       <h2 class="question-title">
         {{ question.title }}
         <span
-          v-if="$store.getters.debug"
+          v-if="$annomlstore.getters.debug"
           class="float-right"
           style="color: lightgray"
         >
@@ -29,7 +29,7 @@
       </div>
       <div>
         <b-button
-          v-if="!$store.getters.currentEdit"
+          v-if="!$annomlstore.getters.currentEdit"
           @click="answerPost"
           variant="primary"
         >
@@ -51,9 +51,9 @@
     />
     <answer-editor
       v-if="currentEdit"
-      :answer="$store.getters.getCurrentPost"
-      :point-annotations="$store.getters.currentPointAnnotations"
-      :rectangle-annotations="$store.getters.currentRectangleAnnotations"
+      :answer="$annomlstore.getters.getCurrentPost"
+      :point-annotations="$annomlstore.getters.currentPointAnnotations"
+      :rectangle-annotations="$annomlstore.getters.currentRectangleAnnotations"
       @select-annotation="selectAnnotation"
       @delete-annotation="deleteAnnotation"
       @save-answer="saveAnswer"
@@ -142,13 +142,13 @@ export default {
     this.answers = this.question.answers;
     this.answers.forEach((answer) => {
       if (answer.color) {
-        this.$annoml.store.commit('addUsedColor', answer.color);
+        this.$annomlstore.commit('addUsedColor', answer.color);
       }
       if (answer.pointAnnotations.length > 0) {
-        this.$annoml.store.commit('addPointAnnotations', answer.pointAnnotations);
+        this.$annomlstore.commit('addPointAnnotations', answer.pointAnnotations);
       }
       if (answer.rectangleAnnotations.length > 0) {
-        this.$annoml.store.commit(
+        this.$annomlstore.commit(
           'addRectangleAnnotations',
           answer.rectangleAnnotations,
         );
@@ -223,17 +223,17 @@ export default {
         comments: [],
       };
       this.currentEdit = answer;
-      this.$annoml.store.commit('disableSelectable');
-      this.$annoml.store.commit('setCurrentPost', answer);
+      this.$annomlstore.commit('disableSelectable');
+      this.$annomlstore.commit('setCurrentPost', answer);
     },
     saveAnswer(answer) {
       this.currentEdit = null;
-      this.$annoml.store.commit('removeCurrentPost');
-      this.$annoml.store.commit('enableSelectable');
-      this.$annoml.store.commit('mergeCurrentAnnotations');
-      this.$annoml.store.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$annomlstore.commit('mergeCurrentAnnotations');
+      this.$annomlstore.commit('clearCurrentAnnotations');
       if (answer.color) {
-        this.$annoml.store.commit('addUsedColor', answer.color);
+        this.$annomlstore.commit('addUsedColor', answer.color);
       }
       this.answers.push(answer);
       APIService(this.$serviceApi).addAnswer(this.question.id, answer).then((response) => {
@@ -243,33 +243,33 @@ export default {
           response,
         );
         if (response.pointAnnotations.length > 0) {
-          this.$annoml.store.commit('removePointAnnotations', answer.pointAnnotations);
-          this.$annoml.store.commit('addPointAnnotations', response.pointAnnotations);
+          this.$annomlstore.commit('removePointAnnotations', answer.pointAnnotations);
+          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
         }
         if (response.rectangleAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removeRectangleAnnotations',
             answer.rectangleAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'addRectangleAnnotations',
             response.rectangleAnnotations,
           );
         }
         if (response.color && response.color !== answer.color) {
-          this.$annoml.store.commit('addUsedColor', answer.color);
+          this.$annomlstore.commit('addUsedColor', answer.color);
         }
         this.$forceUpdate(); // todo check if necessary
       });
     },
     updateAnswer(answer) {
       this.currentEdit = null;
-      this.$annoml.store.commit('removeCurrentPost');
-      this.$annoml.store.commit('enableSelectable');
-      this.$annoml.store.commit('mergeCurrentAnnotations');
-      this.$annoml.store.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$annomlstore.commit('mergeCurrentAnnotations');
+      this.$annomlstore.commit('clearCurrentAnnotations');
       if (answer.color) {
-        this.$annoml.store.commit('addUsedColor', answer.color);
+        this.$annomlstore.commit('addUsedColor', answer.color);
       }
       APIService(this.$serviceApi).updateAnswer(answer).then((response) => {
         this.$set(
@@ -278,31 +278,31 @@ export default {
           response,
         );
         if (response.pointAnnotations.length > 0) {
-          this.$annoml.store.commit('removePointAnnotations', answer.pointAnnotations);
-          this.$annoml.store.commit('addPointAnnotations', response.pointAnnotations);
+          this.$annomlstore.commit('removePointAnnotations', answer.pointAnnotations);
+          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
         }
         if (response.rectangleAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removeRectangleAnnotations',
             answer.rectangleAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'addRectangleAnnotations',
             response.rectangleAnnotations,
           );
         }
         if (response.color && response.color !== answer.color) {
-          this.$annoml.store.commit('addUsedColor', answer.color);
+          this.$annomlstore.commit('addUsedColor', answer.color);
         }
       });
     },
     deleteAnswer(answer) {
       this.currentEdit = null;
-      this.$annoml.store.commit('removeCurrentPost');
-      this.$annoml.store.commit('enableSelectable');
-      this.$annoml.store.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$annomlstore.commit('clearCurrentAnnotations');
       if (answer.color) {
-        this.$annoml.store.commit('removeUsedColor', answer.color);
+        this.$annomlstore.commit('removeUsedColor', answer.color);
       }
       this.answers = this.answers.filter(a => a.id !== answer.id);
       APIService(this.$serviceApi).deleteAnswer(answer).then((response) => {
@@ -310,22 +310,22 @@ export default {
       });
     },
     editAnswer(answer) {
-      if (!this.$annoml.store.getters.hasCurrentPost) {
+      if (!this.$annomlstore.getters.hasCurrentPost) {
         this.currentEdit = answer;
-        this.$annoml.store.commit('setCurrentPost', answer);
+        this.$annomlstore.commit('setCurrentPost', answer);
         if (answer.pointAnnotations.length > 0) {
-          this.$annoml.store.commit('removePointAnnotations', answer.pointAnnotations);
-          this.$annoml.store.commit(
+          this.$annomlstore.commit('removePointAnnotations', answer.pointAnnotations);
+          this.$annomlstore.commit(
             'setCurrentPointAnnotations',
             answer.pointAnnotations,
           );
         }
         if (answer.rectangleAnnotations.length > 0) {
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'removeRectangleAnnotations',
             answer.rectangleAnnotations,
           );
-          this.$annoml.store.commit(
+          this.$annomlstore.commit(
             'setCurrentRectangleAnnotations',
             answer.rectangleAnnotations,
           );

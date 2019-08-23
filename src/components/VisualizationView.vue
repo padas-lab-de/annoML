@@ -23,7 +23,7 @@
           :temp-annotations="tempAnnotations"
           :tools="tools"
           @click="createAnnotation"
-        /><span v-if="$store.getters.debug" style="color: lightgray">
+        /><span v-if="$annomlstore.getters.debug" style="color: lightgray">
           Hash: {{ visualization.hash }}</span>
       </div>
       <loading v-else :message="'Loading Visualization'"></loading>
@@ -99,31 +99,31 @@ export default {
     };
   },
   mounted() {
-    this.$annoml.store.watch(
+    this.$annomlstore.watch(
       (state, getters) => getters.pointAnnotations,
       (pointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$annoml.store
+        this.vegaAnnotations.pointAnnotations = this.$annomlstore
           .getters.currentPointAnnotations.concat(pointAnnotations);
       },
     );
-    this.$annoml.store.watch(
+    this.$annomlstore.watch(
       (state, getters) => getters.rectangleAnnotations,
       (rectangleAnnotation) => {
-        this.vegaAnnotations.rectangleAnnotations = this.$annoml.store.getters
+        this.vegaAnnotations.rectangleAnnotations = this.$annomlstore.getters
           .currentRectangleAnnotations.concat(rectangleAnnotation);
       },
     );
-    this.$annoml.store.watch(
+    this.$annomlstore.watch(
       (state, getters) => getters.currentPointAnnotations,
       (currentPointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$annoml
-          .store.getters.pointAnnotations.concat(currentPointAnnotations);
+        this.vegaAnnotations.pointAnnotations = this.$annomlstore.getters
+          .pointAnnotations.concat(currentPointAnnotations);
       },
     );
-    this.$annoml.store.watch(
+    this.$annomlstore.watch(
       (state, getters) => getters.currentRectangleAnnotations,
       (currentRectangleAnnotations) => {
-        this.vegaAnnotations.rectangleAnnotations = this.$annoml.store.getters
+        this.vegaAnnotations.rectangleAnnotations = this.$annomlstore.getters
           .currentRectangleAnnotations.concat(currentRectangleAnnotations);
       },
     );
@@ -173,7 +173,7 @@ export default {
      * Annotation creation
      */
     createAnnotation(item) {
-      if (this.$annoml.store.getters.visualizationSelectable) {
+      if (this.$annomlstore.getters.visualizationSelectable) {
         if (this.currentTool === this.tools.pointAnnotation) {
           this.addPointAnnotation(item);
         } else if (this.currentTool === this.tools.rectangleAnnotation) {
@@ -201,7 +201,7 @@ export default {
       this.tempAnnotations.push(annotation);
     },
     addPointAnnotation(item) {
-      this.$annoml.store.commit('disableSelectable');
+      this.$annomlstore.commit('disableSelectable');
       const annotation = {};
       annotation.annotationType = this.tools.pointAnnotation.name;
       annotation.id = Date.now();
@@ -209,12 +209,12 @@ export default {
         title: 'Circle Annotation',
       };
       annotation.data = item.datum;
-      if (this.$annoml.store.getters.hasCurrentPost) {
-        annotation.color = this.$annoml.store.getters.getCurrentPost.color;
+      if (this.$annomlstore.getters.hasCurrentPost) {
+        annotation.color = this.$annomlstore.getters.getCurrentPost.color;
       } else {
         annotation.color = 'grey';
       }
-      this.$annoml.store.commit('addCurrentPointAnnotation', annotation);
+      this.$annomlstore.commit('addCurrentPointAnnotation', annotation);
     },
     addRectangleAnnotation(item) {
       const startPoint = this.tools.rectangleAnnotation.tempPoint;
@@ -229,12 +229,12 @@ export default {
         width: item.x - startPoint.x,
         height: item.y - startPoint.y,
       };
-      if (this.$annoml.store.getters.hasCurrentPost) {
-        annotation.color = this.$annoml.store.getters.getCurrentPost.color;
+      if (this.$annomlstore.getters.hasCurrentPost) {
+        annotation.color = this.$annomlstore.getters.getCurrentPost.color;
       } else {
         annotation.color = 'grey';
       }
-      this.$annoml.store.commit('addCurrentRectangleAnnotation', annotation);
+      this.$annomlstore.commit('addCurrentRectangleAnnotation', annotation);
       this.clearTempPoints();
     },
     setTool(newTool) {
