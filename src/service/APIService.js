@@ -66,15 +66,14 @@ const service = instance => ({
       .then(response => response.data);
   },
 
-  createDiscussion: (visualizationId, visualizationUrl, authorId) => {
+  createDiscussion: (visualizationId, visualizationUrl) => {
     const url = '/discussions/create';
     const body = {
       visualizationId,
       visualizationUrl,
-      authorId,
     };
-    console.log(body);
-    return instance.post(url, body);
+    return instance.post(url, body)
+      .then(response => response.data);
   },
 
   /**

@@ -13,12 +13,14 @@ Vue.use(annoML, {
   annomlBaseURL: 'http://localhost:9999',
   store: {
     username: store.getters.getUsername,
-    accessToken: store.getters.getToken,
+    accessToken: store.getters.getAccessToken,
+    token: window.localStorage.getItem('token'),
+    authenticated: store.getters.getAuthenticated,
   },
   authenticationProvider: {
     baseURL: 'http:localhost:8080',
     endpoints: {
-      authorization: 'http://localhost:8080/oauth/authorize',
+      authorization: 'http://localhost:8080/oauth/login',
       userInfo: 'http://localhost:8080/api/users/me',
       userInfoById: 'http://localhost:8080/api/users',
     },

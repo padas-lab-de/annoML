@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div class="visualization-page">
     <b-container fluid>
@@ -36,33 +37,9 @@ export default {
   },
   data() {
     return {
-      visualizations: [
-        {
-          uid: 'fdfewklfhlkfe',
-          url: 'http://localhost:3000/visualiaztions/1',
-          schema:
-            '{\n'
-            + '  "data": {\n'
-            + '    "values": [\n'
-            + '      {"a": "C", "b": 2}, {"a": "C", "b": 7}, {"a": "C", "b": 4},\n'
-            + '      {"a": "D", "b": 1}, {"a": "D", "b": 2}, {"a": "D", "b": 6},\n'
-            + '      {"a": "E", "b": 8}, {"a": "E", "b": 4}, {"a": "E", "b": 7}\n'
-            + '    ]\n'
-            + '  },\n'
-            + '  "mark": "bar",\n'
-            + '  "encoding": {\n'
-            + '    "y": {"field": "a", "type": "nominal"},\n'
-            + '    "x": {\n'
-            + '      "aggregate": "average", "field": "b", "type": "quantitative",\n'
-            + '      "axis": {"title": "Mean of b"}\n'
-            + '    }\n'
-            + '  }\n'
-            + '}',
-        },
-      ],
+      visualizations: [],
     };
   },
-  mounted() {},
   created() {
     const provider = axios.create({
       baseURL: 'http://localhost:8080/api',
@@ -81,16 +58,31 @@ export default {
   },
   methods: {
     startDiscussion(visualizationId, visualizationUrl) {
-      this.$startDiscussion(
-        visualizationId,
-        visualizationUrl,
-      ).then((discussion) => {
-        this.$router.push({
-          name: 'AnnoML',
-          params: {
-            id: discussion,
-          },
-        });
+      const auth = axios.create({
+        baseURL: 'http://localhost:8080/api',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+          Authorization: `Bearer ${this.$store.getters.getAccessToken}`,
+        },
+      });
+      auth.get('/users/jwttoken').then((response) => {
+        console.log(response.data.token);
+        if (response.data.token) {
+          window.localStorage.setItem('token', response.data.token);
+          this.$startDiscussion(
+            visualizationId,
+            visualizationUrl,
+          ).then((discussion) => {
+            this.$router.push({
+              name: 'AnnoML',
+              params: {
+                id: discussion,
+              },
+            });
+          });
+        }
       });
     },
   },

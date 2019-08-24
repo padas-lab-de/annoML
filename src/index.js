@@ -33,36 +33,26 @@ const install = (Vue, config) => {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-      Authorization: `Bearer ${config.store.accessToken}`,
-
     },
   });
+
+  const serviceApiAuthenticated = () => {
+    serviceApi.defaults.headers.common.Authorization = `Bearer ${config.store.token}`;
+    return serviceApi;
+  };
 
   Vue.prototype.$serviceApi = serviceApi;
-
-  Vue.prototype.$authApi = axios.create({
-    baseURL: config.authenticationProvider.baseURL,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    },
-  });
+  Vue.prototype.$serviceApiAuthenticated = serviceApiAuthenticated();
 
   Vue.prototype.$startDiscussion = (
     visualizationId,
     visualizationUrl,
-    username,
-    token,
-  ) => APIService(serviceApi)
-    .createDiscussion(visualizationId, visualizationUrl, username, token)
-    .then((result) => {
-      console.log(result);
-      return result.data.id;
-    })
-    .catch((message) => {
+  ) => APIService(serviceApiAuthenticated())
+    .createDiscussion(visualizationId, visualizationUrl)
+    .then(discussion => discussion.id).catch((message) => {
       console.log(message);
     });
+
   /*
   // register annoML module to provided Vuex storage
   if (config.moduleName) {
@@ -76,7 +66,6 @@ const install = (Vue, config) => {
 
   if (config.debug) {
     console.log('DEBUG MODE');
-    console.log(store.getters.getSettings);
   }
 };
 

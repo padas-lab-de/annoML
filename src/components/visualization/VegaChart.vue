@@ -35,7 +35,7 @@ export default {
     tempAnnotations: {
       type: Array,
       default() {
-        return null;
+        return [];
       },
     },
   },

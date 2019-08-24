@@ -8,26 +8,22 @@ const store = new Vuex.Store({
     auth: {
       profile: {
         username: 'annoml',
+        accessToken: 'a5fc7b2a-b8af-4562-b38d-aabb31c1397e',
       },
-      token: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0aG9tYm9yZyIsImV4cCI6MTU2NjU4MDU2MSwiaWF0IjoxNTY2NTc4NzYxfQ.YigKi4Ugtp27tUu8n9NZC-gtLpSPI0QNFGYLQbto4mwATgnvk1k1VIMDb08I52MhUiUgXGHzg6h4arEC6gLU5w',
-      isAuthenticated: true,
+      token: null,
+      isAuthenticated: false,
     },
   },
   getters: {
+    getAccessToken: state => state.auth.profile.accessToken,
     getToken: state => state.auth.token,
-    getUserId: state => state.auth.profile.uid,
     getUsername: state => state.auth.profile.username,
+    getAuthenticated: state => state.auth.isAuthenticated,
   },
 
   mutations: {
-    isAuthenticated(state, payload) {
-      state.auth.isAuthenticated = payload.isAuthenticated;
-    },
     token(state, payload) {
       state.auth.token = payload.token;
-    },
-    setProfile(state, payload) {
-      state.auth.profile = payload.profile;
     },
   },
 });

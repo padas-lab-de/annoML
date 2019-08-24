@@ -135,9 +135,9 @@ export default {
           this.chart = this.visualization.schema;
         } else if (this.visualization.visualizationUrl) {
           console.log(this.visualization.visualizationUrl);
-          APIService(this.$serviceApi)
+          APIService(this.$serviceApiAuthenticated)
             .getExternalVisualization(this.visualization.visualizationUrl,
-              'f71e164e-34df-4631-b5ea-1eee122164c4')
+              this.$annomlsettings.store.accessToken)
             .then((visualization) => {
               this.visualization = visualization;
               this.chart = JSON.parse(visualization.schema);
