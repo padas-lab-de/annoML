@@ -37,7 +37,7 @@ const install = (Vue, config) => {
   });
 
   const serviceApiAuthenticated = () => {
-    serviceApi.defaults.headers.common.Authorization = `Bearer ${config.store.token}`;
+    serviceApi.defaults.headers.common.Authorization = `Bearer ${config.store.authToken}`;
     return serviceApi;
   };
 

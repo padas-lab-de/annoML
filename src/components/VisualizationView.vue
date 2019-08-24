@@ -137,7 +137,7 @@ export default {
           console.log(this.visualization.visualizationUrl);
           APIService(this.$serviceApiAuthenticated)
             .getExternalVisualization(this.visualization.visualizationUrl,
-              this.$annomlsettings.store.accessToken)
+              this.$annomlsettings.store.resourceToken)
             .then((visualization) => {
               this.visualization = visualization;
               this.chart = JSON.parse(visualization.schema);
