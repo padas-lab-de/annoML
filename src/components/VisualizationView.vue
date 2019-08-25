@@ -131,13 +131,16 @@ export default {
       .getVisualization(this.visualizationId)
       .then((data) => {
         this.visualization = data;
+        console.log(this.visualization);
         if (this.visualization.schema) {
           this.chart = this.visualization.schema;
-        } else if (this.visualization.visualizationUrl) {
-          console.log(this.visualization.visualizationUrl);
-          APIService(this.$serviceApiAuthenticated)
-            .getExternalVisualization(this.visualization.visualizationUrl,
-              this.$annomlsettings.store.resourceToken)
+        } else if (this.visualization.reference) {
+          APIService(this.$resourceApi)
+            .getResourceVisualization(
+              this.$annomlsettings.resourceProvider.endpoints.visualization,
+              this.visualization.reference,
+              this.$annomlsettings.resourceProvider.accessToken,
+            )
             .then((visualization) => {
               this.visualization = visualization;
               this.chart = JSON.parse(visualization.schema);
@@ -146,6 +149,8 @@ export default {
               console.log(error);
               this.resourceFailed = true;
             });
+        } else {
+          console.log(this.visualization.url);
         }
       })
       .catch((error) => {

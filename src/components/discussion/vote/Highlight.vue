@@ -1,5 +1,5 @@
 <template>
-  <div class="highlight" @click="toggleHighlight">
+  <div class="highlight" @click="toggleHighlight" v-if="highlight || edit">
     <font-awesome-icon
       v-if="starred"
       icon="star"
@@ -17,7 +17,7 @@
 export default {
   name: 'Highlight',
   props: {
-    starred: {
+    highlight: {
       type: Boolean,
       default() {
         return false;

@@ -9,24 +9,24 @@ Vue.config.productionTip = false;
 
 Vue.use(annoML, {
   debug: true,
-  moduleName: 'ANNOML',
-  annomlBaseURL: 'http://localhost:9999',
-  store: {
-    username: store.getters.getUsername,
-    resourceToken: store.getters.getAccessToken,
-    authToken: window.localStorage.getItem('token'),
-    authenticated: store.getters.getAuthenticated,
-  },
+  baseURL: 'http://localhost:9999',
+  isAuthenticated: store.getters.getAuthenticated,
+  currentUser: store.getters.getId,
   authenticationProvider: {
-    baseURL: 'http:localhost:8080',
+    baseURL: 'http://localhost:8080',
+    authToken: window.localStorage.getItem('token'),
     endpoints: {
       authorization: 'http://localhost:8080/oauth/login',
       userInfo: 'http://localhost:8080/api/users/me',
       userInfoById: 'http://localhost:8080/api/users',
     },
   },
-  visualizationProvider: {
-    endpoint: 'http:localhost:3000/visualization',
+  resourceProvider: {
+    baseURL: 'http://localhost:8080',
+    accessToken: store.getters.getAccessToken,
+    endpoints: {
+      visualization: '/api/visualizations',
+    },
   },
 });
 

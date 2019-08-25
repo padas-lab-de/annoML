@@ -7,9 +7,12 @@
         style="color: lightgray"
       >
         {{ comment.author.username }} #{{ comment.id }}
-</span
-      >
-
+      </span>
+      <highlight
+        class="pull-right"
+        :edit="$annomlsettings.currentUser === question.author.externalId"
+        :highlight="question.highlight === comment.id"
+      ></highlight>
       <annotation-select
         class="annotation-select"
         v-if="
@@ -19,14 +22,18 @@
         :point-annotations="comment.pointAnnotations"
         :rectangle-annotations="comment.rectangleAnnotations"
         :annotation-color="comment.color"
-        :edit="false"
+        :edit="$annomlsettings.currentUser === question.author.externalId"
         @select-annotation="selectAnnotation"
       />
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
-        <vote class="float-right btn"></vote>
-      <b-button @click="editComment" class="float-right" variant="light"
+      <vote class="float-right btn"></vote>
+      <b-button
+        @click="editComment"
+        class="float-right"
+        variant="light"
+        v-if="$annomlsettings.currentUser === comment.author.externalId"
         >Edit</b-button
       >
     </b-card>
@@ -69,6 +76,12 @@ export default {
       type: Object,
       default() {
         return {};
+      },
+    },
+    question: {
+      type: Object,
+      default() {
+        return null;
       },
     },
   },

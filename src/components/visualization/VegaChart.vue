@@ -59,7 +59,6 @@ export default {
       defaultHeight: 600,
       size: {},
       annotationOptions: {
-        timeFormat: d3.timeFormat('%d-%b-%y'),
         annotationSize: 2,
         editMode: false,
         hideOtherAnnotations: true,
@@ -134,7 +133,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', () => {});
-    this.unbindEvents();
+    this.unbindEvents(this.view);
     this.view.finalize();
   },
   methods: {

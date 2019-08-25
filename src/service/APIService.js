@@ -1,5 +1,4 @@
 /* eslint-disable semi,no-console */
-import axios from 'axios';
 
 
 const service = instance => ({
@@ -66,12 +65,26 @@ const service = instance => ({
       .then(response => response.data);
   },
 
-  createDiscussion: (visualizationId, visualizationUrl) => {
-    const url = '/discussions/create';
+  createDiscussionWithUrl: (visualizationUrl) => {
+    const url = '/discussions/create/url';
     const body = {
-      visualizationId,
-      visualizationUrl,
+      url: visualizationUrl,
     };
+    return instance.post(url, body)
+      .then(response => response.data);
+  },
+  createDiscussionWithId: (visualizationId) => {
+    const url = '/discussions/create/reference';
+    const body = {
+      reference: visualizationId,
+    };
+    return instance.post(url, body)
+      .then(response => response.data);
+  },
+
+  createDiscussionWithSchema: (schema) => {
+    const url = '/discussions/create/reference';
+    const body = schema;
     return instance.post(url, body)
       .then(response => response.data);
   },
@@ -88,13 +101,9 @@ const service = instance => ({
   /**
      * Data from external resource server
      */
-  getExternalVisualization(url, token) {
-    const platform = axios.create({
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    return platform.get(url)
+  getResourceVisualization(path, id) {
+    const url = `${path}/${id}`;
+    return instance.get(url)
       .then(response => response.data);
   },
 });

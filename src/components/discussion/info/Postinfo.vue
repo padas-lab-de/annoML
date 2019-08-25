@@ -1,9 +1,10 @@
 <template>
     <div>
-        <span v-if="postDate">Posted on {{ postDate }}</span>
-        <span v-if="username"> by {{ username }}</span>
-        <span v-else>User #{{ userId }}</span>
-        <span v-if="editDate"> (last edited on {{ editDate }}</span>
+        <span v-if="post.created">Posted on {{ formatTimestamp(post.created) }}</span>
+        <span v-if="post.author.externalId"> by {{ post.author.externalId }}</span>
+        <span v-else>User #{{ post.author.id }}</span>
+        <span v-if="checkIfIsSameDate(post.created, post.edited)">
+            ({{formatEditTimestamp(post.created, post.edited)}})</span>
     </div>
 </template>
 
@@ -21,29 +22,27 @@ export default {
         return null;
       },
     },
-    data() {
-      return {
-        userId: null,
-        username: null,
-        postDate: null,
-        editDate: null,
-      };
-    },
+
   },
   created() {
-    if (this.post) {
-      console.log(this.post);
-      this.userId = this.post.author.externalId;
-      if (this.userId) {
-        this.username = this.requestUsername(this.userId);
-      }
-      this.postDate = this.post.date;
-      if (this.post.edit) {
-        this.editDate = this.post.edit;
-      }
-    }
+
   },
   methods: {
+    checkIfIsSameDate(date1, date2) {
+      return date1 !== date2;
+    },
+    formatTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      return `${date.toLocaleDateString()} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    },
+    formatEditTimestamp(created, edit) {
+      const createdate = new Date(created);
+      const editdate = new Date(edit);
+      if (createdate.getDate() === editdate.getDate()) {
+        return `last edit at ${editdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      }
+      return `edited on ${editdate.toLocaleDateString()}at${editdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    },
     requestUsername(userId) {
       APIService(this.$authApi).getUser(
         this.$annomlstore.getters

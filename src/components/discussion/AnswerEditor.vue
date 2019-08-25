@@ -121,6 +121,7 @@
       v-for="comment in answer.comments"
       :key="comment.id"
       :comment="comment"
+      :question="question"
     />
   </div>
 </template>

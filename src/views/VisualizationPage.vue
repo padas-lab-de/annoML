@@ -14,7 +14,7 @@
             <vega-chart :chart="JSON.parse(visualization.schema)" />
           </div>
           <b-button
-            @click="startDiscussion(visualization.uid, visualization.links[0].href)"
+            @click="startDiscussion(visualization.uid)"
           >
             Discuss
           </b-button>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-/* eslint-disable no-console */
+/* eslint-disable no-console, no-alert */
 
 import axios from 'axios';
 import VegaChart from '@/components/visualization/VegaChart.vue';
@@ -57,7 +57,7 @@ export default {
     });
   },
   methods: {
-    startDiscussion(visualizationId, visualizationUrl) {
+    startDiscussion(visualizationId) {
       const auth = axios.create({
         baseURL: 'http://localhost:8080/api',
         headers: {
@@ -71,9 +71,8 @@ export default {
         console.log(response.data.token);
         if (response.data.token) {
           window.localStorage.setItem('token', response.data.token);
-          this.$startDiscussion(
+          this.$startDiscussionWithReference(
             visualizationId,
-            visualizationUrl,
           ).then((discussion) => {
             this.$router.push({
               name: 'AnnoML',
@@ -81,7 +80,7 @@ export default {
                 id: discussion,
               },
             });
-          });
+          }).catch(window.alert('Unauthorized! Please try again'));
         }
       });
     },

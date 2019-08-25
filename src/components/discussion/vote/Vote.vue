@@ -31,7 +31,7 @@ export default {
       return '0';
     },
     voteUp() {
-      console.log('up');
+      this.$emit();
       this.votes = this.votes + 1;
     },
     voteDown() {

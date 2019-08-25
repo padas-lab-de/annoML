@@ -1,7 +1,9 @@
 <template>
   <div>
     <b-card class="mb-2 ml-2">
-      <Highlight class="pull-right" :edit=true :starred=favorite></Highlight>
+      <highlight class="pull-right" :edit="$annomlsettings.currentUser
+      === question.author.externalId"
+                 :highlight="question.highlight === answer.id"></highlight>
         <span
         v-if="$annomlstore.getters.debug"
         class="float-right"
@@ -18,7 +20,7 @@
         :point-annotations="answer.pointAnnotations"
         :rectangle-annotations="answer.rectangleAnnotations"
         :annotation-color="answer.color"
-        :edit="false"
+        :edit="$annomlsettings.currentUser === question.author.externalId"
         @select-annotation="selectAnnotation"
       />
       <div class="body">
@@ -33,6 +35,7 @@
       </b-button>
       <vote class="float-right btn"></vote>
       <b-button @click="editAnswer" class="float-right" variant="light"
+                v-if="$annomlsettings.currentUser === answer.author.externalId"
         >Edit</b-button
       >
     </b-card>
@@ -42,6 +45,7 @@
       )"
       :key="comment.id"
       :comment="comment"
+      :question="question"
       @edit-comment="editComment"
     />
     <comment-editor
@@ -104,10 +108,10 @@ export default {
         return {};
       },
     },
-    favorite: {
-      type: Boolean,
+    question: {
+      type: Object,
       default() {
-        return false;
+        return null;
       },
     },
   },
@@ -236,35 +240,36 @@ export default {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
       this.comments.push(comment);
-      APIService(this.$serviceApi).addComment(this.answer.id, comment).then((response) => {
-        console.log(response);
-        this.$set(
-          this.comments,
-          this.comments.findIndex(a => a.id === comment.id),
-          response,
-        );
-        if (response.pointAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removePointAnnotations',
-            comment.pointAnnotations,
+      APIService(this.$serviceApiAuthenticated).addComment(this.answer.id, comment)
+        .then((response) => {
+          console.log(response);
+          this.$set(
+            this.comments,
+            this.comments.findIndex(a => a.id === comment.id),
+            response,
           );
-          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
-        }
-        if (response.rectangleAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removeRectangleAnnotations',
-            comment.rectangleAnnotations,
-          );
-          this.$annomlstore.commit(
-            'addRectangleAnnotations',
-            response.rectangleAnnotations,
-          );
-        }
-        if (response.color && response.color !== comment.color) {
-          this.$annomlstore.commit('addUsedColor', comment.color);
-        }
-        this.$forceUpdate(); // todo check if necessary
-      });
+          if (response.pointAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removePointAnnotations',
+              comment.pointAnnotations,
+            );
+            this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
+          }
+          if (response.rectangleAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removeRectangleAnnotations',
+              comment.rectangleAnnotations,
+            );
+            this.$annomlstore.commit(
+              'addRectangleAnnotations',
+              response.rectangleAnnotations,
+            );
+          }
+          if (response.color && response.color !== comment.color) {
+            this.$annomlstore.commit('addUsedColor', comment.color);
+          }
+          this.$forceUpdate(); // todo check if necessary
+        });
     },
     updateComment(comment) {
       this.currentEdit = null;
@@ -275,7 +280,7 @@ export default {
       if (comment.color) {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
-      APIService(this.$serviceApi).updateComment(comment).then((response) => {
+      APIService(this.$serviceApiAuthenticated).updateComment(comment).then((response) => {
         this.$set(
           this.comments,
           this.comments.findIndex(a => a.id === comment.id),
@@ -312,7 +317,7 @@ export default {
         this.$annomlstore.commit('removeUsedColor', comment.color);
       }
       this.comments = this.comments.filter(a => a.id !== comment.id);
-      APIService(this.$serviceApi).deleteComment(comment).then((response) => {
+      APIService(this.$serviceApiAuthenticated).deleteComment(comment).then((response) => {
         console.log(response);
       });
     },

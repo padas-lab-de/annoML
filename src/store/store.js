@@ -7,17 +7,17 @@ const store = new Vuex.Store({
   state: {
     auth: {
       profile: {
-        username: 'annoml',
-        accessToken: 'a5fc7b2a-b8af-4562-b38d-aabb31c1397e',
+        id: 'thomborg',
+        accessToken: '87d59798-f7f5-4da7-8dc7-66d74732353c',
       },
       token: null,
-      isAuthenticated: false,
+      isAuthenticated: true,
     },
   },
   getters: {
     getAccessToken: state => state.auth.profile.accessToken,
     getToken: state => state.auth.token,
-    getUsername: state => state.auth.profile.username,
+    getId: state => state.auth.profile.id,
     getAuthenticated: state => state.auth.isAuthenticated,
   },
 

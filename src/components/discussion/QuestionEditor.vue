@@ -128,7 +128,7 @@
       v-for="answer in question.answers"
       :key="answer.id"
       :post="answer"
-      :favorite="answers.id === question.favorite"
+      :question="question"
     />
   </b-card>
 </template>

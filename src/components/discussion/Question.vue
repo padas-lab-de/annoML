@@ -8,10 +8,10 @@
           class="float-right"
           style="color: lightgray"
         >
-          {{ question.author.username }} #{{ question.id }}</span
+          {{ $annomlsettings.currentUser  }} #{{ question.id }}</span
         >
       </h2>
-      <Postinfo :post="question"></Postinfo>
+      <postinfo v-bind:post="question"></postinfo>
       <annotation-select
         class="annotation-select"
         v-if="
@@ -21,7 +21,7 @@
         :point-annotations="question.pointAnnotations"
         :rectangle-annotations="question.rectangleAnnotations"
         :annotation-color="question.color"
-        :edit="false"
+        :edit="$annomlsettings.currentUser === question.author.externalId"
         @select-annotation="selectAnnotation"
       />
       <div class="body">
@@ -36,7 +36,8 @@
           Answer
         </b-button>
         <vote class="float-right btn"></vote>
-        <b-button @click="editQuestion" class="float-right" variant="light"
+        <b-button v-if="$annomlsettings.currentUser === question.author.externalId"
+                @click="editQuestion" class="float-right" variant="light"
           >Edit</b-button
         >
         <small class="text-muted"> {{ question.date }}</small>
@@ -46,7 +47,7 @@
       v-for="answer in answers.filter(a => a !== currentEdit)"
       :key="answer.id"
       :answer="answer"
-      :favorite="answers.id === question.favorite"
+      :question="question"
       @edit-answer="editAnswer"
     />
     <answer-editor
@@ -236,31 +237,32 @@ export default {
         this.$annomlstore.commit('addUsedColor', answer.color);
       }
       this.answers.push(answer);
-      APIService(this.$serviceApi).addAnswer(this.question.id, answer).then((response) => {
-        this.$set(
-          this.answers,
-          this.answers.findIndex(a => a.id === answer.id),
-          response,
-        );
-        if (response.pointAnnotations.length > 0) {
-          this.$annomlstore.commit('removePointAnnotations', answer.pointAnnotations);
-          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
-        }
-        if (response.rectangleAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removeRectangleAnnotations',
-            answer.rectangleAnnotations,
+      APIService(this.$serviceApiAuthenticated).addAnswer(this.question.id, answer)
+        .then((response) => {
+          this.$set(
+            this.answers,
+            this.answers.findIndex(a => a.id === answer.id),
+            response,
           );
-          this.$annomlstore.commit(
-            'addRectangleAnnotations',
-            response.rectangleAnnotations,
-          );
-        }
-        if (response.color && response.color !== answer.color) {
-          this.$annomlstore.commit('addUsedColor', answer.color);
-        }
-        this.$forceUpdate(); // todo check if necessary
-      });
+          if (response.pointAnnotations.length > 0) {
+            this.$annomlstore.commit('removePointAnnotations', answer.pointAnnotations);
+            this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
+          }
+          if (response.rectangleAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removeRectangleAnnotations',
+              answer.rectangleAnnotations,
+            );
+            this.$annomlstore.commit(
+              'addRectangleAnnotations',
+              response.rectangleAnnotations,
+            );
+          }
+          if (response.color && response.color !== answer.color) {
+            this.$annomlstore.commit('addUsedColor', answer.color);
+          }
+          this.$forceUpdate(); // todo check if necessary
+        });
     },
     updateAnswer(answer) {
       this.currentEdit = null;
@@ -271,7 +273,7 @@ export default {
       if (answer.color) {
         this.$annomlstore.commit('addUsedColor', answer.color);
       }
-      APIService(this.$serviceApi).updateAnswer(answer).then((response) => {
+      APIService(this.$serviceApiAuthenticated).updateAnswer(answer).then((response) => {
         this.$set(
           this.answers,
           this.answers.findIndex(a => a.id === answer.id),
@@ -305,7 +307,7 @@ export default {
         this.$annomlstore.commit('removeUsedColor', answer.color);
       }
       this.answers = this.answers.filter(a => a.id !== answer.id);
-      APIService(this.$serviceApi).deleteAnswer(answer).then((response) => {
+      APIService(this.$serviceApiAuthenticated).deleteAnswer(answer).then((response) => {
         console.log(response);
       });
     },
