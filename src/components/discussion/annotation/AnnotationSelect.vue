@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <b-container fluid>
     <b-row>
@@ -12,7 +13,9 @@
           "
           row-length="5"
           :exceptions="
-            $annomlstore.getters.getUsedColors.filter(c => c !== annotationColor)
+            $annomlstore.getters.getUsedColors.filter(
+              c => c !== annotationColor
+            )
           "
           shapes="circles"
           exception-mode="hidden"
@@ -21,19 +24,26 @@
         <div
           v-else
           class="annotation-color-swatch"
-          :style="{ backgroundColor: annotationColor }"
+          :class="{
+            annotationsHidden: annotationsHidden
+          }"
+          :style="{
+            backgroundColor: annotationsHidden
+              ? annotationColor
+              : $annomlutils.annotation.stateColor.HIDDEN
+          }"
+          @click="hideAllAnnotations"
         />
       </b-col>
       <b-col>
         <b-card-group>
           <annotation-tile
-            v-for="annotation in pointAnnotations
-              .concat(rectangleAnnotations)
-              .sort((a, b) => a.id - b.id)"
+            v-for="annotation in annotations"
             :key="annotation.id"
             :annotation="annotation"
             :edit="edit"
             @select-annotation="selectAnnotation"
+            @hide-annotation="hideAnnotation"
             @delete-annotation="deleteAnnotation"
             @update-annotation="updateAnnotation"
           />
@@ -48,6 +58,7 @@
 import Swatches from 'vue-swatches';
 import BCol from 'bootstrap-vue/esm/components/layout/col';
 import AnnotationTile from '@/components/discussion/annotation/AnnotationTile.vue';
+import utils from '@/util';
 
 export default {
   name: 'AnnotationList',
@@ -84,24 +95,66 @@ export default {
   },
   data() {
     return {
+      annotations: [],
       color: this.annotationColor,
+      annotationsHidden: false,
     };
   },
+
   created() {
     if (this.annotationColor) {
       this.color = this.annotationColor;
     } else {
       this.color = this.$annomlstore.getters.getFreeColor;
     }
+    this.annotations = utils.annotation.concatAndSortAnnotations(
+      [this.rectangleAnnotations, this.pointAnnotations],
+      (a, b) => a.id - b.id,
+    );
+    this.annotationsHidden = this.annotations.some(
+      a => a.color !== utils.annotation.stateColor.HIDDEN,
+    );
   },
   watch: {
     color() {
       this.updateColor(this.color);
     },
+    pointAnnotations: {
+      handler() {
+        this.annotations = utils.annotation.concatAndSortAnnotations(
+          [this.rectangleAnnotations, this.pointAnnotations],
+          (a, b) => a.id - b.id,
+        );
+        this.annotationsHidden = this.annotations.some(
+          a => a.color !== utils.annotation.stateColor.HIDDEN,
+        );
+      },
+      deep: true,
+    },
+    rectangleAnnotations: {
+      handler() {
+        this.annotations = utils.annotation.concatAndSortAnnotations(
+          [this.rectangleAnnotations, this.pointAnnotations],
+          (a, b) => a.id - b.id,
+        );
+        this.annotationsHidden = this.annotations.some(
+          a => a.color !== utils.annotation.stateColor.HIDDEN,
+        );
+      },
+      deep: true,
+    },
   },
+  computed: {},
   methods: {
     selectAnnotation(annotation) {
       this.$emit('select-annotation', annotation);
+    },
+    hideAnnotation(annotation) {
+      this.$emit('hide-annotation', annotation);
+    },
+    hideAllAnnotations() {
+      this.$emit('hide-all-annotations', this.annotationsHidden);
+      this.annotationsHidden = !this.annotationsHidden;
     },
     deleteAnnotation(annotation) {
       this.$emit('delete-annotation', annotation);
@@ -122,5 +175,9 @@ export default {
   height: 42px;
   background-color: lightgray;
   border-radius: 50%;
+}
+
+.annotation-color-swatch:hover {
+  transform: scale(0.95);
 }
 </style>

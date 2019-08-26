@@ -27,6 +27,8 @@ const store = new Vuex.Store({
       currentPost: null,
       currentPointAnnotations: [],
       currentRectangleAnnotations: [],
+      hideColor: 'purple',
+      selectColor: 'black',
       usedColors: [],
       colors: [
         '#D32F2F',
@@ -61,6 +63,8 @@ const store = new Vuex.Store({
     visualizationSelectable: state => state.visualization.selectable,
     visualizationFit: state => state.visualization.fitChart,
     selectedAnnotation: state => state.annotation.selectedAnnotation,
+    getHideColor: state => state.annotation.hideColor,
+    getSelectColor: state => state.annotation.selectColor,
     getColors: state => state.annotation.colors,
     getUsedColors: state => state.annotation.usedColors,
     getFreeColor: state => state.annotation.colors.filter(

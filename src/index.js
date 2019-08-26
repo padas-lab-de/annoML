@@ -1,6 +1,7 @@
 /* eslint-disable no-console,no-param-reassign,max-len */
 import axios from 'axios';
 import store from '@/store/plugin';
+import utils from '@/util/';
 import APIService from '@/service/APIService';
 
 const version = '__VERSION__';
@@ -22,6 +23,8 @@ const install = (Vue, config) => {
   // Exports plugin settings and store to components
   Vue.prototype.$annomlsettings = config;
   Vue.prototype.$annomlstore = store;
+
+  Vue.prototype.$annomlutils = utils;
 
   Vue.prototype.$resourceApi = axios.create({
     baseURL: config.resourceProvider.baseURL,

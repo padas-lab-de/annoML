@@ -11,7 +11,7 @@ Vue.use(annoML, {
   debug: true,
   baseURL: 'http://localhost:9999',
   isAuthenticated: store.getters.getAuthenticated,
-  currentUser: store.getters.getId,
+  currentUser: 'thomborg',
   authenticationProvider: {
     baseURL: 'http://localhost:8080',
     authToken: window.localStorage.getItem('token'),

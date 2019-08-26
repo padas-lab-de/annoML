@@ -24,11 +24,12 @@
           :tools="tools"
           @click="createAnnotation"
         /><span v-if="$annomlstore.getters.debug" style="color: lightgray">
-          Hash: {{ visualization.hash }}</span>
+          Hash: {{ visualization.hash }}</span
+        >
       </div>
       <loading v-else :message="'Loading Visualization'"></loading>
     </div>
-    <p v-if="visualization.description">{{visualization.description}}</p>
+    <p v-if="visualization.description">{{ visualization.description }}</p>
   </div>
 </template>
 <script>
@@ -39,7 +40,8 @@ import JSum from 'jsum';
 import VegaAnnotationOptions from '@/components/visualization/VegaAnnotationToolbar.vue';
 import VegaChart from '@/components/visualization/VegaChart.vue';
 import APIService from '@/service/APIService';
-import Loading from '@/components/discussion/util/Loading.vue';
+import utils from '@/util';
+import Loading from '@/components/extra/Loading.vue';
 
 export default {
   name: 'VisualizationView',
@@ -75,20 +77,20 @@ export default {
           type: d3annotation.annotationBadge,
         },
         pointAnnotation: {
-          name: 'POINT',
+          name: utils.annotation.types.POINT,
           type: d3annotation.annotationCalloutCircle,
         },
         freePointAnnotation: {
-          name: 'FREEPOINT',
+          name: utils.annotation.types.FREEPOINT,
           type: d3annotation.annotationCalloutCircle,
         },
         rectangleAnnotation: {
-          name: 'RECTANGLE',
+          name: utils.annotation.types.RECTANGLE,
           type: d3annotation.annotationCalloutRect,
           tempPoint: null,
         },
         freeRectangleAnnotation: {
-          name: 'FREERECTANGEL',
+          name: utils.annotation.types.FREERECTANGLE,
           type: d3annotation.annotationCalloutRect,
           tempPoint: null,
         },
@@ -102,29 +104,39 @@ export default {
     this.$annomlstore.watch(
       (state, getters) => getters.pointAnnotations,
       (pointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$annomlstore
-          .getters.currentPointAnnotations.concat(pointAnnotations);
+        this.vegaAnnotations.pointAnnotations = utils.annotation.concatAnnotations(
+          [pointAnnotations, this.$annomlstore.getters.currentPointAnnotations],
+        );
       },
     );
     this.$annomlstore.watch(
       (state, getters) => getters.rectangleAnnotations,
-      (rectangleAnnotation) => {
-        this.vegaAnnotations.rectangleAnnotations = this.$annomlstore.getters
-          .currentRectangleAnnotations.concat(rectangleAnnotation);
+      (rectangleAnnotations) => {
+        this.vegaAnnotations.rectangleAnnotations = utils.annotation.concatAnnotations(
+          [
+            rectangleAnnotations,
+            this.$annomlstore.getters.currentRectangleAnnotations,
+          ],
+        );
       },
     );
     this.$annomlstore.watch(
       (state, getters) => getters.currentPointAnnotations,
       (currentPointAnnotations) => {
-        this.vegaAnnotations.pointAnnotations = this.$annomlstore.getters
-          .pointAnnotations.concat(currentPointAnnotations);
+        this.vegaAnnotations.pointAnnotations = utils.annotation.concatAnnotations(
+          [currentPointAnnotations, this.$annomlstore.getters.pointAnnotations],
+        );
       },
     );
     this.$annomlstore.watch(
       (state, getters) => getters.currentRectangleAnnotations,
       (currentRectangleAnnotations) => {
-        this.vegaAnnotations.rectangleAnnotations = this.$annomlstore.getters
-          .currentRectangleAnnotations.concat(currentRectangleAnnotations);
+        this.vegaAnnotations.rectangleAnnotations = utils.annotation.concatAnnotations(
+          [
+            currentRectangleAnnotations,
+            this.$annomlstore.getters.rectangleAnnotations,
+          ],
+        );
       },
     );
     APIService(this.$serviceApi)
@@ -202,7 +214,7 @@ export default {
       annotation.subject = {
         radius: 5,
       };
-      annotation.color = 'grey';
+      annotation.color = this.$annomlstore.getSelectColor;
       this.tempAnnotations.push(annotation);
     },
     addPointAnnotation(item) {
@@ -217,7 +229,7 @@ export default {
       if (this.$annomlstore.getters.hasCurrentPost) {
         annotation.color = this.$annomlstore.getters.getCurrentPost.color;
       } else {
-        annotation.color = 'grey';
+        annotation.color = this.$annomlstore.getSelectColor;
       }
       this.$annomlstore.commit('addCurrentPointAnnotation', annotation);
     },
@@ -227,7 +239,7 @@ export default {
       annotation.annotationType = this.tools.rectangleAnnotation.name;
       annotation.id = Date.now();
       annotation.note = {
-        title: 'Rect Annotation',
+        title: 'Rectangle Annotation',
       };
       annotation.data = startPoint.datum;
       annotation.subject = {
@@ -237,7 +249,7 @@ export default {
       if (this.$annomlstore.getters.hasCurrentPost) {
         annotation.color = this.$annomlstore.getters.getCurrentPost.color;
       } else {
-        annotation.color = 'grey';
+        annotation.color = this.$annomlstore.getSelectColor;
       }
       this.$annomlstore.commit('addCurrentRectangleAnnotation', annotation);
       this.clearTempPoints();

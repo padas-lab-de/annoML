@@ -4,12 +4,13 @@
 </template>
 
 <script>
-/* eslint-disable no-console  */
+/* eslint-disable no-console, no-param-reassign  */
 
 import VegaEmbed from 'vega-embed';
 import * as d3 from 'd3';
 import * as d3annotation from 'd3-svg-annotation';
 import lodash from 'lodash';
+import utils from '@/util';
 
 export default {
   name: 'VegaChart',
@@ -189,7 +190,7 @@ export default {
       }
     },
     redrawAnnoations: lodash.debounce((self) => {
-      this.hideAnnotations = false;
+      self.hideAnnotations = false;
       self.drawAnnotations();
     }, 100),
     /**
@@ -219,9 +220,12 @@ export default {
         // POINT ANNOTATIONS
         if (
           this.annotations.pointAnnotations.length > 0
-          && this.$annomlstore.getters.showPointAnnotations) {
+          && this.$annomlstore.getters.showPointAnnotations
+        ) {
           this.svgAnnotations.pointAnnotations = this.makeAnnotations(
-            this.annotations.pointAnnotations,
+            this.annotations.pointAnnotations.filter(
+              a => a.color !== utils.annotation.stateColor.HIDDEN,
+            ),
             d3annotation.annotationCalloutCircle,
           );
           svg
@@ -232,9 +236,12 @@ export default {
         // RECTANGLE ANNOTATIONS
         if (
           this.annotations.rectangleAnnotations.length > 0
-          && this.$annomlstore.getters.showRectangleAnnotations) {
+          && this.$annomlstore.getters.showRectangleAnnotations
+        ) {
           this.svgAnnotations.rectangleAnnotations = this.makeAnnotations(
-            this.annotations.rectangleAnnotations,
+            this.annotations.rectangleAnnotations.filter(
+              a => a.color !== utils.annotation.stateColor.HIDDEN,
+            ),
             d3annotation.annotationCalloutRect,
           );
           svg

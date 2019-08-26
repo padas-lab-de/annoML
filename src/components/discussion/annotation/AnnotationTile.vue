@@ -5,7 +5,7 @@
       :style="{ borderColor: annotation.color }"
       no-body
     >
-      <b-input-group @click="selectAnnotation">
+      <b-input-group @click="clickEvent">
         <b-input-group-prepend :style="{ borderColor: annotation.color }">
           <span
             class="input-group-text"
@@ -14,7 +14,8 @@
               borderColor: annotation.color
             }"
           >
-            <font-awesome-layers v-if="annotation.annotationType === 'POINT'">
+            <font-awesome-layers
+                    v-if="annotation.annotationType === $annomlutils.annotation.types.POINT">
               <font-awesome-icon icon="bullseye" />
               <font-awesome-icon
                 icon="circle"
@@ -28,13 +29,14 @@
             </font-awesome-layers>
 
             <font-awesome-layers
-              v-else-if="annotation.annotationType === 'FREEPOINT'"
+              v-else-if="annotation.annotationType === $annomlutils.annotation.types.FREEPOINT"
             >
               <font-awesome-icon icon="bullseye" />
               <font-awesome-icon
                 icon="circle"
                 transform="shrink-9 down-7 right-7"
-                :style="{ color: 'black' }"
+                :style="{ color: 'gray' }"
+
               />
               <font-awesome-icon
                 icon="hand-pointer"
@@ -43,7 +45,7 @@
             </font-awesome-layers>
 
             <font-awesome-layers
-              v-else-if="annotation.annotationType === 'RECTANGLE'"
+              v-else-if="annotation.annotationType === $annomlutils.annotation.types.RECTANGLE"
             >
               <font-awesome-icon icon="vector-square" />
               <font-awesome-icon
@@ -58,13 +60,14 @@
             </font-awesome-layers>
 
             <font-awesome-layers
-              v-else-if="annotation.annotationType === 'FREERECTANGEL'"
+              v-else-if="annotation.annotationType === $annomlutils.annotation.types.FREERECTANGLE"
             >
               <font-awesome-icon icon="vector-square" />
               <font-awesome-icon
                 icon="circle"
                 transform="shrink-9 down-6 right-7"
-                :style="{ color: 'black' }"
+                :style="{ color: 'gray' }"
+
               />
               <font-awesome-icon
                 icon="hand-pointer"
@@ -79,6 +82,7 @@
           :disabled="!edit"
           v-model.trim.lazy="title"
           :style="{ borderColor: annotation.color }"
+          id="annotation-title"
         />
         <b-input-group-append
           v-if="edit"
@@ -121,6 +125,9 @@ export default {
   data() {
     return {
       title: '',
+      timer: null,
+      clickCounter: 0,
+      doubleClickTimeout: 200,
     };
   },
   created() {
@@ -132,8 +139,25 @@ export default {
     },
   },
   methods: {
+    clickEvent(event) {
+      event.preventDefault();
+      this.clickCounter = this.clickCounter + 1;
+      if (this.clickCounter === 1) {
+        this.timer = setTimeout(() => {
+          this.clickCounter = 0;
+          this.selectAnnotation();
+        }, this.doubleClickTimeout);
+      } else if (this.clickCounter === 2) {
+        clearTimeout(this.timer);
+        this.clickCounter = 0;
+        this.hideAnnotation();
+      }
+    },
     selectAnnotation() {
       this.$emit('select-annotation', this.annotation);
+    },
+    hideAnnotation() {
+      this.$emit('hide-annotation', this.annotation);
     },
     deleteAnnotation() {
       this.$emit('delete-annotation', this.annotation);
@@ -163,20 +187,21 @@ export default {
   border-right: none;
   background-color: #ffffff;
 }
+
 .UniqueFullWidth [class^="fa-"],
 [class*=" fa-"] {
   display: inline-block;
   color: white;
   width: 100%;
 }
-.UniqueFullWidth [class^="fa-"],
-[class*=" fa-"]:hover {
-  display: inline-block;
-  color: lightgray;
-  width: 100%;
-}
+
 .form-control:disabled,
 .form-control[readonly] {
   background-color: #fff;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 </style>

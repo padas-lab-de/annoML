@@ -8,7 +8,7 @@ const store = new Vuex.Store({
     auth: {
       profile: {
         id: 'thomborg',
-        accessToken: '87d59798-f7f5-4da7-8dc7-66d74732353c',
+        accessToken: 'f8a7ce26-2ba7-42b4-8fe2-1f134a271931',
       },
       token: null,
       isAuthenticated: true,

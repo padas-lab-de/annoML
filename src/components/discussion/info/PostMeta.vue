@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <span v-if="post.created">Posted on {{ formatTimestamp(post.created) }}</span>
-        <span v-if="post.author.externalId"> by {{ post.author.externalId }}</span>
-        <span v-else>User #{{ post.author.id }}</span>
-        <span v-if="checkIfIsSameDate(post.created, post.edited)">
+    <div class="postinfo">
+        <span class="username" v-if="post.author.externalId"> {{ post.author.externalId }}</span>
+        <span class="username" v-else>User #{{ post.author.id }}</span>
+        <span class="created" v-if="post.created"> on {{ formatTimestamp(post.created) }}</span>
+        <span class="edited" v-if="checkIfIsSameDate(post.created, post.edited)">
             ({{formatEditTimestamp(post.created, post.edited)}})</span>
     </div>
 </template>
@@ -14,7 +14,7 @@
 import APIService from '@/service/APIService';
 
 export default {
-  name: 'Postinfo',
+  name: 'PostMeta',
   props: {
     post: {
       type: Object,
@@ -56,5 +56,16 @@ export default {
 </script>
 
 <style scoped>
+    .username {
+        font-size: larger;
+        font-weight: bold;
+    }
+
+    .created, .edited {
+    }
+
+    .edited {
+        font-weight: lighter;
+    }
 
 </style>

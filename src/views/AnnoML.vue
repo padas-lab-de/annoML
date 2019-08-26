@@ -23,7 +23,7 @@
 import VisualizationView from '@/components/VisualizationView.vue';
 import APIService from '@/service/APIService';
 import DiscussionView from '@/components/DiscussionView.vue';
-import Loading from '@/components/discussion/util/Loading.vue';
+import Loading from '@/components/extra/Loading.vue';
 
 export default {
   name: 'AnnotationPage',
@@ -45,6 +45,7 @@ export default {
       .getDiscussion(this.$route.params.id)
       .then((result) => {
         this.discussion = result;
+        console.log(result);
         this.visualization = result.visualization;
       })
       .catch((message) => {

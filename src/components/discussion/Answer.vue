@@ -1,17 +1,25 @@
 <template>
   <div>
     <b-card class="mb-2 ml-2">
-      <highlight class="pull-right" :edit="$annomlsettings.currentUser
-      === question.author.externalId"
-                 :highlight="question.highlight === answer.id"></highlight>
-        <span
-        v-if="$annomlstore.getters.debug"
+      <highlight
         class="float-right"
+        v-if="
+        answer.id && (
+          $annomlsettings.currentUser !== answer.author.externalId ||
+            question.highlight === answer.id)
+        "
+        :edit="$annomlsettings.currentUser === question.author.externalId"
+        :highlight="question.highlight === answer.id"
+      ></highlight>
+      <span
+        v-if="$annomlstore.getters.debug"
+        class="float-right mr-1"
         style="color: lightgray"
       >
         {{ answer.author.username }} #{{ answer.id }}</span
       >
-        <annotation-select
+      <post-meta v-bind:post="answer"></post-meta>
+      <annotation-select
         class="annotation-select"
         v-if="
           answer.pointAnnotations.length > 0 ||
@@ -20,8 +28,10 @@
         :point-annotations="answer.pointAnnotations"
         :rectangle-annotations="answer.rectangleAnnotations"
         :annotation-color="answer.color"
-        :edit="$annomlsettings.currentUser === question.author.externalId"
+        :edit="false"
         @select-annotation="selectAnnotation"
+        @hide-annotation="hideAnnotation"
+        @hide-all-annotations="hideAnnoations"
       />
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
@@ -34,8 +44,11 @@
         Comment
       </b-button>
       <vote class="float-right btn"></vote>
-      <b-button @click="editAnswer" class="float-right" variant="light"
-                v-if="$annomlsettings.currentUser === answer.author.externalId"
+      <b-button
+        @click="editAnswer"
+        class="float-right"
+        variant="light"
+        v-if="$annomlsettings.currentUser === answer.author.externalId"
         >Edit</b-button
       >
     </b-card>
@@ -89,13 +102,15 @@ import CommentEditor from '@/components/discussion/CommentEditor.vue';
 import APIService from '@/service/APIService';
 import Vote from '@/components/discussion/vote/Vote.vue';
 import Highlight from '@/components/discussion/vote/Highlight.vue';
-
+import PostMeta from '@/components/discussion/info/PostMeta.vue';
+import utils from '@/util';
 
 export default {
   name: 'Answer',
   components: {
     Vote,
     Highlight,
+    PostMeta,
     CommentEditor,
     Comment,
     EditorContent,
@@ -149,7 +164,10 @@ export default {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
       if (comment.pointAnnotations.length > 0) {
-        this.$annomlstore.commit('addPointAnnotations', comment.pointAnnotations);
+        this.$annomlstore.commit(
+          'addPointAnnotations',
+          comment.pointAnnotations,
+        );
       }
       if (comment.rectangleAnnotations.length > 0) {
         this.$annomlstore.commit(
@@ -174,37 +192,18 @@ export default {
      * Annotation Handling
      */
     selectAnnotation(annotation) {
-      if (annotation.color === 'gray') {
-        this.clearAnnotation();
-      } else {
-        this.answer.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = 'gray';
-          } else {
-            pointAnnotation.color = this.answer.color;
-          }
-        });
-        this.answer.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = 'gray';
-          } else {
-            rectangleAnnotation.color = this.answer.color;
-          }
-        });
-        this.$emit('select-annotation', annotation);
-      }
+      utils.annotation.selectAnnotation(
+        [this.answer.pointAnnotations, this.answer.rectangleAnnotations],
+        annotation,
+        this.answer.color,
+      );
     },
-    clearAnnotation() {
-      this.comment.pointAnnotations.forEach((a) => {
-        const pointAnnotation = a;
-        pointAnnotation.color = this.answer.color;
-      });
-      this.comment.rectangleAnnotations.forEach((a) => {
-        const rectangleAnnotation = a;
-        rectangleAnnotation.color = this.answer.color;
-      });
+    hideAnnotation(annotation) {
+      utils.annotation.hideAnnotation(
+        [this.answer.pointAnnotations, this.answer.rectangleAnnotations],
+        annotation,
+        this.answer.color,
+      );
     },
     /**
      * Annotation Events
@@ -240,7 +239,8 @@ export default {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
       this.comments.push(comment);
-      APIService(this.$serviceApiAuthenticated).addComment(this.answer.id, comment)
+      APIService(this.$serviceApiAuthenticated)
+        .addComment(this.answer.id, comment)
         .then((response) => {
           console.log(response);
           this.$set(
@@ -253,7 +253,10 @@ export default {
               'removePointAnnotations',
               comment.pointAnnotations,
             );
-            this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
+            this.$annomlstore.commit(
+              'addPointAnnotations',
+              response.pointAnnotations,
+            );
           }
           if (response.rectangleAnnotations.length > 0) {
             this.$annomlstore.commit(
@@ -280,33 +283,38 @@ export default {
       if (comment.color) {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
-      APIService(this.$serviceApiAuthenticated).updateComment(comment).then((response) => {
-        this.$set(
-          this.comments,
-          this.comments.findIndex(a => a.id === comment.id),
-          response,
-        );
-        if (response.pointAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removePointAnnotations',
-            comment.pointAnnotations,
+      APIService(this.$serviceApiAuthenticated)
+        .updateComment(comment)
+        .then((response) => {
+          this.$set(
+            this.comments,
+            this.comments.findIndex(a => a.id === comment.id),
+            response,
           );
-          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
-        }
-        if (response.rectangleAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removeRectangleAnnotations',
-            comment.rectangleAnnotations,
-          );
-          this.$annomlstore.commit(
-            'addRectangleAnnotations',
-            response.rectangleAnnotations,
-          );
-        }
-        if (response.color && response.color !== comment.color) {
-          this.$annomlstore.commit('addUsedColor', comment.color);
-        }
-      });
+          if (response.pointAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removePointAnnotations',
+              comment.pointAnnotations,
+            );
+            this.$annomlstore.commit(
+              'addPointAnnotations',
+              response.pointAnnotations,
+            );
+          }
+          if (response.rectangleAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removeRectangleAnnotations',
+              comment.rectangleAnnotations,
+            );
+            this.$annomlstore.commit(
+              'addRectangleAnnotations',
+              response.rectangleAnnotations,
+            );
+          }
+          if (response.color && response.color !== comment.color) {
+            this.$annomlstore.commit('addUsedColor', comment.color);
+          }
+        });
     },
     deleteComment(comment) {
       this.currentEdit = null;
@@ -317,9 +325,11 @@ export default {
         this.$annomlstore.commit('removeUsedColor', comment.color);
       }
       this.comments = this.comments.filter(a => a.id !== comment.id);
-      APIService(this.$serviceApiAuthenticated).deleteComment(comment).then((response) => {
-        console.log(response);
-      });
+      APIService(this.$serviceApiAuthenticated)
+        .deleteComment(comment)
+        .then((response) => {
+          console.log(response);
+        });
     },
     editComment(comment) {
       if (!this.$annomlstore.getters.hasCurrentPost) {

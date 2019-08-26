@@ -41,7 +41,6 @@
             <font-awesome-icon
               icon="circle"
               transform="shrink-9 down-7 right-7"
-              :style="{ color: 'black' }"
             />
             <font-awesome-icon
               icon="hand-pointer"
@@ -83,7 +82,6 @@
             <font-awesome-icon
               icon="circle"
               transform="shrink-9 down-6 right-7"
-              :style="{ color: 'black' }"
             />
             <font-awesome-icon
               icon="hand-pointer"

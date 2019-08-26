@@ -1,13 +1,18 @@
 <template>
-  <div class="highlight" @click="toggleHighlight" v-if="highlight || edit">
+  <div
+    class="highlight"
+    :class="{ edit: edit }"
+    @click="toggleHighlight">
     <font-awesome-icon
-      v-if="starred"
+      v-if="highlight"
       icon="star"
+      size="2x"
       :style="{ color: '#ffbe3c' }"
     ></font-awesome-icon>
     <font-awesome-icon
       v-else
       icon="star"
+      size="2x"
       :style="{ color: 'lightgray' }"
     ></font-awesome-icon>
   </div>
@@ -40,12 +45,10 @@ export default {
 
 <style scoped>
 .highlight {
-  height: 40px;
-  width: 40px;
   color: gray;
 }
-.highlight:hover {
+.highlight:hover .edit {
   color: #ffbe3c;
-  transform: scale(1.2);
+  transform: scale(0.9);
 }
 </style>

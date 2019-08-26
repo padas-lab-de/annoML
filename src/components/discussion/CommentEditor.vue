@@ -13,6 +13,7 @@
         :annotation-color="comment.color"
         :edit="true"
         @select-annotation="selectAnnotation"
+        @hide-annotation="hideAnnotation"
         @delete-annotation="deleteAnnotation"
         @update-annotation="updateAnnotation"
         @update-color="updateAnnotationColor"
@@ -144,6 +145,7 @@ import {
   History,
 } from 'tiptap-extensions';
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
+import utils from '@/util';
 
 export default {
   name: 'CommentEditor',
@@ -256,13 +258,13 @@ export default {
      * Annotation Handling
      */
     selectAnnotation(annotation) {
-      if (annotation.color === 'gray') {
+      if (annotation.color === utils.annotation.stateColor.SELECTED) {
         this.clearAnnotation();
       } else {
         this.pointAnnotations.forEach((a) => {
           const pointAnnotation = a;
           if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = 'gray';
+            pointAnnotation.color = utils.annotation.stateColor.SELECTED;
           } else {
             pointAnnotation.color = this.post.color;
           }
@@ -270,7 +272,29 @@ export default {
         this.rectangleAnnotations.forEach((a) => {
           const rectangleAnnotation = a;
           if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = 'gray';
+            rectangleAnnotation.color = utils.annotation.stateColor.SELECTED;
+          } else {
+            rectangleAnnotation.color = this.post.color;
+          }
+        });
+      }
+    },
+    hideAnnotation(annotation) {
+      if (annotation.color === utils.annotation.stateColor.HIDDEN) {
+        this.clearAnnotation();
+      } else {
+        this.pointAnnotations.forEach((a) => {
+          const pointAnnotation = a;
+          if (pointAnnotation.id === annotation.id) {
+            pointAnnotation.color = utils.annotation.stateColor.HIDDEN;
+          } else {
+            pointAnnotation.color = this.post.color;
+          }
+        });
+        this.rectangleAnnotations.forEach((a) => {
+          const rectangleAnnotation = a;
+          if (rectangleAnnotation.id === annotation.id) {
+            rectangleAnnotation.color = utils.annotation.stateColor.HIDDEN;
           } else {
             rectangleAnnotation.color = this.post.color;
           }
@@ -291,20 +315,20 @@ export default {
       });
     },
     deleteAnnotation(annotation) {
-      if (annotation.type === 'POINT') {
+      if (annotation.type === utils.annotation.types.POINT) {
         this.pointAnnotations.filter(a => a.id !== annotation.id);
-      } else if (annotation.type === 'RECTANGLE') {
+      } else if (annotation.type === utils.annotation.types.RECTANGLE) {
         this.rectangleAnnotations.filter(a => a.id !== annotation.id);
       }
     },
     updateAnnotation(annotation) {
-      if (annotation.annotationType === 'POINT') {
+      if (annotation.annotationType === utils.annotation.types.POINT) {
         this.$set(
           this.pointAnnotations,
           this.pointAnnotations.findIndex(a => a.id === annotation.id),
           annotation,
         );
-      } else if (annotation.annotationType === 'RECTANGLE') {
+      } else if (annotation.annotationType === utils.annotation.types.RECTANGLE) {
         this.$set(
           this.rectangleAnnotations,
           this.rectangleAnnotations.findIndex(a => a.id === annotation.id),
@@ -313,16 +337,23 @@ export default {
       }
     },
     updateAnnotationColor(value) {
-      this.comment.color = value;
+      if (this.question.color) {
+        this.$annomlstore.commit('removeUsedColor', value);
+        this.question.color = value;
+      } else {
+        this.question.color = value;
+      }
       this.pointAnnotations.forEach((a) => {
         const pointAnnotation = a;
-        if (pointAnnotation.color !== 'gray') {
+        if (pointAnnotation.color !== utils.annotation.stateColor.HIDDEN
+          || pointAnnotation.color !== utils.annotation.stateColor.SELECTED) {
           pointAnnotation.color = value;
         }
       });
       this.rectangleAnnotations.forEach((a) => {
         const rectangleAnnotation = a;
-        if (rectangleAnnotation.color !== 'gray') {
+        if (rectangleAnnotation.color !== utils.annotation.stateColor.HIDDEN
+          || rectangleAnnotation.color !== utils.annotation.stateColor.SELECTED) {
           rectangleAnnotation.color = value;
         }
       });

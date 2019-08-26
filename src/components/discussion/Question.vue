@@ -11,7 +11,7 @@
           {{ $annomlsettings.currentUser  }} #{{ question.id }}</span
         >
       </h2>
-      <postinfo v-bind:post="question"></postinfo>
+      <post-meta v-bind:post="question"></post-meta>
       <annotation-select
         class="annotation-select"
         v-if="
@@ -21,8 +21,10 @@
         :point-annotations="question.pointAnnotations"
         :rectangle-annotations="question.rectangleAnnotations"
         :annotation-color="question.color"
-        :edit="$annomlsettings.currentUser === question.author.externalId"
+        :edit="false"
         @select-annotation="selectAnnotation"
+        @hide-annotation="hideAnnotation"
+        @hide-all-annotations="hideAnnotations"
       />
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
@@ -90,14 +92,15 @@ import Answer from '@/components/discussion/Answer.vue';
 import AnswerEditor from '@/components/discussion/AnswerEditor.vue';
 import APIService from '@/service/APIService';
 import Vote from '@/components/discussion/vote/Vote.vue';
-import Postinfo from '@/components/discussion/info/Postinfo.vue';
+import PostMeta from '@/components/discussion/info/PostMeta.vue';
+import utils from '@/util';
 
 
 export default {
   name: 'Question',
   components: {
     Vote,
-    Postinfo,
+    PostMeta,
     EditorContent,
     AnnotationSelect,
     AnswerEditor,
@@ -171,37 +174,16 @@ export default {
      * Annotation Handling
      */
     selectAnnotation(annotation) {
-      if (annotation.color === 'gray') {
-        this.clearAnnotation();
-      } else {
-        this.question.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = 'gray';
-          } else {
-            pointAnnotation.color = this.question.color;
-          }
-        });
-        this.question.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = 'gray';
-          } else {
-            rectangleAnnotation.color = this.question.color;
-          }
-        });
-        this.$emit('select-annotation', annotation);
-      }
+      utils.annotation.selectAnnotation([this.question.pointAnnotations,
+        this.question.rectangleAnnotations], annotation, this.question.color);
     },
-    clearAnnotation() {
-      this.question.pointAnnotations.forEach((a) => {
-        const pointAnnotation = a;
-        pointAnnotation.color = this.question.color;
-      });
-      this.question.rectangleAnnotations.forEach((a) => {
-        const rectangleAnnotation = a;
-        rectangleAnnotation.color = this.question.color;
-      });
+    hideAnnotation(annotation) {
+      utils.annotation.hideAnnotation([this.question.pointAnnotations,
+        this.question.rectangleAnnotations], annotation, this.question.color);
+    },
+    hideAnnotations(hidden) {
+      utils.annotation.hideAnnotations([this.question.pointAnnotations,
+        this.question.rectangleAnnotations], hidden, this.question.color);
     },
     /**
      * Annotation Events

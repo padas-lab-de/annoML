@@ -1,18 +1,24 @@
 <template>
   <div>
     <b-card class="mb-2 ml-4">
+      <highlight
+        class="float-right"
+        v-if="
+          comment.id && (
+            $annomlsettings.currentUser !== comment.author.externalId ||
+            question.highlight === comment.id)
+        "
+        :edit="$annomlsettings.currentUser === question.author.externalId"
+        :highlight="question.highlight === comment.id"
+      ></highlight>
       <span
         v-if="$annomlstore.getters.debug"
-        class="float-right"
+        class="float-right mr-1"
         style="color: lightgray"
       >
         {{ comment.author.username }} #{{ comment.id }}
       </span>
-      <highlight
-        class="pull-right"
-        :edit="$annomlsettings.currentUser === question.author.externalId"
-        :highlight="question.highlight === comment.id"
-      ></highlight>
+      <post-meta v-bind:post="comment"></post-meta>
       <annotation-select
         class="annotation-select"
         v-if="
@@ -22,8 +28,10 @@
         :point-annotations="comment.pointAnnotations"
         :rectangle-annotations="comment.rectangleAnnotations"
         :annotation-color="comment.color"
-        :edit="$annomlsettings.currentUser === question.author.externalId"
+        :edit="false"
         @select-annotation="selectAnnotation"
+        @hide-annotation="hideAnnotation"
+        @hide-all-annotations="hideAnnoations"
       />
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
@@ -63,11 +71,14 @@ import {
 } from 'tiptap-extensions';
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
 import Vote from '@/components/discussion/vote/Vote.vue';
+import PostMeta from '@/components/discussion/info/PostMeta.vue';
+import utils from '@/util';
 
 export default {
   name: 'Comment',
   components: {
     Vote,
+    PostMeta,
     EditorContent,
     AnnotationSelect,
   },
@@ -127,37 +138,18 @@ export default {
      * Annotation Handling
      */
     selectAnnotation(annotation) {
-      if (annotation.color === 'gray') {
-        this.clearAnnotation();
-      } else {
-        this.comment.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = 'gray';
-          } else {
-            pointAnnotation.color = this.comment.color;
-          }
-        });
-        this.comment.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = 'gray';
-          } else {
-            rectangleAnnotation.color = this.comment.color;
-          }
-        });
-        this.$emit('select-annotation', annotation);
-      }
+      utils.annotation.selectAnnotation(
+        [this.comment.pointAnnotations, this.comment.rectangleAnnotations],
+        annotation,
+        this.comment.color,
+      );
     },
-    clearAnnotation() {
-      this.comment.pointAnnotations.forEach((a) => {
-        const pointAnnotation = a;
-        pointAnnotation.color = this.comment.color;
-      });
-      this.comment.rectangleAnnotations.forEach((a) => {
-        const rectangleAnnotation = a;
-        rectangleAnnotation.color = this.comment.color;
-      });
+    hideAnnotation(annotation) {
+      utils.annotation.hideAnnotation(
+        [this.comment.pointAnnotations, this.comment.rectangleAnnotations],
+        annotation,
+        this.comment.color,
+      );
     },
     /**
      * Annotation Events

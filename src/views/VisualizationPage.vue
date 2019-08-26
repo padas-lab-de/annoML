@@ -80,7 +80,7 @@ export default {
                 id: discussion,
               },
             });
-          }).catch(window.alert('Unauthorized! Please try again'));
+          }).catch(message => window.alert(message));
         }
       });
     },
