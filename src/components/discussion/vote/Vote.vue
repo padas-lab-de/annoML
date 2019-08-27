@@ -1,10 +1,10 @@
 <template>
     <div class="vote pull-right btn">
-            <span @click="voteUp()" >
+            <span @click="voteUp()" v-if="edit">
                 <font-awesome-icon icon="chevron-up"></font-awesome-icon>
             </span>
-            <span >{{ voteCounter() }}</span>
-            <span @click="voteDown()" >
+            <div>{{ voteCounter() }}</div>
+            <span @click="voteDown()" v-if="edit">
             <font-awesome-icon icon="chevron-down">
             </font-awesome-icon>
             </span>
@@ -21,6 +21,31 @@ export default {
       votes: 0,
     };
   },
+  props: {
+    edit: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    post: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
+  watch: {
+    post: {
+      handler() {
+        this.votes = this.post.upVotes.length - this.post.downVotes.length;
+      },
+      deep: true,
+    },
+  },
+  created() {
+    this.votes = this.post.upVotes.length - this.post.downVotes.length;
+  },
   methods: {
     voteCounter() {
       if (this.votes > 0) {
@@ -31,18 +56,16 @@ export default {
       return '0';
     },
     voteUp() {
-      this.$emit();
-      this.votes = this.votes + 1;
+      this.$emit('up-vote');
     },
     voteDown() {
-      console.log('down');
-      this.votes = this.votes - 1;
+      this.$emit('down-vote');
     },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss">
     .vote {
         display: block;
     }
@@ -57,7 +80,17 @@ export default {
         display: inline-block;
     }
 
-    .vote i:hover {
+    .vote div {
+        color: black;
+        text-align: center;
+        margin-left:auto;
+        margin-right: auto;
+        height: 30px;
+        width: 30px;
+        display: inline-block;
+    }
+
+    .vote span:hover {
         color: black;
         transform: scale(1.2);
     }

@@ -71,7 +71,7 @@ import {
 } from 'tiptap-extensions';
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
 import Vote from '@/components/discussion/vote/Vote.vue';
-import PostMeta from '@/components/discussion/info/PostMeta.vue';
+import PostMeta from '@/components/info/PostMeta.vue';
 import utils from '@/util';
 
 export default {

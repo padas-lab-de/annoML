@@ -102,7 +102,7 @@ import CommentEditor from '@/components/discussion/CommentEditor.vue';
 import APIService from '@/service/APIService';
 import Vote from '@/components/discussion/vote/Vote.vue';
 import Highlight from '@/components/discussion/vote/Highlight.vue';
-import PostMeta from '@/components/discussion/info/PostMeta.vue';
+import PostMeta from '@/components/info/PostMeta.vue';
 import utils from '@/util';
 
 export default {

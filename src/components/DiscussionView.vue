@@ -5,12 +5,15 @@
       :key="question.id"
       :question="question"
       @edit-question="editQuestion"
+      @up-vote-question="upVoteQuestion"
+      @down-vote-question="downVoteQuestion"
     />
     <question-editor
       v-if="currentEdit"
       :question="$annomlstore.getters.getCurrentPost"
       :point-annotations="$annomlstore.getters.currentPointAnnotations"
       :rectangle-annotations="$annomlstore.getters.currentRectangleAnnotations"
+      :discussion="discussion"
       @save-question="saveQuestion"
       @update-question="updateQuestion"
       @delete-question="deleteQuestion"
@@ -78,7 +81,10 @@ export default {
         this.$annomlstore.commit('addUsedColor', question.color);
       }
       if (question.pointAnnotations.length > 0) {
-        this.$annomlstore.commit('addPointAnnotations', question.pointAnnotations);
+        this.$annomlstore.commit(
+          'addPointAnnotations',
+          question.pointAnnotations,
+        );
       }
       if (question.rectangleAnnotations.length > 0) {
         this.$annomlstore.commit(
@@ -107,7 +113,8 @@ export default {
       this.$annomlstore.commit('clearCurrentAnnotations');
       this.$annomlstore.commit('addUsedColor', question.color);
       this.questions.push(question);
-      APIService(this.$serviceApiAuthenticated).addQuestion(this.discussion.id, question)
+      APIService(this.$serviceApiAuthenticated)
+        .addQuestion(this.discussion.id, question)
         .then((response) => {
           console.log(response);
           this.$set(
@@ -120,7 +127,10 @@ export default {
               'removePointAnnotations',
               question.pointAnnotations,
             );
-            this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
+            this.$annomlstore.commit(
+              'addPointAnnotations',
+              response.pointAnnotations,
+            );
           }
           if (response.rectangleAnnotations.length > 0) {
             this.$annomlstore.commit(
@@ -143,33 +153,38 @@ export default {
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
-      APIService(this.$serviceApiAuthenticated).updateQuestion(question).then((response) => {
-        this.$set(
-          this.questions,
-          this.questions.findIndex(q => q.id === question.id),
-          response,
-        );
-        if (response.pointAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removePointAnnotations',
-            question.pointAnnotations,
+      APIService(this.$serviceApiAuthenticated)
+        .updateQuestion(question)
+        .then((response) => {
+          this.$set(
+            this.questions,
+            this.questions.findIndex(q => q.id === question.id),
+            response,
           );
-          this.$annomlstore.commit('addPointAnnotations', response.pointAnnotations);
-        }
-        if (response.rectangleAnnotations.length > 0) {
-          this.$annomlstore.commit(
-            'removeRectangleAnnotations',
-            question.rectangleAnnotations,
-          );
-          this.$annomlstore.commit(
-            'addRectangleAnnotations',
-            response.rectangleAnnotations,
-          );
-        }
-        if (response.color !== question.color) {
-          this.$annomlstore.commit('addUsedColor', question.color);
-        }
-      });
+          if (response.pointAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removePointAnnotations',
+              question.pointAnnotations,
+            );
+            this.$annomlstore.commit(
+              'addPointAnnotations',
+              response.pointAnnotations,
+            );
+          }
+          if (response.rectangleAnnotations.length > 0) {
+            this.$annomlstore.commit(
+              'removeRectangleAnnotations',
+              question.rectangleAnnotations,
+            );
+            this.$annomlstore.commit(
+              'addRectangleAnnotations',
+              response.rectangleAnnotations,
+            );
+          }
+          if (response.color !== question.color) {
+            this.$annomlstore.commit('addUsedColor', question.color);
+          }
+        });
     },
     deleteQuestion(question) {
       this.currentEdit = null;
@@ -181,7 +196,8 @@ export default {
       }
       this.questions.filter(q => q.id !== question.id);
       APIService(this.$serviceApiAuthenticated)
-        .deleteQuestion(this.discussion.id, question).then((response) => {
+        .deleteQuestion(this.discussion.id, question)
+        .then((response) => {
           console.log(response);
           this.$set(
             this.questions,
@@ -215,6 +231,28 @@ export default {
           );
         }
       }
+    },
+    upVoteQuestion(question) {
+      APIService(this.$serviceApiAuthenticated)
+        .upVoteQuestion(question)
+        .then((response) => {
+          this.$set(
+            this.questions,
+            this.questions.findIndex(q => q.id === question.id),
+            response,
+          );
+        });
+    },
+    downVoteQuestion(question) {
+      APIService(this.$serviceApiAuthenticated)
+        .downVoteQuestion(question)
+        .then((response) => {
+          this.$set(
+            this.questions,
+            this.questions.findIndex(q => q.id === question.id),
+            response,
+          );
+        });
     },
   },
 };

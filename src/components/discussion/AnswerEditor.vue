@@ -103,7 +103,7 @@
                 </b-button>
 
                 <b-button class="menubar__button" @click="commands.redo">
-                  <font-awesome-icon icon="undo" flip="horizontal"/>
+                  <font-awesome-icon icon="undo" flip="horizontal" />
                 </b-button>
               </b-button-group>
             </editor-menu-bar>
@@ -112,11 +112,18 @@
         <editor-content class="editor__content" id="editor" :editor="editor" />
       </div>
 
-      <b-button v-if="answer.id" @click="updateAnswer" variant="success"
+      <b-button v-if="answer.id" @click="updateAnswer" variant="primary"
         >Save
       </b-button>
-      <b-button v-else @click="submitAnswer" variant="success">Submit</b-button>
-      <b-button @click="deleteAnswer" variant="danger">Delete </b-button>
+      <b-button
+        v-else
+        @click="submitAnswer"
+        variant="success"
+        >Submit</b-button
+      >
+      <b-button class="ml-2" @click="deleteAnswer" variant="danger"
+        >Delete
+      </b-button>
     </b-card>
     <comment
       v-for="comment in answer.comments"
@@ -336,7 +343,9 @@ export default {
           this.pointAnnotations.findIndex(a => a.id === annotation.id),
           annotation,
         );
-      } else if (annotation.annotationType === utils.annotation.types.RECTANGLE) {
+      } else if (
+        annotation.annotationType === utils.annotation.types.RECTANGLE
+      ) {
         this.$set(
           this.rectangleAnnotations,
           this.rectangleAnnotations.findIndex(a => a.id === annotation.id),
@@ -353,15 +362,19 @@ export default {
       }
       this.pointAnnotations.forEach((a) => {
         const pointAnnotation = a;
-        if (pointAnnotation.color !== utils.annotation.stateColor.HIDDEN
-          || pointAnnotation.color !== utils.annotation.stateColor.SELECTED) {
+        if (
+          pointAnnotation.color !== utils.annotation.stateColor.HIDDEN
+          || pointAnnotation.color !== utils.annotation.stateColor.SELECTED
+        ) {
           pointAnnotation.color = value;
         }
       });
       this.rectangleAnnotations.forEach((a) => {
         const rectangleAnnotation = a;
-        if (rectangleAnnotation.color !== utils.annotation.stateColor.HIDDEN
-          || rectangleAnnotation.color !== utils.annotation.stateColor.SELECTED) {
+        if (
+          rectangleAnnotation.color !== utils.annotation.stateColor.HIDDEN
+          || rectangleAnnotation.color !== utils.annotation.stateColor.SELECTED
+        ) {
           rectangleAnnotation.color = value;
         }
       });

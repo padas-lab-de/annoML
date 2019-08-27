@@ -33,71 +33,71 @@
       <div class="editor-toolbar">
         <b-button-toolbar>
           <editor-menu-bar
-                  class="menubar"
-                  :editor="editor"
-                  v-slot="{ commands, isActive }"
+            class="menubar"
+            :editor="editor"
+            v-slot="{ commands, isActive }"
           >
             <b-button-group size="sm">
               <b-button
-                      class="menubar__b-button"
-                      :class="{ active: isActive.bold() }"
-                      @click="commands.bold"
+                class="menubar__b-button"
+                :class="{ active: isActive.bold() }"
+                @click="commands.bold"
               >
                 <font-awesome-icon icon="bold"
-                /></b-button>
+              /></b-button>
 
               <b-button
-                      class="menubar__b-button"
-                      :class="{ active: isActive.italic() }"
-                      @click="commands.italic"
+                class="menubar__b-button"
+                :class="{ active: isActive.italic() }"
+                @click="commands.italic"
               >
                 <font-awesome-icon icon="italic"
-                /></b-button>
+              /></b-button>
 
               <b-button
-                      class="menubar__b-button"
-                      :class="{ active: isActive.strike() }"
-                      @click="commands.strike"
+                class="menubar__b-button"
+                :class="{ active: isActive.strike() }"
+                @click="commands.strike"
               >
                 <font-awesome-icon icon="strikethrough"
-                /></b-button>
+              /></b-button>
 
               <b-button
-                      class="menubar__b-button"
-                      :class="{ active: isActive.underline() }"
-                      @click="commands.underline"
+                class="menubar__b-button"
+                :class="{ active: isActive.underline() }"
+                @click="commands.underline"
               >
                 <font-awesome-icon icon="underline"
-                /></b-button>
+              /></b-button>
 
               <b-button
-                      class="menubar__button"
-                      :class="{ active: isActive.bullet_list() }"
-                      @click="commands.bullet_list"
+                class="menubar__button"
+                :class="{ active: isActive.bullet_list() }"
+                @click="commands.bullet_list"
               >
                 <font-awesome-icon icon="list-ul" />
               </b-button>
 
               <b-button
-                      class="menubar__button"
-                      :class="{ active: isActive.ordered_list() }"
-                      @click="commands.ordered_list"
+                class="menubar__button"
+                :class="{ active: isActive.ordered_list() }"
+                @click="commands.ordered_list"
               >
                 <font-awesome-icon icon="list-ol" />
               </b-button>
 
               <b-button
-                      class="menubar__button"
-                      :class="{ active: isActive.blockquote() }"
-                      @click="commands.blockquote"
+                class="menubar__button"
+                :class="{ active: isActive.blockquote() }"
+                @click="commands.blockquote"
               >
                 <font-awesome-icon icon="quote-left" />
               </b-button>
 
               <b-button
-                      class="menubar__button"
-                      :class="{ active: isActive.code_block() }"
-                      @click="commands.code_block"
+                class="menubar__button"
+                :class="{ active: isActive.code_block() }"
+                @click="commands.code_block"
               >
                 <font-awesome-icon icon="code" />
               </b-button>
@@ -106,7 +106,7 @@
               </b-button>
 
               <b-button class="menubar__button" @click="commands.redo">
-                <font-awesome-icon icon="undo" flip="horizontal"/>
+                <font-awesome-icon icon="undo" flip="horizontal" />
               </b-button>
             </b-button-group>
           </editor-menu-bar>
@@ -115,15 +115,20 @@
       <editor-content class="editor__content" id="editor" :editor="editor" />
     </div>
     <div>
-
-      <b-button v-if="question.id" @click="updateQuestion" variant="success"
+      <b-button v-if="question.id" @click="updateQuestion" variant="primary"
         >Save
       </b-button>
 
-      <b-button v-else @click="submitQuestion" variant="success"
+      <b-button
+        v-else
+        @click="submitQuestion"
+        variant="success"
+        :disabled="!discussion.published"
         >Submit</b-button
       >
-      <b-button class="ml-1" @click="deleteQuestion" variant="danger">Delete </b-button>
+      <b-button class="ml-1" @click="deleteQuestion" variant="danger"
+        >Delete
+      </b-button>
     </div>
     <answer
       v-for="answer in question.answers"
@@ -184,6 +189,12 @@ export default {
       type: Array,
       default() {
         return [];
+      },
+    },
+    discussion: {
+      type: Object,
+      default() {
+        return null;
       },
     },
   },
@@ -338,7 +349,9 @@ export default {
     deleteAnnotation(annotation) {
       if (annotation.annotationType === utils.annotation.types.POINT) {
         this.pointAnnotations.filter(a => a.id !== annotation.id);
-      } else if (annotation.annotationType === utils.annotation.types.RECTANGLE) {
+      } else if (
+        annotation.annotationType === utils.annotation.types.RECTANGLE
+      ) {
         this.rectangleAnnotations.filter(a => a.id !== annotation.id);
       }
     },
@@ -349,7 +362,9 @@ export default {
           this.pointAnnotations.findIndex(a => a.id === annotation.id),
           annotation,
         );
-      } else if (annotation.annotationType === utils.annotation.types.RECTANGLE) {
+      } else if (
+        annotation.annotationType === utils.annotation.types.RECTANGLE
+      ) {
         this.$set(
           this.rectangleAnnotations,
           this.rectangleAnnotations.findIndex(a => a.id === annotation.id),
@@ -366,15 +381,19 @@ export default {
       }
       this.pointAnnotations.forEach((a) => {
         const pointAnnotation = a;
-        if (pointAnnotation.color !== utils.annotation.stateColor.HIDDEN
-          || pointAnnotation.color !== utils.annotation.stateColor.SELECTED) {
+        if (
+          pointAnnotation.color !== utils.annotation.stateColor.HIDDEN
+          || pointAnnotation.color !== utils.annotation.stateColor.SELECTED
+        ) {
           pointAnnotation.color = value;
         }
       });
       this.rectangleAnnotations.forEach((a) => {
         const rectangleAnnotation = a;
-        if (rectangleAnnotation.color !== utils.annotation.stateColor.HIDDEN
-          || rectangleAnnotation.color !== utils.annotation.stateColor.SELECTED) {
+        if (
+          rectangleAnnotation.color !== utils.annotation.stateColor.HIDDEN
+          || rectangleAnnotation.color !== utils.annotation.stateColor.SELECTED
+        ) {
           rectangleAnnotation.color = value;
         }
       });

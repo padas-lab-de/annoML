@@ -11,6 +11,9 @@ const store = new Vuex.Store({
     settings: {
       debug: true,
     },
+    discussion: {
+      published: false,
+    },
     visualization: {
       id: 5,
       showPointAnnotations: true,

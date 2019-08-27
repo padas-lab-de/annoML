@@ -21,6 +21,16 @@ const service = instance => ({
       .then(response => response.data);
   },
 
+  upVoteQuestion: (question) => {
+    const url = `/discussions/questions/${question.id}/vote/up`;
+    return instance.get(url).then(response => response.data)
+  },
+
+  downVoteQuestion: (question) => {
+    const url = `/discussions/questions/${question.id}/vote/down`;
+    return instance.get(url).then(response => response.data)
+  },
+
   addAnswer: (questionId, answer) => {
     const url = `/discussions/questions/${questionId}/answer`;
     return instance.post(url, answer)
@@ -57,6 +67,20 @@ const service = instance => ({
     const url = `/visualizations/${visId}`;
     return instance.get(url)
       .then(response => response.data);
+  },
+
+  updateDiscussion: (discussionId, hash, title) => {
+    const url = `discussions/${discussionId}`;
+    const body = {
+      hash,
+      title,
+    };
+    return instance.put(url, body).then(response => response.data);
+  },
+
+  deleteDiscussion: (discussionId) => {
+    const url = `discussions/${discussionId}`;
+    return instance.delete(url).then(response => response.data);
   },
 
   getDiscussion: (disId) => {

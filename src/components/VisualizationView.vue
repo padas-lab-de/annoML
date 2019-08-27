@@ -24,7 +24,7 @@
           :tools="tools"
           @click="createAnnotation"
         /><span v-if="$annomlstore.getters.debug" style="color: lightgray">
-          Hash: {{ visualization.hash }}</span
+          Hash: {{ discussion.visualizationHash }}</span
         >
       </div>
       <loading v-else :message="'Loading Visualization'"></loading>
@@ -51,8 +51,8 @@ export default {
     VegaChart,
   },
   props: {
-    visualizationId: {
-      type: Number,
+    discussion: {
+      type: Object,
       default() {
         return null;
       },
@@ -61,7 +61,6 @@ export default {
   data() {
     return {
       scaleFactor: 1,
-      discussion: null,
       visualization: null,
       chart: null,
       questions: null,
@@ -140,10 +139,9 @@ export default {
       },
     );
     APIService(this.$serviceApi)
-      .getVisualization(this.visualizationId)
+      .getVisualization(this.discussion.visualization.id)
       .then((data) => {
         this.visualization = data;
-        console.log(this.visualization);
         if (this.visualization.schema) {
           this.chart = this.visualization.schema;
         } else if (this.visualization.reference) {
@@ -173,13 +171,15 @@ export default {
   watch: {
     chart() {
       if (this.chart) {
-        if (this.visualization.hash) {
+        if (this.discussion.visualizationHash) {
           const hash = JSum.digest(this.chart, 'SHA256', 'hex');
-          if (hash !== this.visualization.hash) {
+          if (hash !== this.discussion.visualizationHash) {
             this.modifiedWarning = true;
           }
-        } else {
-          this.visualization.hash = JSum.digest(this.chart, 'SHA256', 'hex');
+        } else if (
+          this.$annomlsettings.currentUser === this.discussion.author.externalId
+        ) {
+          this.discussion.visualizationHash = JSum.digest(this.chart, 'SHA256', 'hex');
           this.modifiedWarning = false;
         }
       }

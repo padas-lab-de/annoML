@@ -30,7 +30,7 @@ export default {
     annotations: {
       type: Object,
       default() {
-        return null;
+        return {};
       },
     },
     tempAnnotations: {

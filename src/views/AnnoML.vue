@@ -2,11 +2,16 @@
   <div class="annoml-page">
     <b-container fluid v-if="discussion">
       <b-row>
+        <b-col cols="12">
+          <discussion-info
+            v-bind:discussion="discussion"
+            @update-discussion="updateDiscussion"
+          ></discussion-info>
+        </b-col>
+      </b-row>
+      <b-row>
         <b-col cols="12" md="6">
-          <visualization-view
-            v-if="visualization"
-            :visualization-id="visualization.id"
-          />
+          <visualization-view :discussion="discussion" />
         </b-col>
         <b-col cols="12" md="6">
           <discussion-view :discussion="discussion" />
@@ -24,10 +29,12 @@ import VisualizationView from '@/components/VisualizationView.vue';
 import APIService from '@/service/APIService';
 import DiscussionView from '@/components/DiscussionView.vue';
 import Loading from '@/components/extra/Loading.vue';
+import DiscussionInfo from '@/components/info/DiscussionInfo.vue';
 
 export default {
   name: 'AnnotationPage',
   components: {
+    DiscussionInfo,
     Loading,
     DiscussionView,
     VisualizationView,
@@ -35,7 +42,6 @@ export default {
   data() {
     return {
       discussion: null,
-      visualization: null,
       message: 'Loading Discussion',
       warning: null,
     };
@@ -45,12 +51,15 @@ export default {
       .getDiscussion(this.$route.params.id)
       .then((result) => {
         this.discussion = result;
-        console.log(result);
-        this.visualization = result.visualization;
       })
       .catch((message) => {
-        this.warning = message;
+        this.warning = message.toString();
       });
+  },
+  methods: {
+    updateDiscussion(discussion) {
+      this.discussion = discussion;
+    },
   },
 };
 </script>
