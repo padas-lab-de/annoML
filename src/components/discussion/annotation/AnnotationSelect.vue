@@ -6,10 +6,10 @@
         <swatches
           v-if="edit"
           v-model="color"
-          :colors="$annomlstore.getters.getColors"
+          :colors="$annomlutils.annotation.postColors"
           :show-fallback="
             $annomlstore.getters.getUsedColors.length >
-              $annomlstore.getters.getColors.length
+              $annomlutils.annotation.postColors.length
           "
           row-length="5"
           :exceptions="
@@ -105,7 +105,7 @@ export default {
     if (this.annotationColor) {
       this.color = this.annotationColor;
     } else {
-      this.color = this.$annomlstore.getters.getFreeColor;
+      this.color = utils.annotation.getFreeColor(this.$annomlstore.getters.getUsedColors);
     }
     this.annotations = utils.annotation.concatAndSortAnnotations(
       [this.rectangleAnnotations, this.pointAnnotations],

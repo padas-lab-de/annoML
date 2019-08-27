@@ -46,6 +46,9 @@ export default {
       warning: null,
     };
   },
+  created() {
+    this.$annomlstore.commit('clearStore');
+  },
   mounted() {
     APIService(this.$serviceApiAuthenticated)
       .getDiscussion(this.$route.params.id)

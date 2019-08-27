@@ -15,7 +15,6 @@ const store = new Vuex.Store({
       published: false,
     },
     visualization: {
-      id: 5,
       showPointAnnotations: true,
       showFreePointAnnotations: true,
       showRectangleAnnotations: true,
@@ -26,34 +25,10 @@ const store = new Vuex.Store({
     annotation: {
       pointAnnotations: [],
       rectangleAnnotations: [],
-      selectedAnnotation: null,
       currentPost: null,
       currentPointAnnotations: [],
       currentRectangleAnnotations: [],
-      hideColor: 'purple',
-      selectColor: 'black',
       usedColors: [],
-      colors: [
-        '#D32F2F',
-        '#C2185B',
-        '#7B1FA2',
-        '#512DA8',
-        '#303F9F',
-        '#1976D2',
-        '#0288D1',
-        '#0097A7',
-        '#00796B',
-        '#388E3C',
-        '#689F38',
-        '#AFB42B',
-        '#FBC02D',
-        '#FFA000',
-        '#F57C00',
-        '#E64A19',
-        '#5D4037',
-        '#616161',
-        '#455A64',
-      ],
     },
   },
   getters: {
@@ -65,14 +40,7 @@ const store = new Vuex.Store({
     showFreeRectangleAnnotations: state => state.visualization.showFreeRectangleAnnotations,
     visualizationSelectable: state => state.visualization.selectable,
     visualizationFit: state => state.visualization.fitChart,
-    selectedAnnotation: state => state.annotation.selectedAnnotation,
-    getHideColor: state => state.annotation.hideColor,
-    getSelectColor: state => state.annotation.selectColor,
-    getColors: state => state.annotation.colors,
     getUsedColors: state => state.annotation.usedColors,
-    getFreeColor: state => state.annotation.colors.filter(
-      c => !state.annotation.usedColors.includes(c),
-    )[0],
     getCurrentPost: state => state.annotation.currentPost,
     hasCurrentPost: state => state.annotation.currentPost !== null,
     pointAnnotations: state => state.annotation.pointAnnotations,
@@ -81,6 +49,20 @@ const store = new Vuex.Store({
     currentRectangleAnnotations: state => state.annotation.currentRectangleAnnotations,
   },
   mutations: {
+    clearStore(state) {
+      state.annotation.pointAnnotations = [];
+      state.annotation.rectangleAnnotations = [];
+      state.annotation.currentPointAnnotations = [];
+      state.annotation.currentRectangleAnnotations = [];
+      state.annotation.currentPost = null;
+      state.annotation.stateColor = [];
+      state.visualization.showPointAnnotations = true;
+      state.visualization.showFreePointAnnotations = true;
+      state.visualization.showRectangleAnnotations = true;
+      state.visualization.showFreeRectangleAnnotations = true;
+      state.visualization.selectable = true;
+      state.visualization.fitChart = true;
+    },
     importSettings(state, settings) {
       state.settings = settings;
     },
@@ -131,17 +113,15 @@ const store = new Vuex.Store({
       state.annotation.pointAnnotations.push(pointAnnotation);
     },
     addPointAnnotations(state, pointAnnotations) {
-      state.annotation.pointAnnotations = state.annotation.pointAnnotations.concat(
-        pointAnnotations,
-      );
+      state.annotation.pointAnnotations = state.annotation
+        .pointAnnotations.concat(pointAnnotations);
     },
     addRectangleAnnotation(state, rectangleAnnotation) {
       state.annotation.rectangleAnnotations.push(rectangleAnnotation);
     },
     addRectangleAnnotations(state, rectangleAnnotations) {
-      state.annotation.rectangleAnnotations = state.annotation.rectangleAnnotations.concat(
-        rectangleAnnotations,
-      );
+      state.annotation.rectangleAnnotations = state.annotation
+        .rectangleAnnotations.concat(rectangleAnnotations);
     },
     addCurrentPointAnnotation(state, pointAnnotation) {
       state.annotation.currentPointAnnotations.push(pointAnnotation);

@@ -163,6 +163,7 @@ import {
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
 import Answer from '@/components/discussion/Answer.vue';
 import utils from '@/util';
+import APIService from '@/service/APIService';
 
 export default {
   name: 'QuestionEditor',
@@ -256,6 +257,8 @@ export default {
           },
           pointAnnotations: this.pointAnnotations,
           rectangleAnnotations: this.rectangleAnnotations,
+          upVotes: [],
+          downVotes: [],
           answers: this.question.answers,
         };
         this.$emit('save-question', post);
@@ -293,13 +296,13 @@ export default {
       this.$annomlstore.commit('enableSelectable');
     },
     selectAnnotation(annotation) {
-      if (annotation.color === 'black') {
+      if (annotation.color === utils.annotation.stateColor.SELECTED) {
         this.clearAnnotation();
       } else {
         this.pointAnnotations.forEach((a) => {
           const pointAnnotation = a;
           if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = 'black';
+            pointAnnotation.color = utils.annotation.stateColor.SELECTED;
           } else {
             pointAnnotation.color = this.question.color;
           }
@@ -307,7 +310,7 @@ export default {
         this.rectangleAnnotations.forEach((a) => {
           const rectangleAnnotation = a;
           if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = 'black';
+            rectangleAnnotation.color = utils.annotation.stateColor.SELECTED;
           } else {
             rectangleAnnotation.color = this.question.color;
           }
@@ -399,11 +402,36 @@ export default {
       });
     },
     /**
-     * Helpers
+     * Editor Helpers
      */
     editorHasContent() {
       const body = this.editor.getHTML();
       return body !== '<p></p>';
+    },
+    /**
+     * Answer Handling
+     */
+    upVoteAnswer(answer) {
+      APIService(this.$serviceApiAuthenticated)
+        .upVoteAnswer(answer)
+        .then((response) => {
+          this.$set(
+            this.answers,
+            this.answers.findIndex(q => q.id === answer.id),
+            response,
+          );
+        });
+    },
+    downVoteAnswer(answer) {
+      APIService(this.$serviceApiAuthenticated)
+        .downVoteAnswer(answer)
+        .then((response) => {
+          this.$set(
+            this.answers,
+            this.answers.findIndex(q => q.id === answer.id),
+            response,
+          );
+        });
     },
   },
   beforeDestroy() {

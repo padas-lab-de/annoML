@@ -218,8 +218,11 @@ export default {
           author: {
             username: '',
           },
+
           pointAnnotations: this.pointAnnotations,
           rectangleAnnotations: this.rectangleAnnotations,
+          upVotes: [],
+          downVotes: [],
         };
         if (
           this.pointAnnotations.length > 0
@@ -263,48 +266,25 @@ export default {
      * Annotation Handling
      */
     selectAnnotation(annotation) {
-      if (annotation.color === utils.annotation.stateColor.SELECTED) {
-        this.clearAnnotation();
-      } else {
-        this.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = utils.annotation.stateColor.SELECTED;
-          } else {
-            pointAnnotation.color = this.post.color;
-          }
-        });
-        this.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = utils.annotation.stateColor.SELECTED;
-          } else {
-            rectangleAnnotation.color = this.post.color;
-          }
-        });
-      }
+      utils.annotation.selectAnnotation(
+        [this.comment.pointAnnotations, this.comment.rectangleAnnotations],
+        annotation,
+        this.comment.color,
+      );
     },
     hideAnnotation(annotation) {
-      if (annotation.color === utils.annotation.stateColor.HIDDEN) {
-        this.clearAnnotation();
-      } else {
-        this.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = utils.annotation.stateColor.HIDDEN;
-          } else {
-            pointAnnotation.color = this.post.color;
-          }
-        });
-        this.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = utils.annotation.stateColor.HIDDEN;
-          } else {
-            rectangleAnnotation.color = this.post.color;
-          }
-        });
-      }
+      utils.annotation.hideAnnotation(
+        [this.comment.pointAnnotations, this.comment.rectangleAnnotations],
+        annotation,
+        this.comment.color,
+      );
+    },
+    hideAnnotations(hidden) {
+      utils.annotation.hideAnnotations(
+        [this.comment.pointAnnotations, this.comment.rectangleAnnotations],
+        hidden,
+        this.comment.color,
+      );
     },
     addNewAnnotation() {
       this.$annomlstore.commit('enableSelectable');
@@ -344,11 +324,11 @@ export default {
       }
     },
     updateAnnotationColor(value) {
-      if (this.question.color) {
+      if (this.comment.color) {
         this.$annomlstore.commit('removeUsedColor', value);
-        this.question.color = value;
+        this.comment.color = value;
       } else {
-        this.question.color = value;
+        this.comment.color = value;
       }
       this.pointAnnotations.forEach((a) => {
         const pointAnnotation = a;
@@ -388,15 +368,6 @@ $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
 
-#question-title {
-  border: none;
-  font-size: 2rem;
-  width: 100%;
-}
-
-#question-title:focus {
-  outline: none;
-}
 
 .annotation-select {
   margin-top: 0.5rem;

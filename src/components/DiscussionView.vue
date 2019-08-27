@@ -51,6 +51,27 @@ export default {
     };
   },
   mounted() {
+
+  },
+  created() {
+    this.questions = this.discussion.questions;
+    this.questions.forEach((question) => {
+      if (question.color) {
+        this.$annomlstore.commit('addUsedColor', question.color);
+      }
+      if (question.pointAnnotations.length > 0) {
+        this.$annomlstore.commit(
+          'addPointAnnotations',
+          question.pointAnnotations,
+        );
+      }
+      if (question.rectangleAnnotations.length > 0) {
+        this.$annomlstore.commit(
+          'addRectangleAnnotations',
+          question.rectangleAnnotations,
+        );
+      }
+    });
     this.$annomlstore.watch(
       (state, getters) => getters.currentPointAnnotations,
       (currentPointAnnotations) => {
@@ -73,26 +94,6 @@ export default {
         }
       },
     );
-  },
-  created() {
-    this.questions = this.discussion.questions;
-    this.questions.forEach((question) => {
-      if (question.color) {
-        this.$annomlstore.commit('addUsedColor', question.color);
-      }
-      if (question.pointAnnotations.length > 0) {
-        this.$annomlstore.commit(
-          'addPointAnnotations',
-          question.pointAnnotations,
-        );
-      }
-      if (question.rectangleAnnotations.length > 0) {
-        this.$annomlstore.commit(
-          'addRectangleAnnotations',
-          question.rectangleAnnotations,
-        );
-      }
-    });
   },
   methods: {
     /**
@@ -232,6 +233,9 @@ export default {
         }
       }
     },
+    /**
+     * Vote Handling
+     */
     upVoteQuestion(question) {
       APIService(this.$serviceApiAuthenticated)
         .upVoteQuestion(question)

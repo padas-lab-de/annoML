@@ -130,6 +130,8 @@
       :key="comment.id"
       :comment="comment"
       :question="question"
+      @up-vote-comment="upVoteComment"
+      @down-vote-comment="downVoteComment"
     />
   </div>
 </template>
@@ -158,6 +160,7 @@ import {
 import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
 import Comment from '@/components/discussion/Comment.vue';
 import utils from '@/util';
+import APIService from '@/service/APIService';
 
 export default {
   name: 'AnswerEditor',
@@ -228,6 +231,8 @@ export default {
           },
           pointAnnotations: this.pointAnnotations,
           rectangleAnnotations: this.rectangleAnnotations,
+          upVotes: [],
+          downVotes: [],
           comments: this.answer.comments,
         };
         if (
@@ -273,48 +278,25 @@ export default {
      * Annotation Handling
      */
     selectAnnotation(annotation) {
-      if (annotation.color === utils.annotation.stateColor.SELECTED) {
-        this.clearAnnotation();
-      } else {
-        this.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = utils.annotation.stateColor.SELECTED;
-          } else {
-            pointAnnotation.color = this.post.color;
-          }
-        });
-        this.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = utils.annotation.stateColor.SELECTED;
-          } else {
-            rectangleAnnotation.color = this.post.color;
-          }
-        });
-      }
+      utils.annotation.selectAnnotation(
+        [this.answer.pointAnnotations, this.answer.rectangleAnnotations],
+        annotation,
+        this.answer.color,
+      );
     },
     hideAnnotation(annotation) {
-      if (annotation.color === utils.annotation.stateColor.HIDDEN) {
-        this.clearAnnotation();
-      } else {
-        this.pointAnnotations.forEach((a) => {
-          const pointAnnotation = a;
-          if (pointAnnotation.id === annotation.id) {
-            pointAnnotation.color = utils.annotation.stateColor.HIDDEN;
-          } else {
-            pointAnnotation.color = this.post.color;
-          }
-        });
-        this.rectangleAnnotations.forEach((a) => {
-          const rectangleAnnotation = a;
-          if (rectangleAnnotation.id === annotation.id) {
-            rectangleAnnotation.color = utils.annotation.stateColor.HIDDEN;
-          } else {
-            rectangleAnnotation.color = this.post.color;
-          }
-        });
-      }
+      utils.annotation.hideAnnotation(
+        [this.answer.pointAnnotations, this.answer.rectangleAnnotations],
+        annotation,
+        this.answer.color,
+      );
+    },
+    hideAnnotations(hidden) {
+      utils.annotation.hideAnnotations(
+        [this.answer.pointAnnotations, this.answer.rectangleAnnotations],
+        hidden,
+        this.answer.color,
+      );
     },
     addNewAnnotation() {
       this.$annomlstore.commit('enableSelectable');
@@ -354,11 +336,11 @@ export default {
       }
     },
     updateAnnotationColor(value) {
-      if (this.question.color) {
+      if (this.answer.color) {
         this.$annomlstore.commit('removeUsedColor', value);
-        this.question.color = value;
+        this.answer.color = value;
       } else {
-        this.question.color = value;
+        this.answer.color = value;
       }
       this.pointAnnotations.forEach((a) => {
         const pointAnnotation = a;
@@ -386,6 +368,31 @@ export default {
       const body = this.editor.getHTML();
       return body !== '<p></p>';
     },
+    /**
+     * Vote Handling
+     */
+    upVoteComment(comment) {
+      APIService(this.$serviceApiAuthenticated)
+        .upVoteComment(comment)
+        .then((response) => {
+          this.$set(
+            this.comments,
+            this.comments.findIndex(q => q.id === comment.id),
+            response,
+          );
+        });
+    },
+    downVoteComment(comment) {
+      APIService(this.$serviceApiAuthenticated)
+        .downVoteComment(comment)
+        .then((response) => {
+          this.$set(
+            this.comments,
+            this.comments.findIndex(q => q.id === comment.id),
+            response,
+          );
+        });
+    },
   },
   beforeDestroy() {
     this.editor.destroy();
@@ -398,15 +405,6 @@ $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
 
-#question-title {
-  border: none;
-  font-size: 2rem;
-  width: 100%;
-}
-
-#question-title:focus {
-  outline: none;
-}
 
 .annotation-select {
   margin-top: 0.5rem;

@@ -59,11 +59,12 @@
               >Delete</b-button
             >
             <b-popover
-              target="publish"
+                    v-if="!discussion.published"
+                    target="publish"
               placement="bottom"
               :show="showPublish"
               title="Please enter a title and publish!"
-              content="Otherwise all changes made get lost after leaving this page"
+              content="Otherwise all changes get lost after leaving this page"
               triggers="none"
               :delay="{ show: 100 }"
             ></b-popover></div

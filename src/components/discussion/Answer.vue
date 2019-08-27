@@ -31,19 +31,25 @@
         :edit="false"
         @select-annotation="selectAnnotation"
         @hide-annotation="hideAnnotation"
-        @hide-all-annotations="hideAnnoations"
+        @hide-all-annotations="hideAnnotations"
       />
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
       <b-button
         v-if="!$annomlstore.getters.currentEdit"
-        @click="answerPost"
+        @click="commentPost"
         variant="primary"
       >
         Comment
       </b-button>
-      <vote class="float-right btn"></vote>
+      <vote
+              class="float-right btn"
+              :post="answer"
+              :edit="$annomlsettings.isAuthenticated"
+              @up-vote="upVoteAnswer"
+              @down-vote="downVoteAnswer"
+      ></vote>
       <b-button
         @click="editAnswer"
         class="float-right"
@@ -60,6 +66,8 @@
       :comment="comment"
       :question="question"
       @edit-comment="editComment"
+      @up-vote-comment="upVoteComment"
+      @down-vote-comment="downVoteComment"
     />
     <comment-editor
       v-if="currentEdit"
@@ -188,6 +196,12 @@ export default {
     editAnswer() {
       this.$emit('edit-answer', this.answer);
     },
+    upVoteAnswer() {
+      this.$emit('up-vote-answer', this.answer);
+    },
+    downVoteAnswer() {
+      this.$emit('down-vote-answer', this.answer);
+    },
     /**
      * Annotation Handling
      */
@@ -205,6 +219,14 @@ export default {
         this.answer.color,
       );
     },
+    hideAnnotations(hidden) {
+      utils.annotation.hideAnnotations(
+        [this.answer.pointAnnotations, this.answer.rectangleAnnotations],
+        hidden,
+        this.answer.color,
+      );
+    },
+
     /**
      * Annotation Events
      */
@@ -215,15 +237,14 @@ export default {
       this.currentEdit.color = value;
     },
     /**
-     * Answer Handling
+     * Comment Handling
      */
-    answerPost() {
+    commentPost() {
       const comment = {
         annotations: {
           pointAnnotations: [],
           rectangleAnnotations: [],
         },
-        comments: [],
       };
       this.currentEdit = comment;
       this.$annomlstore.commit('disableSelectable');
@@ -357,6 +378,31 @@ export default {
         }
       }
     },
+    /**
+     * Vote Handling
+     */
+    upVoteComment(comment) {
+      APIService(this.$serviceApiAuthenticated)
+        .upVoteComment(comment)
+        .then((response) => {
+          this.$set(
+            this.comments,
+            this.comments.findIndex(q => q.id === comment.id),
+            response,
+          );
+        });
+    },
+    downVoteComment(comment) {
+      APIService(this.$serviceApiAuthenticated)
+        .downVoteComment(comment)
+        .then((response) => {
+          this.$set(
+            this.comments,
+            this.comments.findIndex(q => q.id === comment.id),
+            response,
+          );
+        });
+    },
   },
 };
 </script>
@@ -365,11 +411,6 @@ export default {
 $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
-
-#question-title {
-  font-size: 2rem;
-  width: 100%;
-}
 
 .annotation-select {
   margin-top: 0.5rem;

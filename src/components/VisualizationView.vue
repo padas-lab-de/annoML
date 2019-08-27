@@ -1,5 +1,5 @@
 <template>
-  <div class="visualization-view mt-3" ref="vis" v-if="visualization">
+  <div class="visualization-view mt-4" ref="vis" v-if="visualization">
     <div class="visualization">
       <vega-annotation-options
         :tools="tools"
@@ -99,7 +99,7 @@ export default {
       modifiedWarning: false,
     };
   },
-  mounted() {
+  created() {
     this.$annomlstore.watch(
       (state, getters) => getters.pointAnnotations,
       (pointAnnotations) => {
@@ -214,7 +214,7 @@ export default {
       annotation.subject = {
         radius: 5,
       };
-      annotation.color = this.$annomlstore.getSelectColor;
+      annotation.color = utils.annotation.stateColor.SELECTED;
       this.tempAnnotations.push(annotation);
     },
     addPointAnnotation(item) {
@@ -229,7 +229,7 @@ export default {
       if (this.$annomlstore.getters.hasCurrentPost) {
         annotation.color = this.$annomlstore.getters.getCurrentPost.color;
       } else {
-        annotation.color = this.$annomlstore.getSelectColor;
+        annotation.color = utils.annotation.stateColor.SELECTED;
       }
       this.$annomlstore.commit('addCurrentPointAnnotation', annotation);
     },
@@ -249,7 +249,7 @@ export default {
       if (this.$annomlstore.getters.hasCurrentPost) {
         annotation.color = this.$annomlstore.getters.getCurrentPost.color;
       } else {
-        annotation.color = this.$annomlstore.getSelectColor;
+        annotation.color = utils.annotation.stateColor.SELECTED;
       }
       this.$annomlstore.commit('addCurrentRectangleAnnotation', annotation);
       this.clearTempPoints();

@@ -31,13 +31,18 @@
         :edit="false"
         @select-annotation="selectAnnotation"
         @hide-annotation="hideAnnotation"
-        @hide-all-annotations="hideAnnoations"
+        @hide-all-annotations="hideAnnotations"
       />
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
-      <vote class="float-right btn"></vote>
-      <b-button
+        <vote
+                class="float-right btn"
+                :post="comment"
+                :edit="$annomlsettings.isAuthenticated"
+                @up-vote="upVoteComment"
+                @down-vote="downVoteComment"
+        ></vote>      <b-button
         @click="editComment"
         class="float-right"
         variant="light"
@@ -134,6 +139,12 @@ export default {
     editComment() {
       this.$emit('edit-comment', this.comment);
     },
+    upVoteComment() {
+      this.$emit('up-vote-comment', this.comment);
+    },
+    downVoteComment() {
+      this.$emit('down-vote-comment', this.comment);
+    },
     /**
      * Annotation Handling
      */
@@ -151,6 +162,14 @@ export default {
         this.comment.color,
       );
     },
+    hideAnnotations(hidden) {
+      utils.annotation.hideAnnotations(
+        [this.comment.pointAnnotations, this.comment.rectangleAnnotations],
+        hidden,
+        this.comment.color,
+      );
+    },
+
     /**
      * Annotation Events
      */
@@ -169,15 +188,6 @@ $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
 
-#question-title {
-  font-size: 2rem;
-  width: 100%;
-}
-
-.annotation-select {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
 
 .body {
   margin-top: 0.5rem;

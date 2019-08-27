@@ -60,6 +60,8 @@
       :answer="answer"
       :question="question"
       @edit-answer="editAnswer"
+      @up-vote-answer="upVoteAnswer"
+      @down-vote-answer="downVoteAnswer"
     />
     <answer-editor
       v-if="currentEdit"
@@ -361,6 +363,31 @@ export default {
           );
         }
       }
+    },
+    /**
+     * Vote Handling
+     */
+    upVoteAnswer(answer) {
+      APIService(this.$serviceApiAuthenticated)
+        .upVoteAnswer(answer)
+        .then((response) => {
+          this.$set(
+            this.answers,
+            this.answers.findIndex(q => q.id === answer.id),
+            response,
+          );
+        });
+    },
+    downVoteAnswer(answer) {
+      APIService(this.$serviceApiAuthenticated)
+        .downVoteAnswer(answer)
+        .then((response) => {
+          this.$set(
+            this.answers,
+            this.answers.findIndex(q => q.id === answer.id),
+            response,
+          );
+        });
     },
   },
 };

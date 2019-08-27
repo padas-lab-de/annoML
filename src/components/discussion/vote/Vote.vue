@@ -1,14 +1,13 @@
 <template>
-    <div class="vote pull-right btn">
-            <span @click="voteUp()" v-if="edit">
-                <font-awesome-icon icon="chevron-up"></font-awesome-icon>
-            </span>
-            <div>{{ voteCounter() }}</div>
-            <span @click="voteDown()" v-if="edit">
-            <font-awesome-icon icon="chevron-down">
-            </font-awesome-icon>
-            </span>
-    </div>
+  <div class="vote pull-right btn">
+    <span @click="voteUp()" v-if="edit">
+      <font-awesome-icon icon="chevron-up"></font-awesome-icon>
+    </span>
+    <div>{{ voteCounter() }}</div>
+    <span @click="voteDown()" v-if="edit">
+      <font-awesome-icon icon="chevron-down"> </font-awesome-icon>
+    </span>
+  </div>
 </template>
 
 <script>
@@ -50,50 +49,59 @@ export default {
     voteCounter() {
       if (this.votes > 0) {
         return `+${this.votes}`;
-      } if (this.votes < 0) {
+      }
+      if (this.votes < 0) {
         return this.votes;
       }
       return '0';
     },
     voteUp() {
-      this.$emit('up-vote');
+      const user = this.post.upVotes.filter(
+        vote => vote.externalId === this.$annomlsettings.currentUser,
+      );
+      if (user.length === 0) {
+        this.$emit('up-vote');
+      }
     },
     voteDown() {
-      this.$emit('down-vote');
+      const user = this.post.downVotes.filter(
+        vote => vote.externalId === this.$annomlsettings.currentUser,
+      );
+      if (user.length === 0) {
+        this.$emit('down-vote');
+      }
     },
   },
 };
 </script>
 
 <style lang="scss">
-    .vote {
-        display: block;
-    }
+.vote {
+  display: block;
+}
 
-    .vote span {
-        color: gray;
-        text-align: center;
-        margin-left:auto;
-        margin-right: auto;
-        height: 30px;
-        width: 30px;
-        display: inline-block;
-    }
+.vote span {
+  color: gray;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+}
 
-    .vote div {
-        color: black;
-        text-align: center;
-        margin-left:auto;
-        margin-right: auto;
-        height: 30px;
-        width: 30px;
-        display: inline-block;
-    }
+.vote div {
+  color: black;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+}
 
-    .vote span:hover {
-        color: black;
-        transform: scale(1.2);
-    }
-
-
+.vote span:hover {
+  color: black;
+  transform: scale(1.2);
+}
 </style>
