@@ -60,7 +60,6 @@ export default {
   },
   data() {
     return {
-      scaleFactor: 1,
       visualization: null,
       chart: null,
       questions: null,
@@ -74,24 +73,29 @@ export default {
       tools: {
         noTool: {
           type: d3annotation.annotationBadge,
+          disabled: false,
         },
         pointAnnotation: {
           name: utils.annotation.types.POINT,
           type: d3annotation.annotationCalloutCircle,
+          disabled: false,
         },
         freePointAnnotation: {
           name: utils.annotation.types.FREEPOINT,
           type: d3annotation.annotationCalloutCircle,
+          disabled: true,
         },
         rectangleAnnotation: {
           name: utils.annotation.types.RECTANGLE,
           type: d3annotation.annotationCalloutRect,
           tempPoint: null,
+          disabled: false,
         },
         freeRectangleAnnotation: {
           name: utils.annotation.types.FREERECTANGLE,
           type: d3annotation.annotationCalloutRect,
           tempPoint: null,
+          disabled: true,
         },
       },
       visualizationFailed: false,
@@ -193,6 +197,8 @@ export default {
       if (this.$annomlstore.getters.visualizationSelectable) {
         if (this.currentTool === this.tools.pointAnnotation) {
           this.addPointAnnotation(item);
+        } else if (this.currentTool === this.tools.freePointAnnotation) {
+          console.log(item);
         } else if (this.currentTool === this.tools.rectangleAnnotation) {
           if (this.tools.rectangleAnnotation.tempPoint === null) {
             this.tools.rectangleAnnotation.tempPoint = item;
@@ -200,6 +206,8 @@ export default {
           } else if (this.tools.rectangleAnnotation.tempPoint) {
             this.addRectangleAnnotation(item);
           }
+        } else if (this.currentTool === this.tools.freeRectangleAnnotation) {
+          this.addPointAnnotation(item);
         }
       }
     },

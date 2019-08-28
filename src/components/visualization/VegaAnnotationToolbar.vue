@@ -3,12 +3,14 @@
     <b-button-toolbar class="mb-2">
       <b-button-group class="annotation-tools">
         <b-button
+          v-if="!tools.noTool.disabled"
           @click="selectNoTool"
           :disabled="!$annomlstore.getters.visualizationSelectable"
           :pressed="currentTool === tools.noTool"
           ><font-awesome-icon icon="hand-paper"
         /></b-button>
         <b-button
+          v-if="!tools.pointAnnotation.disabled"
           @click="selectPointAnnotation"
           :disabled="
             !$annomlstore.getters.visualizationSelectable ||
@@ -30,6 +32,7 @@
           Point</b-button
         >
         <b-button
+          v-if="!tools.freePointAnnotation.disabled"
           @click="selectFreePointAnnotation"
           :disabled="
             !$annomlstore.getters.visualizationSelectable ||
@@ -50,6 +53,7 @@
           Free Point</b-button
         >
         <b-button
+          v-if="!tools.rectangleAnnotation.disabled"
           @click="selectRectangleAnnotation"
           :disabled="
             !$annomlstore.getters.visualizationSelectable ||
@@ -71,6 +75,7 @@
           Rectangle</b-button
         >
         <b-button
+          v-if="!tools.freeRectangleAnnotation.disabled"
           @click="selectFreeRectangleAnnotation"
           :disabled="
             !$annomlstore.getters.visualizationSelectable ||
@@ -93,6 +98,7 @@
       </b-button-group>
       <b-dropdown right class="mx-1 " text="Annotations">
         <b-dropdown-item
+          v-if="!tools.pointAnnotation.disabled"
           :active="$annomlstore.getters.showPointAnnotations"
           @click="$annomlstore.commit('toggleShowPointAnnotations')"
           ><font-awesome-layers class="mr-1">
@@ -110,6 +116,7 @@
           Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
+          v-if="!tools.freePointAnnotation.disabled"
           :active="$annomlstore.getters.showFreePointAnnotations"
           @click="$annomlstore.commit('toggleShowFreePointAnnotations')"
           ><font-awesome-layers class="mr-1">
@@ -127,6 +134,7 @@
           Free Point Annotations</b-dropdown-item
         >
         <b-dropdown-item
+          v-if="!tools.rectangleAnnotation.disabled"
           :active="$annomlstore.getters.showRectangleAnnotations"
           @click="$annomlstore.commit('toggleShowRectangleAnnotations')"
           ><font-awesome-layers class="mr-1">
@@ -144,6 +152,7 @@
           Rectangle Annotations</b-dropdown-item
         >
         <b-dropdown-item
+          v-if="!tools.freeRectangleAnnotation.disabled"
           :active="$annomlstore.getters.showFreeRectangleAnnotations"
           @click="$annomlstore.commit('toggleShowFreeRectangleAnnotations')"
           ><font-awesome-layers class="mr-1">
@@ -214,12 +223,8 @@ export default {
       this.$emit('tool', tool);
     },
     downloadSVG() {
-      const svgEl = d3
-        .select('svg')
-        .attr('title', 'chart')
-        .attr('version', 1.1)
-        .attr('xmlns', 'http://www.w3.org/2000/svg')
-        .node().parentNode.innerHTML;
+      const svgEl = d3.select('#chart').select('svg').innerHTML;
+      console.log(svgEl);
       const svgBlob = new Blob([svgEl], { type: 'image/svg+xml' });
       saveAs(svgBlob, 'chart.svg', { autoBom: true });
     },

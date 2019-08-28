@@ -1,6 +1,6 @@
 <!--suppress ALL -->
 <template>
-  <div ref="chart" />
+  <div id="chart" ref="chart" />
 </template>
 
 <script>
@@ -203,7 +203,6 @@ export default {
 
       // TEMP ANNOTATIONS
       if (this.tempAnnotations.length > 0) {
-        console.log(this.tempAnnotations);
         this.svgAnnotations.tempAnnotations = this.makeAnnotations(
           this.tempAnnotations,
           d3annotation.annotationBadge,
