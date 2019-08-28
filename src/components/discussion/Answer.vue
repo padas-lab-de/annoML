@@ -36,6 +36,7 @@
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
+        <div v-if="answer.author">
       <b-button
         v-if="!$annomlstore.getters.getCurrentPost"
         @click="commentPost"
@@ -51,12 +52,14 @@
         @down-vote="downVoteAnswer"
       ></vote>
       <b-button
-        @click="editAnswer"
+              v-if="$annomlsettings.currentUser === answer.author.externalId
+              && !$annomlstore.getters.getCurrentPost"
+              @click="editAnswer"
         class="float-right"
         variant="light"
-        v-if="$annomlsettings.currentUser === answer.author.externalId"
         >Edit</b-button
       >
+        </div>
     </b-card>
     <div v-for="comment in comments" :key="comment.id">
       <comment-editor
@@ -242,15 +245,19 @@ export default {
         id: Date.now(),
         pointAnnotations: [],
         rectangleAnnotations: [],
+        author: null,
+        upVotes: [],
+        downVotes: [],
       };
+      this.comments.push(comment);
       this.$annomlstore.commit('disableSelectable');
       this.$annomlstore.commit('setCurrentPost', comment);
     },
     saveComment(comment) {
-      this.$annomlstore.commit('removeCurrentPost');
-      this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
       if (comment.color) {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
@@ -295,13 +302,18 @@ export default {
         });
     },
     updateComment(comment) {
-      this.$annomlstore.commit('removeCurrentPost');
-      this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
       if (comment.color) {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
+      this.$set(
+        this.comments,
+        this.comments.findIndex(c => c.id === comment.id),
+        comment,
+      );
       APIService(this.$serviceApiAuthenticated)
         .updateComment(comment)
         .then((response) => {
@@ -336,18 +348,20 @@ export default {
         });
     },
     deleteComment(comment) {
+      this.$annomlstore.commit('clearCurrentAnnotations');
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
-      this.$annomlstore.commit('clearCurrentAnnotations');
       if (comment.color) {
         this.$annomlstore.commit('removeUsedColor', comment.color);
       }
       this.comments = this.comments.filter(a => a.id !== comment.id);
-      APIService(this.$serviceApiAuthenticated)
-        .deleteComment(comment)
-        .then((response) => {
-          console.log(response);
-        });
+      if (comment.author) {
+        APIService(this.$serviceApiAuthenticated)
+          .deleteComment(comment)
+          .then((response) => {
+            console.log(response);
+          });
+      }
     },
     editComment(comment) {
       if (!this.$annomlstore.getters.hasCurrentPost) {

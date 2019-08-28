@@ -1,5 +1,5 @@
 <template>
-    <div class="post-info">
+    <div class="post-info" v-if="post.author">
         <span class="username" v-if="post.author.externalId"> {{ post.author.externalId }}</span>
         <span class="username" v-else>User #{{ post.author.id }}</span>
         <span class="created" v-if="post.created"> on {{ formatTimestamp(post.created) }}</span>

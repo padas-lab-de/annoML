@@ -1,12 +1,9 @@
-
 import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-
-
   state: {
     settings: {
       debug: true,
@@ -113,24 +110,38 @@ const store = new Vuex.Store({
       state.annotation.pointAnnotations.push(pointAnnotation);
     },
     addPointAnnotations(state, pointAnnotations) {
-      state.annotation.pointAnnotations = state.annotation
-        .pointAnnotations.concat(pointAnnotations);
+      state.annotation.pointAnnotations = state.annotation.pointAnnotations.concat(
+        pointAnnotations,
+      );
     },
     addRectangleAnnotation(state, rectangleAnnotation) {
       state.annotation.rectangleAnnotations.push(rectangleAnnotation);
     },
     addRectangleAnnotations(state, rectangleAnnotations) {
-      state.annotation.rectangleAnnotations = state.annotation
-        .rectangleAnnotations.concat(rectangleAnnotations);
+      state.annotation.rectangleAnnotations = state.annotation.rectangleAnnotations.concat(
+        rectangleAnnotations,
+      );
     },
     addCurrentPointAnnotation(state, pointAnnotation) {
       state.annotation.currentPointAnnotations.push(pointAnnotation);
+    },
+    removeCurrentPointAnnotation(state, pointAnnotation) {
+      state.annotation.currentPointAnnotations = state.annotation
+        .currentPointAnnotations.filter(
+          a => a.id !== pointAnnotation.id,
+        );
     },
     setCurrentPointAnnotations(state, pointAnnotations) {
       state.annotation.currentPointAnnotations = pointAnnotations;
     },
     addCurrentRectangleAnnotation(state, rectangleAnnotation) {
       state.annotation.currentRectangleAnnotations.push(rectangleAnnotation);
+    },
+    removeCurrentRectangleAnnotation(state, rectangleAnnotation) {
+      state.annotation.currentRectangleAnnotations = state.annotation
+        .currentRectangleAnnotations.filter(
+          a => a.id !== rectangleAnnotation.id,
+        );
     },
     setCurrentRectangleAnnotations(state, rectangleAnnotations) {
       state.annotation.currentRecAnnotations = rectangleAnnotations;
@@ -159,7 +170,6 @@ const store = new Vuex.Store({
     },
   },
   actions: {},
-
 });
 
 export default store;

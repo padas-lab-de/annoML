@@ -153,7 +153,6 @@ export default {
       });
     },
     updateChart() {
-      console.log('update');
       // Removes the added padding from the container dimensions added by vega-embed
       this.view.width(this.chart.width);
       this.view.height(this.chart.height);
@@ -185,7 +184,8 @@ export default {
       view.removeEventListener('click');
     },
     clickHandler(event, item) {
-      if (item.datum) {
+      // Only emits events if tooltip object is present means an distict datapoint is present
+      if (item.tooltip) {
         this.$emit('click', item);
       }
     },
@@ -305,22 +305,30 @@ export default {
     },
 
     calculateXCoordinate(datapoint) {
-      // because of d3 and vega having a difference in padding measurement
-      // see https://vega.github.io/vega/docs/api/view/
       const x = this.view.scale('x');
       return (
-        x(datapoint[this.chart.encoding.x.field])
-        + this.view.origin()[0]
-        + this.view.padding().left
+        x(
+          datapoint[ // Search data object key for the field name at the end because
+            // other encoding operations like e.g. bin will prepend thier name the field name
+            Object.keys(datapoint).filter(d => d.endsWith(this.chart.encoding.x.field))
+          ],
+        )
+        + this.view.origin()[0] // because of d3 and vega having a difference in padding measurement
+        + this.view.padding().left // see https://vega.github.io/vega/docs/api/view/
       );
     },
 
     calculateYCoordinate(datapoint) {
       const y = this.view.scale('y');
       return (
-        y(datapoint[this.chart.encoding.y.field])
-        + this.view.origin()[1]
-        + this.view.padding().top
+        y(
+          datapoint[ // Search data object key for the field name at the end because
+            // other encoding operations like e.g. bin will prepend thier name to the field name
+            Object.keys(datapoint).filter(d => d.endsWith(this.chart.encoding.y.field))
+          ],
+        )
+        + this.view.origin()[1] // because of d3 and vega having a difference in padding measurement
+        + this.view.padding().top // see https://vega.github.io/vega/docs/api/view/
       );
     },
 
@@ -335,17 +343,21 @@ export default {
     setDefaultSize(spec) {
       if (spec.width) {
         this.defaultWidth = spec.width;
-      } else if (spec.config.view.width) {
-        this.defaultWidth = spec.config.view.width;
-      } else {
-        console.log('SIZE: using deafault width');
+      } else if (spec.config && spec.config.view) {
+        if (spec.config.view.width) {
+          this.defaultWidth = spec.config.view.width;
+        } else {
+          console.log('SIZE: using deafault width');
+        }
       }
       if (spec.height) {
         this.defaultHeight = spec.height;
-      } else if (spec.config.view.height) {
-        this.defaultHeight = spec.config.view.height;
-      } else {
-        console.log('SIZE: using deafault height');
+      } else if (spec.config && spec.config.view) {
+        if (spec.config.view.height) {
+          this.defaultHeight = spec.config.view.height;
+        } else {
+          console.log('SIZE: using deafault height');
+        }
       }
     },
 

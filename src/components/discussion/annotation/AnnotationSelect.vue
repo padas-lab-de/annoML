@@ -144,7 +144,6 @@ export default {
       deep: true,
     },
   },
-  computed: {},
   methods: {
     selectAnnotation(annotation) {
       this.$emit('select-annotation', annotation);

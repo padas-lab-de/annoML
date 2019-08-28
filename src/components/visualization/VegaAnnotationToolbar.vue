@@ -177,10 +177,6 @@
           ><font-awesome-icon icon="expand-arrows-alt" /> Fit
           Chat</b-dropdown-item
         >
-        <b-dropdown-divider />
-        <b-dropdown-item @click="downloadSVG"
-          ><font-awesome-icon icon="download" /> Download SVG
-        </b-dropdown-item>
       </b-dropdown>
     </b-button-toolbar>
   </div>
@@ -188,8 +184,6 @@
 
 <script>
 /* eslint-disable vue/require-default-prop,no-console */
-import * as d3 from 'd3';
-import { saveAs } from 'file-saver';
 
 export default {
   name: 'VegaAnnotationToolbar',
@@ -221,12 +215,6 @@ export default {
     },
     setTool(tool) {
       this.$emit('tool', tool);
-    },
-    downloadSVG() {
-      const svgEl = d3.select('#chart').select('svg').innerHTML;
-      console.log(svgEl);
-      const svgBlob = new Blob([svgEl], { type: 'image/svg+xml' });
-      saveAs(svgBlob, 'chart.svg', { autoBom: true });
     },
   },
 };

@@ -4,9 +4,9 @@
       <highlight
         class="float-right"
         v-if="
-          comment.author && (
-            $annomlsettings.currentUser !== comment.author.externalId ||
-            question.highlight === comment.id)
+          comment.author &&
+            ($annomlsettings.currentUser !== comment.author.externalId ||
+              question.highlight === comment.id)
         "
         :edit="$annomlsettings.currentUser === question.author.externalId"
         :highlight="question.highlight === comment.id"
@@ -36,19 +36,25 @@
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
+      <div v-if="comment.author">
         <vote
-                class="float-right btn"
-                :post="comment"
-                :edit="$annomlsettings.isAuthenticated"
-                @up-vote="upVoteComment"
-                @down-vote="downVoteComment"
-        ></vote>      <b-button
-        @click="editComment"
-        class="float-right"
-        variant="light"
-        v-if="$annomlsettings.currentUser === comment.author.externalId"
-        >Edit</b-button
-      >
+          class="float-right btn"
+          :post="comment"
+          :edit="$annomlsettings.isAuthenticated"
+          @up-vote="upVoteComment"
+          @down-vote="downVoteComment"
+        ></vote>
+        <b-button
+          @click="editComment"
+          class="float-right"
+          variant="light"
+          v-if="
+            $annomlsettings.currentUser === comment.author.externalId &&
+              !$annomlstore.getters.getCurrentPost
+          "
+          >Edit</b-button
+        >
+      </div>
     </b-card>
   </div>
 </template>
@@ -184,7 +190,6 @@ export default {
 $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
-
 
 .body {
   margin-top: 0.5rem;

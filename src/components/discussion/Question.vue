@@ -8,7 +8,7 @@
           class="float-right"
           style="color: lightgray"
         >
-           #{{ question.id }}</span
+          #{{ question.id }}</span
         >
       </h2>
       <post-meta v-bind:post="question"></post-meta>
@@ -29,12 +29,8 @@
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
-      <div>
-        <b-button
-          v-if="!$annomlstore.getters.currentEdit"
-          @click="answerPost"
-          variant="primary"
-        >
+      <div v-if="question.author">
+        <b-button @click="answerPost" variant="primary">
           Answer
         </b-button>
         <vote
@@ -45,7 +41,10 @@
           @down-vote="downVoteQuestion"
         ></vote>
         <b-button
-          v-if="$annomlsettings.currentUser === question.author.externalId"
+          v-if="
+            $annomlsettings.currentUser === question.author.externalId &&
+              !$annomlstore.getters.getCurrentPost
+          "
           @click="editQuestion"
           class="float-right"
           variant="light"
@@ -176,7 +175,6 @@ export default {
       }
     });
   },
-  mounted() {},
   beforeDestroy() {
     this.editor.destroy();
   },
@@ -232,20 +230,27 @@ export default {
         pointAnnotations: [],
         rectangleAnnotations: [],
         comments: [],
+        author: null,
+        upVotes: [],
+        downVotes: [],
       };
       this.answers.push(answer);
       this.$annomlstore.commit('disableSelectable');
       this.$annomlstore.commit('setCurrentPost', answer);
     },
     saveAnswer(answer) {
-      this.$annomlstore.commit('removeCurrentPost');
-      this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
       if (answer.color) {
         this.$annomlstore.commit('addUsedColor', answer.color);
       }
-      this.answers.push(answer);
+      this.$set(
+        this.answers,
+        this.answers.findIndex(a => a.id === answer.id),
+        answer,
+      );
       APIService(this.$serviceApiAuthenticated)
         .addAnswer(this.question.id, answer)
         .then((response) => {
@@ -280,10 +285,10 @@ export default {
         });
     },
     updateAnswer(answer) {
-      this.$annomlstore.commit('removeCurrentPost');
-      this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
       if (answer.color) {
         this.$annomlstore.commit('addUsedColor', answer.color);
       }
@@ -326,18 +331,20 @@ export default {
         });
     },
     deleteAnswer(answer) {
+      this.$annomlstore.commit('clearCurrentAnnotations');
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
-      this.$annomlstore.commit('clearCurrentAnnotations');
       if (answer.color) {
         this.$annomlstore.commit('removeUsedColor', answer.color);
       }
       this.answers = this.answers.filter(a => a.id !== answer.id);
-      APIService(this.$serviceApiAuthenticated)
-        .deleteAnswer(answer)
-        .then((response) => {
-          console.log(response);
-        });
+      if (answer.author) {
+        APIService(this.$serviceApiAuthenticated)
+          .deleteAnswer(answer)
+          .then((response) => {
+            console.log(response);
+          });
+      }
     },
     editAnswer(answer) {
       if (!this.$annomlstore.getters.hasCurrentPost) {

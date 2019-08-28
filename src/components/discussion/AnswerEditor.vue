@@ -4,7 +4,6 @@
       <annotation-select
         class="annotation-select"
         v-if="
-          $annomlstore.getters.visualizationSelectable &&
             pointAnnotations.length > 0 ||
             rectangleAnnotations.length > 0
         "
@@ -225,10 +224,8 @@ export default {
       if (this.editorHasContent()) {
         this.clearAnnotation();
         const post = {
+          id: this.answer.id,
           body: this.editor.getJSON(),
-          author: {
-            username: '',
-          },
           pointAnnotations: this.pointAnnotations,
           rectangleAnnotations: this.rectangleAnnotations,
           upVotes: [],
@@ -312,10 +309,12 @@ export default {
       });
     },
     deleteAnnotation(annotation) {
-      if (annotation.type === utils.annotation.types.POINT) {
-        this.pointAnnotations.filter(a => a.id !== annotation.id);
-      } else if (annotation.type === utils.annotation.types.RECTANGLE) {
-        this.rectangleAnnotations.filter(a => a.id !== annotation.id);
+      if (annotation.annotationType === utils.annotation.types.POINT) {
+        this.$annomlstore.commit('removeCurrentPointAnnotation', annotation);
+      } else if (
+        annotation.annotationType === utils.annotation.types.RECTANGLE
+      ) {
+        this.$annomlstore.commit('removeCurrentRectangleAnnotation', annotation);
       }
     },
     updateAnnotation(annotation) {

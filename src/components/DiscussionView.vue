@@ -104,17 +104,22 @@ export default {
     createQuestion() {
       const newQuestion = {
         id: Date.now(),
+        pointAnnotations: [],
+        rectangleAnnotations: [],
         answers: [],
+        author: null,
+        upVotes: [],
+        downVotes: [],
       };
       this.questions.push(newQuestion);
       this.$annomlstore.commit('setCurrentPost', newQuestion);
     },
     saveQuestion(question) {
-      this.$annomlstore.commit('removeCurrentPost');
-      this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
       this.$annomlstore.commit('addUsedColor', question.color);
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
       this.$set(
         this.questions,
         this.questions.findIndex(q => q.id === question.id),
@@ -154,10 +159,15 @@ export default {
         });
     },
     updateQuestion(question) {
-      this.$annomlstore.commit('removeCurrentPost');
-      this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
+      this.$annomlstore.commit('removeCurrentPost');
+      this.$annomlstore.commit('enableSelectable');
+      this.$set(
+        this.questions,
+        this.questions.findIndex(q => q.id === question.id),
+        question,
+      );
       APIService(this.$serviceApiAuthenticated)
         .updateQuestion(question)
         .then((response) => {
@@ -192,23 +202,25 @@ export default {
         });
     },
     deleteQuestion(question) {
+      this.$annomlstore.commit('clearCurrentAnnotations');
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
-      this.$annomlstore.commit('clearCurrentAnnotations');
       if (question.color) {
         this.$annomlstore.commit('removeUsedColor', question.color);
       }
-      this.questions.filter(q => q.id !== question.id);
-      APIService(this.$serviceApiAuthenticated)
-        .deleteQuestion(this.discussion.id, question)
-        .then((response) => {
-          console.log(response);
-          this.$set(
-            this.questions,
-            this.questions.findIndex(q => q.id === question.id),
-            response,
-          );
-        });
+      this.questions = this.questions.filter(q => q.id !== question.id);
+      if (question.author) {
+        APIService(this.$serviceApiAuthenticated)
+          .deleteQuestion(this.discussion.id, question)
+          .then((response) => {
+            console.log(response);
+            this.$set(
+              this.questions,
+              this.questions.findIndex(q => q.id === question.id),
+              response,
+            );
+          });
+      }
     },
     editQuestion(question) {
       if (!this.$annomlstore.getters.hasCurrentPost) {

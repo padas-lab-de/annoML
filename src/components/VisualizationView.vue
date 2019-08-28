@@ -104,6 +104,35 @@ export default {
     };
   },
   created() {
+    APIService(this.$serviceApi)
+      .getVisualization(this.discussion.visualization.id)
+      .then((data) => {
+        this.visualization = data;
+        if (this.visualization.schema) {
+          this.chart = this.visualization.schema;
+        } else if (this.visualization.reference) {
+          APIService(this.$resourceApi)
+            .getResourceVisualization(
+              this.$annomlsettings.resourceProvider.endpoints.visualization,
+              this.visualization.reference,
+              this.$annomlsettings.resourceProvider.accessToken,
+            )
+            .then((visualization) => {
+              this.visualization = visualization;
+              this.chart = JSON.parse(visualization.schema);
+            })
+            .catch((error) => {
+              console.log(error);
+              this.resourceFailed = true;
+            });
+        } else {
+          console.log(this.visualization.url);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        this.visualizationFailed = false;
+      });
     this.$annomlstore.watch(
       (state, getters) => getters.pointAnnotations,
       (pointAnnotations) => {
@@ -142,35 +171,6 @@ export default {
         );
       },
     );
-    APIService(this.$serviceApi)
-      .getVisualization(this.discussion.visualization.id)
-      .then((data) => {
-        this.visualization = data;
-        if (this.visualization.schema) {
-          this.chart = this.visualization.schema;
-        } else if (this.visualization.reference) {
-          APIService(this.$resourceApi)
-            .getResourceVisualization(
-              this.$annomlsettings.resourceProvider.endpoints.visualization,
-              this.visualization.reference,
-              this.$annomlsettings.resourceProvider.accessToken,
-            )
-            .then((visualization) => {
-              this.visualization = visualization;
-              this.chart = JSON.parse(visualization.schema);
-            })
-            .catch((error) => {
-              console.log(error);
-              this.resourceFailed = true;
-            });
-        } else {
-          console.log(this.visualization.url);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        this.visualizationFailed = false;
-      });
   },
   watch: {
     chart() {
@@ -194,20 +194,18 @@ export default {
      * Annotation creation
      */
     createAnnotation(item) {
-      if (this.$annomlstore.getters.visualizationSelectable) {
-        if (this.currentTool === this.tools.pointAnnotation) {
-          this.addPointAnnotation(item);
-        } else if (this.currentTool === this.tools.freePointAnnotation) {
-          console.log(item);
-        } else if (this.currentTool === this.tools.rectangleAnnotation) {
-          if (this.tools.rectangleAnnotation.tempPoint === null) {
-            this.tools.rectangleAnnotation.tempPoint = item;
-            this.addTempPointAnnotation(item);
-          } else if (this.tools.rectangleAnnotation.tempPoint) {
-            this.addRectangleAnnotation(item);
+      if (item.datum) {
+        if (this.$annomlstore.getters.visualizationSelectable) {
+          if (this.currentTool === this.tools.pointAnnotation) {
+            this.addPointAnnotation(item);
+          } else if (this.currentTool === this.tools.rectangleAnnotation) {
+            if (this.tools.rectangleAnnotation.tempPoint === null) {
+              this.tools.rectangleAnnotation.tempPoint = item;
+              this.addTempPointAnnotation(item);
+            } else if (this.tools.rectangleAnnotation.tempPoint) {
+              this.addRectangleAnnotation(item);
+            }
           }
-        } else if (this.currentTool === this.tools.freeRectangleAnnotation) {
-          this.addPointAnnotation(item);
         }
       }
     },

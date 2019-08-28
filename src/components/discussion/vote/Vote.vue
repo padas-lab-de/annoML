@@ -37,7 +37,9 @@ export default {
   watch: {
     post: {
       handler() {
-        this.votes = this.post.upVotes.length - this.post.downVotes.length;
+        if (this.post.upVotes !== null && this.post.downVotes) {
+          this.votes = this.post.upVotes.length - this.post.downVotes.length;
+        }
       },
       deep: true,
     },

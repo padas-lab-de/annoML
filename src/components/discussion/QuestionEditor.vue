@@ -249,12 +249,10 @@ export default {
           return rectangleAnnotation;
         });
         const post = {
+          id: this.question.id,
           title: this.title,
           body: this.editor.getJSON(),
           color: this.question.color,
-          author: {
-            username: '',
-          },
           pointAnnotations: this.pointAnnotations,
           rectangleAnnotations: this.rectangleAnnotations,
           upVotes: [],
@@ -351,11 +349,11 @@ export default {
     },
     deleteAnnotation(annotation) {
       if (annotation.annotationType === utils.annotation.types.POINT) {
-        this.pointAnnotations.filter(a => a.id !== annotation.id);
+        this.$annomlstore.commit('removeCurrentPointAnnotation', annotation);
       } else if (
         annotation.annotationType === utils.annotation.types.RECTANGLE
       ) {
-        this.rectangleAnnotations.filter(a => a.id !== annotation.id);
+        this.$annomlstore.commit('removeCurrentRectangleAnnotation', annotation);
       }
     },
     updateAnnotation(annotation) {

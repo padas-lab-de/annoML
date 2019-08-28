@@ -5,8 +5,8 @@
       :style="{ borderColor: annotation.color }"
       no-body
     >
-      <b-input-group @click="clickEvent">
-        <b-input-group-prepend :style="{ borderColor: annotation.color }">
+      <b-input-group>
+        <b-input-group-prepend :style="{ borderColor: annotation.color }"  @click="clickEvent">
           <span
             class="input-group-text"
             :style="{
