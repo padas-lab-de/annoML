@@ -80,7 +80,7 @@ const service = instance => ({
 
   updateQuestion: (question) => {
     const url = `/discussions/questions/${question.id}`;
-    return instance.post(url, question)
+    return instance.put(url, question)
       .then(response => response.data);
   },
 
@@ -112,7 +112,7 @@ const service = instance => ({
   },
   updateAnswer: (answer) => {
     const url = `/discussions/answers/${answer.id}`;
-    return instance.post(url, answer)
+    return instance.put(url, answer)
       .then(response => response.data);
   },
   deleteAnswer: (answer) => {
@@ -143,7 +143,7 @@ const service = instance => ({
   },
   updateComment: (comment) => {
     const url = `/discussions/comments/${comment.id}`;
-    return instance.post(url, comment)
+    return instance.put(url, comment)
       .then(response => response.data);
   },
   deleteComment: (comment) => {

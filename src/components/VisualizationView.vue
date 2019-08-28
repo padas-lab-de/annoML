@@ -241,7 +241,10 @@ export default {
       annotation.note = {
         title: 'Rectangle Annotation',
       };
-      annotation.data = startPoint.datum;
+      annotation.data = {
+        p1: startPoint.datum,
+        p2: item.datum,
+      };
       annotation.subject = {
         width: item.x - startPoint.x,
         height: item.y - startPoint.y,

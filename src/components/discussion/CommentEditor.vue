@@ -4,7 +4,7 @@
       <annotation-select
         class="annotation-select"
         v-if="
-          $annomlstore.getters.visualizationSelectable ||
+          $annomlstore.getters.visualizationSelectable &&
             pointAnnotations.length > 0 ||
             rectangleAnnotations.length > 0
         "
@@ -112,7 +112,7 @@
         <editor-content class="editor__content" id="editor" :editor="editor" />
       </div>
 
-      <b-button v-if="comment.id" @click="updateComment" variant="primary"
+      <b-button v-if="comment.author" @click="updateComment" variant="primary"
         >Save
       </b-button>
       <b-button
@@ -204,8 +204,6 @@ export default {
       }),
     };
   },
-  created() {},
-  watch: {},
   methods: {
     /**
      * Answer Operations

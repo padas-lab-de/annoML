@@ -1,23 +1,28 @@
 <template>
   <div class="discussion">
-    <question
-      v-for="question in questions.filter(q => q !== currentEdit)"
-      :key="question.id"
-      :question="question"
-      @edit-question="editQuestion"
-      @up-vote-question="upVoteQuestion"
-      @down-vote-question="downVoteQuestion"
-    />
-    <question-editor
-      v-if="currentEdit"
-      :question="$annomlstore.getters.getCurrentPost"
-      :point-annotations="$annomlstore.getters.currentPointAnnotations"
-      :rectangle-annotations="$annomlstore.getters.currentRectangleAnnotations"
-      :discussion="discussion"
-      @save-question="saveQuestion"
-      @update-question="updateQuestion"
-      @delete-question="deleteQuestion"
-    />
+    <div  v-for="question in questions" :key="question.id">
+      <question-editor
+        v-if="question === $annomlstore.getters.getCurrentPost"
+        :question="question"
+        :key="question.id"
+        :point-annotations="$annomlstore.getters.currentPointAnnotations"
+        :rectangle-annotations="
+          $annomlstore.getters.currentRectangleAnnotations
+        "
+        :discussion="discussion"
+        @save-question="saveQuestion"
+        @update-question="updateQuestion"
+        @delete-question="deleteQuestion"
+      />
+      <question
+        v-else
+        :question="question"
+        :key="question.id"
+        @edit-question="editQuestion"
+        @up-vote-question="upVoteQuestion"
+        @down-vote-question="downVoteQuestion"
+      />
+    </div>
   </div>
 </template>
 
@@ -44,15 +49,12 @@ export default {
   },
   data() {
     return {
-      currentEdit: null,
       questions: [],
       editorOpen: false,
       maxHeight: 0,
     };
   },
-  mounted() {
-
-  },
+  mounted() {},
   created() {
     this.questions = this.discussion.questions;
     this.questions.forEach((question) => {
@@ -101,23 +103,26 @@ export default {
      */
     createQuestion() {
       const newQuestion = {
+        id: Date.now(),
         answers: [],
       };
-      this.currentEdit = newQuestion;
+      this.questions.push(newQuestion);
       this.$annomlstore.commit('setCurrentPost', newQuestion);
     },
     saveQuestion(question) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
       this.$annomlstore.commit('clearCurrentAnnotations');
       this.$annomlstore.commit('addUsedColor', question.color);
-      this.questions.push(question);
+      this.$set(
+        this.questions,
+        this.questions.findIndex(q => q.id === question.id),
+        question,
+      );
       APIService(this.$serviceApiAuthenticated)
         .addQuestion(this.discussion.id, question)
         .then((response) => {
-          console.log(response);
           this.$set(
             this.questions,
             this.questions.findIndex(q => q.id === question.id),
@@ -149,7 +154,6 @@ export default {
         });
     },
     updateQuestion(question) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
@@ -188,7 +192,6 @@ export default {
         });
     },
     deleteQuestion(question) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('clearCurrentAnnotations');
@@ -209,7 +212,6 @@ export default {
     },
     editQuestion(question) {
       if (!this.$annomlstore.getters.hasCurrentPost) {
-        this.currentEdit = question;
         this.$annomlstore.commit('setCurrentPost', question);
         if (question.pointAnnotations.length > 0) {
           this.$annomlstore.commit(
@@ -262,4 +264,6 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+
+</style>

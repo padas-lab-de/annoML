@@ -115,7 +115,7 @@
       <editor-content class="editor__content" id="editor" :editor="editor" />
     </div>
     <div>
-      <b-button v-if="question.id" @click="updateQuestion" variant="primary"
+      <b-button v-if="question.author" @click="updateQuestion" variant="primary"
         >Save
       </b-button>
 

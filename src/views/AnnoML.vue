@@ -1,5 +1,5 @@
 <template>
-  <div class="annoml-page">
+  <div class="annoml-page h-100">
     <b-container fluid v-if="discussion">
       <b-row>
         <b-col cols="12">

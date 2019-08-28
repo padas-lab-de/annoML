@@ -4,7 +4,7 @@
       <highlight
         class="float-right"
         v-if="
-          comment.id && (
+          comment.author && (
             $annomlsettings.currentUser !== comment.author.externalId ||
             question.highlight === comment.id)
         "
@@ -16,7 +16,7 @@
         class="float-right mr-1"
         style="color: lightgray"
       >
-        {{ comment.author.username }} #{{ comment.id }}
+        #{{ comment.id }}
       </span>
       <post-meta v-bind:post="comment"></post-meta>
       <annotation-select
@@ -175,9 +175,6 @@ export default {
      */
     deleteAnnotation(annotation) {
       this.$emit('delete-annotation', annotation);
-    },
-    updateColor(value) {
-      this.currentEdit.color = value;
     },
   },
 };

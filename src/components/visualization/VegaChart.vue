@@ -238,7 +238,7 @@ export default {
           this.annotations.rectangleAnnotations.length > 0
           && this.$annomlstore.getters.showRectangleAnnotations
         ) {
-          this.svgAnnotations.rectangleAnnotations = this.makeAnnotations(
+          this.svgAnnotations.rectangleAnnotations = this.makeRectangleAnnotations(
             this.annotations.rectangleAnnotations.filter(
               a => a.color !== utils.annotation.stateColor.HIDDEN,
             ),
@@ -262,25 +262,69 @@ export default {
       });
     },
     makeAnnotations(annotations, annotationType) {
-      const x = this.view.scale('x');
-      const y = this.view.scale('y');
+      return d3annotation
+        .annotation()
+        .editMode(this.annotationOptions.editMode)
+        .type(annotationType)
+        .accessors({
+          x: d => this.calculateXCoordinate(d),
+          y: d => this.calculateYCoordinate(d),
+        })
+        .annotations(annotations);
+    },
+
+    makeRectangleAnnotations(rectangleAnnotations, annotationType) {
+      const annotations = [];
+      rectangleAnnotations.forEach((rectangleAnnotation) => {
+        const annotation = {
+          annotationType: rectangleAnnotation.annotationType,
+          id: rectangleAnnotation.id,
+          note: rectangleAnnotation.note,
+          color: rectangleAnnotation.color,
+          data: rectangleAnnotation.data.p1,
+          subject: {
+            width:
+              this.calculateXCoordinate(rectangleAnnotation.data.p2)
+              - this.calculateXCoordinate(rectangleAnnotation.data.p1),
+            height:
+              this.calculateYCoordinate(rectangleAnnotation.data.p2)
+              - this.calculateYCoordinate(rectangleAnnotation.data.p1),
+          },
+        };
+        annotations.push(annotation);
+      });
 
       return d3annotation
         .annotation()
         .editMode(this.annotationOptions.editMode)
         .type(annotationType)
         .accessors({
-          // because of d3 and vega difference in padding measurement
-          // see https://vega.github.io/vega/docs/api/view/
-          x: d => x(d[this.chart.encoding.x.field])
-            + this.view.origin()[0]
-            + this.view.padding().left,
-          y: d => y(d[this.chart.encoding.y.field])
-            + this.view.origin()[1]
-            + this.view.padding().top,
+          x: d => this.calculateXCoordinate(d),
+          y: d => this.calculateYCoordinate(d),
         })
         .annotations(annotations);
     },
+
+    calculateXCoordinate(datapoint) {
+      // because of d3 and vega having a difference in padding measurement
+      // see https://vega.github.io/vega/docs/api/view/
+      const x = this.view.scale('x');
+      return (
+        x(datapoint[this.chart.encoding.x.field])
+        + this.view.origin()[0]
+        + this.view.padding().left
+      );
+    },
+
+    calculateYCoordinate(datapoint) {
+      const y = this.view.scale('y');
+      return (
+        y(datapoint[this.chart.encoding.y.field])
+        + this.view.origin()[1]
+        + this.view.padding().top
+      );
+    },
+
     removeAnnotations() {
       d3.selectAll('.annotation-group-temp').remove();
       d3.selectAll('.annotation-group-points').remove();

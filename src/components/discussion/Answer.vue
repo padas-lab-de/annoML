@@ -4,9 +4,9 @@
       <highlight
         class="float-right"
         v-if="
-        answer.id && (
-          $annomlsettings.currentUser !== answer.author.externalId ||
-            question.highlight === answer.id)
+          answer.author &&
+            ($annomlsettings.currentUser !== answer.author.externalId ||
+              question.highlight === answer.id)
         "
         :edit="$annomlsettings.currentUser === question.author.externalId"
         :highlight="question.highlight === answer.id"
@@ -16,7 +16,7 @@
         class="float-right mr-1"
         style="color: lightgray"
       >
-        {{ answer.author.username }} #{{ answer.id }}</span
+         #{{ answer.id }}</span
       >
       <post-meta v-bind:post="answer"></post-meta>
       <annotation-select
@@ -37,18 +37,18 @@
         <editor-content class="editor__content" :editor="editor" />
       </div>
       <b-button
-        v-if="!$annomlstore.getters.currentEdit"
+        v-if="!$annomlstore.getters.getCurrentPost"
         @click="commentPost"
         variant="primary"
       >
         Comment
       </b-button>
       <vote
-              class="float-right btn"
-              :post="answer"
-              :edit="$annomlsettings.isAuthenticated"
-              @up-vote="upVoteAnswer"
-              @down-vote="downVoteAnswer"
+        class="float-right btn"
+        :post="answer"
+        :edit="$annomlsettings.isAuthenticated"
+        @up-vote="upVoteAnswer"
+        @down-vote="downVoteAnswer"
       ></vote>
       <b-button
         @click="editAnswer"
@@ -58,28 +58,30 @@
         >Edit</b-button
       >
     </b-card>
-    <comment
-      v-for="comment in comments.filter(
-        c => c !== $annomlstore.getters.getCurrentPost
-      )"
-      :key="comment.id"
-      :comment="comment"
-      :question="question"
-      @edit-comment="editComment"
-      @up-vote-comment="upVoteComment"
-      @down-vote-comment="downVoteComment"
-    />
-    <comment-editor
-      v-if="currentEdit"
-      :comment="$annomlstore.getters.getCurrentPost"
-      :point-annotations="$annomlstore.getters.currentPointAnnotations"
-      :rectangle-annotations="$annomlstore.getters.currentRectangleAnnotations"
-      @select-annotation="selectAnnotation"
-      @delete-annotation="deleteAnnotation"
-      @save-comment="saveComment"
-      @update-comment="updateComment"
-      @delete-comment="deleteComment"
-    />
+    <div v-for="comment in comments" :key="comment.id">
+      <comment-editor
+        v-if="comment === $annomlstore.getters.getCurrentPost"
+        :comment="comment"
+        :point-annotations="$annomlstore.getters.currentPointAnnotations"
+        :rectangle-annotations="
+          $annomlstore.getters.currentRectangleAnnotations
+        "
+        @select-annotation="selectAnnotation"
+        @delete-annotation="deleteAnnotation"
+        @save-comment="saveComment"
+        @update-comment="updateComment"
+        @delete-comment="deleteComment"
+      />
+      <comment
+        v-else
+        :key="comment.id"
+        :comment="comment"
+        :question="question"
+        @edit-comment="editComment"
+        @up-vote-comment="upVoteComment"
+        @down-vote-comment="downVoteComment"
+      />
+    </div>
   </div>
 </template>
 
@@ -162,7 +164,6 @@ export default {
         content: this.answer.body,
       }),
       comments: [],
-      currentEdit: null,
     };
   },
   created() {
@@ -233,25 +234,19 @@ export default {
     deleteAnnotation(annotation) {
       this.$emit('delete-annotation', annotation);
     },
-    updateColor(value) {
-      this.currentEdit.color = value;
-    },
     /**
      * Comment Handling
      */
     commentPost() {
       const comment = {
-        annotations: {
-          pointAnnotations: [],
-          rectangleAnnotations: [],
-        },
+        id: Date.now(),
+        pointAnnotations: [],
+        rectangleAnnotations: [],
       };
-      this.currentEdit = comment;
       this.$annomlstore.commit('disableSelectable');
       this.$annomlstore.commit('setCurrentPost', comment);
     },
     saveComment(comment) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
@@ -259,14 +254,18 @@ export default {
       if (comment.color) {
         this.$annomlstore.commit('addUsedColor', comment.color);
       }
-      this.comments.push(comment);
+      this.$set(
+        this.comments,
+        this.comments.findIndex(c => c.id === comment.id),
+        comment,
+      );
       APIService(this.$serviceApiAuthenticated)
         .addComment(this.answer.id, comment)
         .then((response) => {
           console.log(response);
           this.$set(
             this.comments,
-            this.comments.findIndex(a => a.id === comment.id),
+            this.comments.findIndex(c => c.id === comment.id),
             response,
           );
           if (response.pointAnnotations.length > 0) {
@@ -296,7 +295,6 @@ export default {
         });
     },
     updateComment(comment) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
@@ -338,7 +336,6 @@ export default {
         });
     },
     deleteComment(comment) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('clearCurrentAnnotations');
@@ -354,7 +351,6 @@ export default {
     },
     editComment(comment) {
       if (!this.$annomlstore.getters.hasCurrentPost) {
-        this.currentEdit = comment;
         this.$annomlstore.commit('setCurrentPost', comment);
         if (comment.pointAnnotations.length > 0) {
           this.$annomlstore.commit(

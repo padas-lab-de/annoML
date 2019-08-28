@@ -8,7 +8,7 @@
           class="float-right"
           style="color: lightgray"
         >
-          {{ $annomlsettings.currentUser }} #{{ question.id }}</span
+           #{{ question.id }}</span
         >
       </h2>
       <post-meta v-bind:post="question"></post-meta>
@@ -54,26 +54,31 @@
         <small class="text-muted"> {{ question.date }}</small>
       </div>
     </b-card>
-    <answer
-      v-for="answer in answers.filter(a => a !== currentEdit)"
-      :key="answer.id"
-      :answer="answer"
-      :question="question"
-      @edit-answer="editAnswer"
-      @up-vote-answer="upVoteAnswer"
-      @down-vote-answer="downVoteAnswer"
-    />
-    <answer-editor
-      v-if="currentEdit"
-      :answer="$annomlstore.getters.getCurrentPost"
-      :point-annotations="$annomlstore.getters.currentPointAnnotations"
-      :rectangle-annotations="$annomlstore.getters.currentRectangleAnnotations"
-      @select-annotation="selectAnnotation"
-      @delete-annotation="deleteAnnotation"
-      @save-answer="saveAnswer"
-      @update-answer="updateAnswer"
-      @delete-answer="deleteAnswer"
-    />
+    <div v-for="answer in answers" :key="answer.id">
+      <answer-editor
+        v-if="answer === $annomlstore.getters.getCurrentPost"
+        :key="answer.id"
+        :answer="answer"
+        :point-annotations="$annomlstore.getters.currentPointAnnotations"
+        :rectangle-annotations="
+          $annomlstore.getters.currentRectangleAnnotations
+        "
+        @select-annotation="selectAnnotation"
+        @delete-annotation="deleteAnnotation"
+        @save-answer="saveAnswer"
+        @update-answer="updateAnswer"
+        @delete-answer="deleteAnswer"
+      />
+      <answer
+        v-else
+        :key="answer.id"
+        :answer="answer"
+        :question="question"
+        @edit-answer="editAnswer"
+        @up-vote-answer="upVoteAnswer"
+        @down-vote-answer="downVoteAnswer"
+      />
+    </div>
   </div>
 </template>
 
@@ -149,7 +154,6 @@ export default {
         content: this.question.body,
       }),
       answers: [],
-      currentEdit: null,
     };
   },
   created() {
@@ -219,26 +223,21 @@ export default {
     deleteAnnotation(annotation) {
       this.$emit('delete-annotation', annotation);
     },
-    updateColor(value) {
-      this.currentEdit.color = value;
-    },
     /**
      * Answer Handling
      */
     answerPost() {
       const answer = {
-        annotations: {
-          pointAnnotations: [],
-          rectangleAnnotations: [],
-        },
+        id: Date.now(),
+        pointAnnotations: [],
+        rectangleAnnotations: [],
         comments: [],
       };
-      this.currentEdit = answer;
+      this.answers.push(answer);
       this.$annomlstore.commit('disableSelectable');
       this.$annomlstore.commit('setCurrentPost', answer);
     },
     saveAnswer(answer) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
@@ -278,11 +277,9 @@ export default {
           if (response.color && response.color !== answer.color) {
             this.$annomlstore.commit('addUsedColor', answer.color);
           }
-          this.$forceUpdate(); // todo check if necessary
         });
     },
     updateAnswer(answer) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('mergeCurrentAnnotations');
@@ -290,6 +287,11 @@ export default {
       if (answer.color) {
         this.$annomlstore.commit('addUsedColor', answer.color);
       }
+      this.$set(
+        this.answers,
+        this.answers.findIndex(a => a.id === answer.id),
+        answer,
+      );
       APIService(this.$serviceApiAuthenticated)
         .updateAnswer(answer)
         .then((response) => {
@@ -324,7 +326,6 @@ export default {
         });
     },
     deleteAnswer(answer) {
-      this.currentEdit = null;
       this.$annomlstore.commit('removeCurrentPost');
       this.$annomlstore.commit('enableSelectable');
       this.$annomlstore.commit('clearCurrentAnnotations');
@@ -340,7 +341,6 @@ export default {
     },
     editAnswer(answer) {
       if (!this.$annomlstore.getters.hasCurrentPost) {
-        this.currentEdit = answer;
         this.$annomlstore.commit('setCurrentPost', answer);
         if (answer.pointAnnotations.length > 0) {
           this.$annomlstore.commit(
