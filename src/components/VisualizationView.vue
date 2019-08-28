@@ -231,6 +231,9 @@ export default {
       annotation.note = {
         title: 'Circle Annotation',
       };
+      annotation.subject = {
+        radius: 8,
+      };
       annotation.data = item.datum;
       if (this.$annomlstore.getters.hasCurrentPost) {
         annotation.color = this.$annomlstore.getters.getCurrentPost.color;

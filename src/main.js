@@ -8,7 +8,7 @@ import annoML from './plugin';
 Vue.config.productionTip = false;
 
 Vue.use(annoML, {
-  debug: true,
+  debug: false,
   baseURL: 'http://localhost:9999',
   isAuthenticated: store.getters.getAuthenticated,
   currentUser: 'thomborg',
