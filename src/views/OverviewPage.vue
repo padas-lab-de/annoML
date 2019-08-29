@@ -1,15 +1,22 @@
 <!--suppress ALL -->
 <template>
-  <div class="visualization-page">
-    <b-container fluid>
-      <h2>Start a discussion on one of the following visualizations</h2>
-      <b-card-group>
+  <div class="overview-page">
+    <div class="p-2 mt-4" v-if="discussions.length > 0">
+      <h2>Open one of the following discussions</h2>
+
+      <b-card-group deck>
         <b-card v-for="discussion in discussions" :key="discussion.id">
-          #{{ discussion.id }} by {{ discussion.author.externalId }}
-          <b-button @click="openDiscussion(discussion.id)">Open</b-button>
+          Discussion #{{ discussion.id }} by
+          {{ discussion.author.externalId }} with
+          {{ discussion.questions.length }} active question(s)
+          <b-button class="float-right" @click="openDiscussion(discussion.id)"
+            >Open</b-button
+          >
         </b-card>
       </b-card-group>
-    </b-container>
+    </div>
+    <div class="p-2 mt-4" v-if="visualizations.length > 0">
+      <h2>Start a discussion on one of the following visualizations</h2>
       <b-card-group deck>
         <b-card
           class="visualization-select"
@@ -20,12 +27,28 @@
           <div id="visualization-container" v-if="false">
             <vega-chart :chart="JSON.parse(visualization.schema)" />
           </div>
+
           <b-button @click="startDiscussion(visualization.uid)">
             Discuss
           </b-button>
+
+          <b-card-group class="mt-2" deck v-if="visualization.discussions">
+            <b-card
+              v-for="discussion in visualization.discussions"
+              :key="discussion.id"
+            >
+                Available discussion #{{ discussion.id }} by
+              {{ discussion.author.externalId }}
+              <b-button
+                class="float-right"
+                @click="openDiscussion(discussion.id)"
+                >Open</b-button
+              >
+            </b-card>
+          </b-card-group>
         </b-card>
       </b-card-group>
-
+    </div>
   </div>
 </template>
 
@@ -37,7 +60,7 @@ import VegaChart from '@/components/visualization/VegaChart.vue';
 import APIService from '@/service/APIService';
 
 export default {
-  name: 'VisualizationPage',
+  name: 'OverviewPage',
   components: {
     VegaChart,
   },
@@ -55,12 +78,18 @@ export default {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
       },
-
     });
     provider.get('/datasets/1/visualizations').then((result) => {
       console.log(result);
       result.data.forEach((v) => {
-        this.visualizations.push(v);
+        const visualiaztion = v;
+        APIService(this.$serviceApi)
+          .getDiscussionsForVisualization(visualiaztion.uid)
+          .then((discussions) => {
+            visualiaztion.discussions = discussions;
+            this.visualizations.push(v);
+          })
+          .catch(message => console.log(message));
       });
     });
     APIService(this.$serviceApi)
@@ -111,4 +140,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss"></style>

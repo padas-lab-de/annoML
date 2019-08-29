@@ -15,12 +15,6 @@ import utils from '@/util';
 export default {
   name: 'VegaChart',
   props: {
-    visualiazionId: {
-      type: Number,
-      default() {
-        return null;
-      },
-    },
     chart: {
       type: Object,
       default() {
@@ -30,7 +24,10 @@ export default {
     annotations: {
       type: Object,
       default() {
-        return {};
+        return {
+          pointAnnotations: [],
+          rectangleAnnotations: [],
+        };
       },
     },
     tempAnnotations: {
@@ -129,7 +126,7 @@ export default {
     this.createChart();
     window.addEventListener('resize', () => {
       console.log('resize');
-      setTimeout(this.resize(), 300); /* Chrome dimensions update delay */ // todo debounce()
+      setTimeout(this.resize(), 300); /* Chrome dimensions update delay */
     });
   },
   beforeDestroy() {

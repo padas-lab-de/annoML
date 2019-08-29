@@ -21,7 +21,6 @@
           :chart="chart"
           :annotations="vegaAnnotations"
           :temp-annotations="tempAnnotations"
-          :tools="tools"
           @click="createAnnotation"
         /><span v-if="$annomlstore.getters.debug" style="color: lightgray">
           Hash: {{ discussion.visualizationHash }}</span
@@ -229,7 +228,7 @@ export default {
       annotation.annotationType = this.tools.pointAnnotation.name;
       annotation.id = Date.now();
       annotation.note = {
-        title: 'Circle Annotation',
+        title: 'Point Annotation',
       };
       annotation.subject = {
         radius: 8,

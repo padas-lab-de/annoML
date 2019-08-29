@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import AnnoML from '@/views/AnnoML.vue';
-import VisualizationPage from '@/views/VisualizationPage.vue';
+import VisualizationPage from '@/views/OverviewPage.vue';
 
 Vue.use(Router);
 

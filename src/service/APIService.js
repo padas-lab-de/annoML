@@ -13,6 +13,11 @@ const service = instance => ({
     return instance.get(url).then(response => response.data);
   },
 
+  getDiscussionsForVisualization: (visualizationReference) => {
+    const url = `/api/discussions/visualizations/${visualizationReference}`;
+    return instance.get(url).then(response => response.data);
+  },
+
 
   /**
    * annoML API create requests

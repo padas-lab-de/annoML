@@ -68,6 +68,8 @@ export default {
 </script>
 
 <style lang="scss">
+  .annoml-page {
+  }
 /* Bootstrap */
 @import "../../node_modules/bootstrap/scss/bootstrap";
 @import "../../node_modules/bootstrap-vue/src/index";
