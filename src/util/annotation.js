@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign,no-console */
 
-
 const types = {
   POINT: 'POINT',
   FREEPOINT: 'FREEPOINT',
@@ -36,7 +35,6 @@ const postColors = [
 ];
 
 export default {
-
   types,
   stateColor,
   postColors,
@@ -44,14 +42,12 @@ export default {
    * Annotation Colors
    */
   getFreeColor(usedColors) {
-    return postColors.filter(
-      color => !usedColors.includes(color),
-    )[0];
+    return postColors.filter(color => !usedColors.includes(color))[0];
   },
 
   /*
-    * Annotation Handling
-    */
+   * Annotation Handling
+   */
   selectAnnotation(annotations, annotation, color) {
     if (annotation.color === stateColor.SELECTED) {
       annotation.color = color;
@@ -98,22 +94,17 @@ export default {
     }
   },
   /*
-  *  Annotation List Helpers
-  */
+   *  Annotation List Helpers
+   */
   concatAndSortAnnotations(annotations, sort) {
-    return []
-      .concat(...annotations)
-      .sort(sort);
+    return [].concat(...annotations).sort(sort);
   },
   concatAndFilterAnnotations(annotations, filter) {
     console.log(annotations);
-    return []
-      .concat(...annotations)
-      .filter(filter);
+    return [].concat(...annotations).filter(filter);
   },
   concatAnnotations(annotations) {
     console.log(annotations);
-    return []
-      .concat(...annotations);
+    return [].concat(...annotations);
   },
 };

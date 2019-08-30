@@ -1,6 +1,6 @@
 <template>
   <div class="discussion">
-    <div  v-for="question in questions" :key="question.id">
+    <div v-for="question in questions" :key="question.id">
       <question-editor
         v-if="question === $annomlstore.getters.getCurrentPost"
         :question="question"
@@ -29,9 +29,9 @@
 <script>
 /* eslint-disable no-console,no-param-reassign */
 
-import Question from '@/components/discussion/Question.vue';
-import QuestionEditor from '@/components/discussion/QuestionEditor.vue';
-import APIService from '@/service/APIService';
+import Question from './discussion/Question.vue';
+import QuestionEditor from './discussion/QuestionEditor.vue';
+import APIService from '../service/APIService';
 
 export default {
   name: 'DiscussionView',
@@ -276,6 +276,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

@@ -36,11 +36,11 @@
 
 import d3annotation from 'd3-svg-annotation';
 import JSum from 'jsum';
-import VegaAnnotationOptions from '@/components/visualization/VegaAnnotationToolbar.vue';
-import VegaChart from '@/components/visualization/VegaChart.vue';
-import APIService from '@/service/APIService';
-import utils from '@/util';
-import Loading from '@/components/extra/Loading.vue';
+import VegaAnnotationOptions from './visualization/VegaAnnotationToolbar.vue';
+import VegaChart from './visualization/VegaChart.vue';
+import APIService from '../service/APIService';
+import utils from '../util';
+import Loading from './extra/Loading.vue';
 
 export default {
   name: 'VisualizationView',
@@ -182,7 +182,11 @@ export default {
         } else if (
           this.$annomlsettings.currentUser === this.discussion.author.externalId
         ) {
-          this.discussion.visualizationHash = JSum.digest(this.chart, 'SHA256', 'hex');
+          this.discussion.visualizationHash = JSum.digest(
+            this.chart,
+            'SHA256',
+            'hex',
+          );
           this.modifiedWarning = false;
         }
       }

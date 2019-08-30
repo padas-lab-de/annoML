@@ -1,8 +1,22 @@
 /* eslint-disable no-console,no-param-reassign,max-len */
 import axios from 'axios';
-import store from '@/store/plugin';
-import utils from '@/util/';
-import APIService from '@/service/APIService';
+import BootstrapVue from 'bootstrap-vue';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import {
+  FontAwesomeIcon,
+  FontAwesomeLayers,
+  FontAwesomeLayersText,
+} from '@fortawesome/vue-fontawesome';
+import store from './store/store';
+import utils from './util';
+import APIService from './service/APIService';
+
+import AnnoML from './views/AnnoML.vue';
+
+const components = {
+  AnnoML,
+};
 
 const version = '__VERSION__';
 
@@ -11,14 +25,19 @@ const install = (Vue, config) => {
    * NOTE:
    *   if you need to extend Vue contstructor, you can extend it in here.
    */
-  /*
-   * NOTE:
-   *  somthing implementation here ...
-   */
 
   if (!config) {
     throw new Error('Please initialise plugin with the required configs.');
   }
+  // install annoML component
+  Vue.component('AnnoML', AnnoML);
+
+  // Bootstrap and icon import
+  library.add(fas);
+  Vue.use(BootstrapVue);
+  Vue.component('font-awesome-icon', FontAwesomeIcon);
+  Vue.component('font-awesome-layers', FontAwesomeLayers);
+  Vue.component('font-awesome-layers-text', FontAwesomeLayersText);
 
   // Exports plugin settings and store to components
   Vue.prototype.$annomlsettings = config;
@@ -35,7 +54,6 @@ const install = (Vue, config) => {
       Authorization: `Bearer ${config.resourceProvider.accessToken}`,
     },
   });
-
 
   const serviceApi = axios.create({
     baseURL: config.baseURL,
@@ -87,12 +105,7 @@ const install = (Vue, config) => {
 const plugin = {
   install,
   version,
+  components,
 };
 
 export default plugin;
-
-/* Only for automatic plugin install
- * if (typeof window !== 'undefined' && window.Vue) {
- *  window.Vue.use(plugin);
- * }
- */

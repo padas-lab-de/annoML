@@ -1,8 +1,9 @@
 {
   "name": "annoml",
-  "version": "1.0.0",
-  "description": "annoML - a vega-lite annotation and discussion tool",
-  "author": "Thomas Haefeker <thomas@haefeker.de>",
+  "version": "1.0.10",
+  "description": "annoML - a annotation and discussion framework for Vega-Lite visualizations",
+  "author": "Thomas Haefeker <thomas@haefeker.net>",
+  "license": "MIT",
   "scripts": {
     "serve": "vue-cli-service serve --port 9090",
     "build": "vue-cli-service build",
@@ -11,9 +12,15 @@
     "docs": "npm run docs:serve",
     "docs:build": "vue-cli-service docs --mode build",
     "docs:serve": "vue-cli-service docs --mode serve",
-    "prepublish": "vue-cli-service lint && vue-cli-service docs --mode build && vue-cli-service build",
-    "start": "vue-cli-service serve"
+    "prepublish": "vue-cli-service lint && vue-cli-service docs --mode build && vue-cli-service build"
   },
+
+  "input": "src/index.js",
+  "output": {
+    "name": "AnnoML",
+    "exports": "named"
+  },
+
   "main": "dist/annoml.common.js",
   "module": "dist/annoml.esm.js",
   "unpkg": "dist/annoml.umd.min.js",
@@ -34,7 +41,6 @@
     "core-js": "^2.6.5",
     "d3": "^5.9.2",
     "d3-svg-annotation": "^2.5.0",
-    "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
     "jsum": "^0.1.4",
     "lodash": "^4.17.11",
@@ -46,8 +52,7 @@
     "vega-view": "^5.2.1",
     "vue": "^2.6.10",
     "vue-swatches": "^1.0.3",
-    "vuex": "^3.0.1",
-    "vue-router": "latest"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",

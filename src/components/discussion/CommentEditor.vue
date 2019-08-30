@@ -3,10 +3,7 @@
     <b-card class="mb-2 ml-4">
       <annotation-select
         class="annotation-select"
-        v-if="
-            pointAnnotations.length > 0 ||
-            rectangleAnnotations.length > 0
-        "
+        v-if="pointAnnotations.length > 0 || rectangleAnnotations.length > 0"
         :point-annotations="pointAnnotations"
         :rectangle-annotations="rectangleAnnotations"
         :annotation-color="comment.color"
@@ -114,10 +111,7 @@
       <b-button v-if="comment.author" @click="updateComment" variant="primary"
         >Save
       </b-button>
-      <b-button
-        v-else
-        @click="submitComment"
-        variant="success"
+      <b-button v-else @click="submitComment" variant="success"
         >Submit</b-button
       >
       <b-button class="ml-2" @click="deleteComment" variant="danger"
@@ -148,8 +142,8 @@ import {
   Underline,
   History,
 } from 'tiptap-extensions';
-import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
-import utils from '@/util';
+import AnnotationSelect from './annotation/AnnotationSelect.vue';
+import utils from '../../util';
 
 export default {
   name: 'CommentEditor',
@@ -299,7 +293,10 @@ export default {
       } else if (
         annotation.annotationType === utils.annotation.types.RECTANGLE
       ) {
-        this.$annomlstore.commit('removeCurrentRectangleAnnotation', annotation);
+        this.$annomlstore.commit(
+          'removeCurrentRectangleAnnotation',
+          annotation,
+        );
       }
     },
     updateAnnotation(annotation) {
@@ -314,7 +311,9 @@ export default {
       ) {
         this.$set(
           this.rectangleAnnotations,
-          this.$annomlstore.deleteCurrent().findIndex(a => a.id === annotation.id),
+          this.$annomlstore
+            .deleteCurrent()
+            .findIndex(a => a.id === annotation.id),
           annotation,
         );
       }
@@ -363,7 +362,6 @@ export default {
 $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
-
 
 .annotation-select {
   margin-top: 0.5rem;

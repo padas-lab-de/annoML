@@ -102,13 +102,13 @@ import {
   Underline,
   History,
 } from 'tiptap-extensions';
-import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
-import Answer from '@/components/discussion/Answer.vue';
-import AnswerEditor from '@/components/discussion/AnswerEditor.vue';
-import APIService from '@/service/APIService';
-import Vote from '@/components/discussion/vote/Vote.vue';
-import PostMeta from '@/components/info/PostMeta.vue';
-import utils from '@/util';
+import AnnotationSelect from './annotation/AnnotationSelect.vue';
+import Answer from './Answer.vue';
+import AnswerEditor from './AnswerEditor.vue';
+import APIService from '../../service/APIService';
+import Vote from './vote/Vote.vue';
+import PostMeta from '../info/PostMeta.vue';
+import utils from '../../util';
 
 export default {
   name: 'Question',

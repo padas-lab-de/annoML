@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="highlight"
-    :class="{ edit: edit }"
-    @click="toggleHighlight">
+  <div class="highlight" :class="{ edit: edit }" @click="toggleHighlight">
     <font-awesome-icon
       v-if="highlight"
       icon="star"

@@ -3,10 +3,7 @@
     <b-card class="mb-2 ml-2">
       <annotation-select
         class="annotation-select"
-        v-if="
-            pointAnnotations.length > 0 ||
-            rectangleAnnotations.length > 0
-        "
+        v-if="pointAnnotations.length > 0 || rectangleAnnotations.length > 0"
         :point-annotations="pointAnnotations"
         :rectangle-annotations="rectangleAnnotations"
         :annotation-color="answer.color"
@@ -114,12 +111,7 @@
       <b-button v-if="answer.author" @click="updateAnswer" variant="primary"
         >Save
       </b-button>
-      <b-button
-        v-else
-        @click="submitAnswer"
-        variant="success"
-        >Submit</b-button
-      >
+      <b-button v-else @click="submitAnswer" variant="success">Submit</b-button>
       <b-button class="ml-2" @click="deleteAnswer" variant="danger"
         >Delete
       </b-button>
@@ -156,10 +148,10 @@ import {
   Underline,
   History,
 } from 'tiptap-extensions';
-import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
-import Comment from '@/components/discussion/Comment.vue';
-import utils from '@/util';
-import APIService from '@/service/APIService';
+import AnnotationSelect from './annotation/AnnotationSelect.vue';
+import Comment from './Comment.vue';
+import utils from '../../util';
+import APIService from '../../service/APIService';
 
 export default {
   name: 'AnswerEditor',
@@ -314,7 +306,10 @@ export default {
       } else if (
         annotation.annotationType === utils.annotation.types.RECTANGLE
       ) {
-        this.$annomlstore.commit('removeCurrentRectangleAnnotation', annotation);
+        this.$annomlstore.commit(
+          'removeCurrentRectangleAnnotation',
+          annotation,
+        );
       }
     },
     updateAnnotation(annotation) {
@@ -403,7 +398,6 @@ export default {
 $color-black: #000000;
 $color-white: #ffffff;
 $color-grey: #dddddd;
-
 
 .annotation-select {
   margin-top: 0.5rem;

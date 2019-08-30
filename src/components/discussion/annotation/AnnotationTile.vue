@@ -6,7 +6,12 @@
       no-body
     >
       <b-input-group>
-        <b-input-group-prepend :style="{ borderColor: annotation.color }"  @click="clickEvent">
+        <b-input-group-prepend
+          :style="{ borderColor: annotation.color }"
+          @click="clickEvent"
+          v-b-tooltip.hover
+          :title="JSON.stringify(annotation.data)"
+        >
           <span
             class="input-group-text"
             :style="{
@@ -15,7 +20,11 @@
             }"
           >
             <font-awesome-layers
-                    v-if="annotation.annotationType === $annomlutils.annotation.types.POINT">
+              v-if="
+                annotation.annotationType ===
+                  $annomlutils.annotation.types.POINT
+              "
+            >
               <font-awesome-icon icon="bullseye" />
               <font-awesome-icon
                 icon="circle"
@@ -29,14 +38,16 @@
             </font-awesome-layers>
 
             <font-awesome-layers
-              v-else-if="annotation.annotationType === $annomlutils.annotation.types.FREEPOINT"
+              v-else-if="
+                annotation.annotationType ===
+                  $annomlutils.annotation.types.FREEPOINT
+              "
             >
               <font-awesome-icon icon="bullseye" />
               <font-awesome-icon
                 icon="circle"
                 transform="shrink-9 down-7 right-7"
                 :style="{ color: 'gray' }"
-
               />
               <font-awesome-icon
                 icon="hand-pointer"
@@ -45,7 +56,10 @@
             </font-awesome-layers>
 
             <font-awesome-layers
-              v-else-if="annotation.annotationType === $annomlutils.annotation.types.RECTANGLE"
+              v-else-if="
+                annotation.annotationType ===
+                  $annomlutils.annotation.types.RECTANGLE
+              "
             >
               <font-awesome-icon icon="vector-square" />
               <font-awesome-icon
@@ -60,14 +74,16 @@
             </font-awesome-layers>
 
             <font-awesome-layers
-              v-else-if="annotation.annotationType === $annomlutils.annotation.types.FREERECTANGLE"
+              v-else-if="
+                annotation.annotationType ===
+                  $annomlutils.annotation.types.FREERECTANGLE
+              "
             >
               <font-awesome-icon icon="vector-square" />
               <font-awesome-icon
                 icon="circle"
                 transform="shrink-9 down-6 right-7"
                 :style="{ color: 'gray' }"
-
               />
               <font-awesome-icon
                 icon="hand-pointer"
@@ -83,19 +99,19 @@
           v-model.trim.lazy="title"
           :style="{ borderColor: annotation.color }"
           id="annotation-title"
-        />
+        ></b-form-input>
         <b-input-group-append
           v-if="edit"
-          :style="{ borderColor: annotation.color, width: '40px', }"
+          :style="{ borderColor: annotation.color, width: '40px' }"
         >
           <b-button
             :style="{
               backgroundColor: annotation.color,
-              borderColor: annotation.color,
+              borderColor: annotation.color
             }"
             variant="outline-secondary"
             @click="deleteAnnotation"
-          ><font-awesome-icon icon="times" style="{color: white}" />
+            ><font-awesome-icon icon="times" style="{color: white}" />
           </b-button>
         </b-input-group-append>
       </b-input-group>

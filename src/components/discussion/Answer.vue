@@ -16,7 +16,7 @@
         class="float-right mr-1"
         style="color: lightgray"
       >
-         #{{ answer.id }}</span
+        #{{ answer.id }}</span
       >
       <post-meta v-bind:post="answer"></post-meta>
       <annotation-select
@@ -36,30 +36,32 @@
       <div class="body">
         <editor-content class="editor__content" :editor="editor" />
       </div>
-        <div v-if="answer.author">
-      <b-button
-        v-if="!$annomlstore.getters.getCurrentPost"
-        @click="commentPost"
-        variant="primary"
-      >
-        Comment
-      </b-button>
-      <vote
-        class="float-right btn"
-        :post="answer"
-        :edit="$annomlsettings.isAuthenticated"
-        @up-vote="upVoteAnswer"
-        @down-vote="downVoteAnswer"
-      ></vote>
-      <b-button
-              v-if="$annomlsettings.currentUser === answer.author.externalId
-              && !$annomlstore.getters.getCurrentPost"
-              @click="editAnswer"
-        class="float-right"
-        variant="light"
-        >Edit</b-button
-      >
-        </div>
+      <div v-if="answer.author">
+        <b-button
+          v-if="!$annomlstore.getters.getCurrentPost"
+          @click="commentPost"
+          variant="primary"
+        >
+          Comment
+        </b-button>
+        <vote
+          class="float-right btn"
+          :post="answer"
+          :edit="$annomlsettings.isAuthenticated"
+          @up-vote="upVoteAnswer"
+          @down-vote="downVoteAnswer"
+        ></vote>
+        <b-button
+          v-if="
+            $annomlsettings.currentUser === answer.author.externalId &&
+              !$annomlstore.getters.getCurrentPost
+          "
+          @click="editAnswer"
+          class="float-right"
+          variant="light"
+          >Edit</b-button
+        >
+      </div>
     </b-card>
     <div v-for="comment in comments" :key="comment.id">
       <comment-editor
@@ -109,14 +111,14 @@ import {
   Strike,
   Underline,
 } from 'tiptap-extensions';
-import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
-import Comment from '@/components/discussion/Comment.vue';
-import CommentEditor from '@/components/discussion/CommentEditor.vue';
-import APIService from '@/service/APIService';
-import Vote from '@/components/discussion/vote/Vote.vue';
-import Highlight from '@/components/discussion/vote/Highlight.vue';
-import PostMeta from '@/components/info/PostMeta.vue';
-import utils from '@/util';
+import AnnotationSelect from './annotation/AnnotationSelect.vue';
+import Comment from './Comment.vue';
+import CommentEditor from './CommentEditor.vue';
+import APIService from '../../service/APIService';
+import Vote from './vote/Vote.vue';
+import Highlight from './vote/Highlight.vue';
+import PostMeta from '../info/PostMeta.vue';
+import utils from '../../util';
 
 export default {
   name: 'Answer',

@@ -59,8 +59,8 @@
               >Delete</b-button
             >
             <b-popover
-                    v-if="!discussion.published"
-                    target="publish"
+              v-if="!discussion.published"
+              target="publish"
               placement="bottom"
               :show="showPublish"
               title="Please enter a title and publish!"
@@ -77,7 +77,7 @@
 <script>
 /* eslint-disable no-console */
 
-import APIService from '@/service/APIService';
+import APIService from '../../service/APIService';
 
 export default {
   name: 'DiscussionInfo',
@@ -106,7 +106,9 @@ export default {
     },
     title: {
       handler() {
-        this.preventSubmit = !(this.title !== this.discussion.title && this.title !== '');
+        this.preventSubmit = !(
+          this.title !== this.discussion.title && this.title !== ''
+        );
       },
     },
   },

@@ -10,7 +10,7 @@ import VegaEmbed from 'vega-embed';
 import * as d3 from 'd3';
 import * as d3annotation from 'd3-svg-annotation';
 import lodash from 'lodash';
-import utils from '@/util';
+import utils from '../../util';
 
 export default {
   name: 'VegaChart',

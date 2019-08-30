@@ -160,10 +160,10 @@ import {
   Underline,
   History,
 } from 'tiptap-extensions';
-import AnnotationSelect from '@/components/discussion/annotation/AnnotationSelect.vue';
-import Answer from '@/components/discussion/Answer.vue';
-import utils from '@/util';
-import APIService from '@/service/APIService';
+import AnnotationSelect from './annotation/AnnotationSelect.vue';
+import Answer from './Answer.vue';
+import utils from '../../util';
+import APIService from '../../service/APIService';
 
 export default {
   name: 'QuestionEditor',
@@ -353,7 +353,10 @@ export default {
       } else if (
         annotation.annotationType === utils.annotation.types.RECTANGLE
       ) {
-        this.$annomlstore.commit('removeCurrentRectangleAnnotation', annotation);
+        this.$annomlstore.commit(
+          'removeCurrentRectangleAnnotation',
+          annotation,
+        );
       }
     },
     updateAnnotation(annotation) {

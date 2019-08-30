@@ -2,11 +2,13 @@ module.exports = {
   plugins: [
     require('./plugin.js')
   ],
+  base: 'https://gitlab.thomb.org/thomborg/annoml/',
+  dest: 'public',
   locales: {
     '/': {
       lang: 'en-US',
-      title: 'Annoml',
-      description: 'Annoml for Vue.js'
+      title: 'annoML',
+      description: 'A annotation and discussion framework for Vega-Lite visualization written in Vue.js'
     }
   },
   themeConfig: {
@@ -16,10 +18,10 @@ module.exports = {
       '/': {
         label: 'English',
         selectText: 'Languages',
-        editLinkText: 'Edit this page on GitHub',
+        editLinkText: 'Edit this page on Gitlab',
         nav: [{
           text: 'Release Notes',
-          link: 'https://github.com/thomborg/annoml/releases'
+          link: 'https://gitlab.thomb.org/thomborg/annoml/releases'
         }],
         sidebar: [
           '/installation.md',

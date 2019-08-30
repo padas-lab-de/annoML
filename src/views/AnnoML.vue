@@ -25,19 +25,27 @@
 <script>
 /* eslint-disable no-console */
 
-import VisualizationView from '@/components/VisualizationView.vue';
-import APIService from '@/service/APIService';
-import DiscussionView from '@/components/DiscussionView.vue';
-import Loading from '@/components/extra/Loading.vue';
-import DiscussionInfo from '@/components/info/DiscussionInfo.vue';
+import VisualizationView from '../components/VisualizationView.vue';
+import APIService from '../service/APIService';
+import DiscussionView from '../components/DiscussionView.vue';
+import Loading from '../components/extra/Loading.vue';
+import DiscussionInfo from '../components/info/DiscussionInfo.vue';
 
 export default {
-  name: 'AnnotationPage',
+  name: 'AnnoML',
   components: {
     DiscussionInfo,
     Loading,
     DiscussionView,
     VisualizationView,
+  },
+  props: {
+    discussionId: {
+      type: Number,
+      default() {
+        return null;
+      },
+    },
   },
   data() {
     return {
@@ -51,7 +59,7 @@ export default {
   },
   mounted() {
     APIService(this.$serviceApiAuthenticated)
-      .getDiscussion(this.$route.params.id)
+      .getDiscussion(this.discussionId)
       .then((result) => {
         this.discussion = result;
       })
@@ -67,10 +75,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-  .annoml-page {
-  }
-/* Bootstrap */
-@import "../../node_modules/bootstrap/scss/bootstrap";
-@import "../../node_modules/bootstrap-vue/src/index";
-</style>
+<style lang="scss"></style>
