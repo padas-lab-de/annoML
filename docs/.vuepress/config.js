@@ -2,7 +2,6 @@ module.exports = {
   plugins: [
     require('./plugin.js')
   ],
-  base: 'https://gitlab.thomb.org/thomborg/annoml/',
   dest: 'public',
   locales: {
     '/': {
