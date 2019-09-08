@@ -1,5 +1,5 @@
 /*!
- * annoml v1.0.10 
+ * annoml v1.0.11 
  * (c) 2019 Thomas Haefeker <thomas@haefeker.net>
  * Released under the MIT License.
  */
@@ -4864,7 +4864,7 @@ var __vue_staticRenderFns__$h = [];
 var components = {
   AnnoML: AnnoML
 };
-var version = '1.0.10';
+var version = '1.0.11';
 
 var install = function install(Vue, config) {
   /*

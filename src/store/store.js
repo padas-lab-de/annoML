@@ -137,9 +137,10 @@ const store = new Vuex.Store({
       state.annotation.currentRectangleAnnotations.push(rectangleAnnotation);
     },
     removeCurrentRectangleAnnotation(state, rectangleAnnotation) {
-      state.annotation.currentRectangleAnnotations = state.annotation.currentRectangleAnnotations.filter(
-        a => a.id !== rectangleAnnotation.id,
-      );
+      state.annotation.currentRectangleAnnotations = state.annotation
+        .currentRectangleAnnotations.filter(
+          a => a.id !== rectangleAnnotation.id,
+        );
     },
     setCurrentRectangleAnnotations(state, rectangleAnnotations) {
       state.annotation.currentRecAnnotations = rectangleAnnotations;
