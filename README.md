@@ -106,7 +106,7 @@ Vue.use(annoml, {
 2. After successful creating a new discussion you will receive a discussion ID as answer for at this point unpublished discussion. Your you can call the annoML component by providing the `discussion-id`. It is suggested to use a router inside the SPA e.g. [vue-router](https://router.vuejs.org) for opening the annoML component.
 
 
-3. The annoML component will then load the annotation framwork and load the specified visualization from its source. The user must now set a title for the discussion and click **publish** in order to create an annotation and ask a question. 
+3. The annoML component will then load the annotation framework and load the specified visualization from its source. The user must now set a title for the discussion and click **publish** in order to create an annotation and ask a question. 
 After publishing, the discussion is then public for everyone and can be requested via the annoML API with its ID: `GET discussions/[id]`
 
 > If a referenced visualization is modified by the resource owner or it is no longer available, the framework will in this case display a notification to the user.
