@@ -1,6 +1,6 @@
 {
   "name": "annoml",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "annoML - a annotation and discussion framework for Vega-Lite visualizations",
   "author": "Thomas Haefeker <thomas@haefeker.net>",
   "license": "MIT",

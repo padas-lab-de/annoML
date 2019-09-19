@@ -84,10 +84,12 @@ import AnnotationSelect from './annotation/AnnotationSelect.vue';
 import Vote from './vote/Vote.vue';
 import PostMeta from '../info/PostMeta.vue';
 import utils from '../../util';
+import Highlight from './vote/Highlight.vue';
 
 export default {
   name: 'Comment',
   components: {
+    Highlight,
     Vote,
     PostMeta,
     EditorContent,
