@@ -100,11 +100,9 @@ export default {
     return [].concat(...annotations).sort(sort);
   },
   concatAndFilterAnnotations(annotations, filter) {
-    console.log(annotations);
     return [].concat(...annotations).filter(filter);
   },
   concatAnnotations(annotations) {
-    console.log(annotations);
     return [].concat(...annotations);
   },
 };

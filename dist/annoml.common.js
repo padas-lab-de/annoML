@@ -1,5 +1,5 @@
 /*!
- * annoml v1.0.12 
+ * annoml v1.0.13 
  * (c) 2019 Thomas Haefeker <thomas@haefeker.net>
  * Released under the MIT License.
  */
@@ -334,13 +334,11 @@ var annotation = {
   concatAndFilterAnnotations: function concatAndFilterAnnotations(annotations, filter) {
     var _ref2;
 
-    console.log(annotations);
     return (_ref2 = []).concat.apply(_ref2, _toConsumableArray(annotations)).filter(filter);
   },
   concatAnnotations: function concatAnnotations(annotations) {
     var _ref3;
 
-    console.log(annotations);
     return (_ref3 = []).concat.apply(_ref3, _toConsumableArray(annotations));
   }
 };
@@ -4801,7 +4799,7 @@ var script$h = {
   },
   props: {
     discussionId: {
-      type: Number,
+      type: String,
       default: function _default() {
         return null;
       }
@@ -4869,7 +4867,7 @@ var __vue_staticRenderFns__$h = [];
 var components = {
   AnnoML: AnnoML
 };
-var version = '1.0.12';
+var version = '1.0.13';
 
 var install = function install(Vue, config) {
   /*

@@ -3,3 +3,5 @@
 ## 1.0.11 updated README
 
 ## 1.0.12 updated README
+
+## 1.0.13 removed some debug output

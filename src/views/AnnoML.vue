@@ -41,7 +41,7 @@ export default {
   },
   props: {
     discussionId: {
-      type: Number,
+      type: String,
       default() {
         return null;
       },
