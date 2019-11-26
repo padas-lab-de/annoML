@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # annoML - a open framework for annotating machine learning related visualization.
 
 annoML is a full featured annotation and discussion framework designed for annotating provided Vega-Lite visualizations.
@@ -140,7 +139,3 @@ npm run lint
 ### Contributions
 
 Special thanks to the [vue-cli-plugin-p11n](https://github.com/kazupon/vue-cli-plugin-p11n) project for providing the boilerplate code for this plugin and to the [d3-annotation](https://github.com/susielu/d3-annotation) project.
-=======
-# annoML
-annoML - a open framework for annotating machine learning related visualization
->>>>>>> origin/master
